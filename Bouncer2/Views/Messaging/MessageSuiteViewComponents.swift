@@ -1,0 +1,38 @@
+//
+//  MessageSuiteVComponents.swift
+//  Bouncer2
+//
+//  Created by Andrew Kestler on 8/22/22.
+//
+
+import UIKit
+struct MessageSuiteViewComponents{
+    
+    let messagesCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.register(MessageCell.self, forCellWithReuseIdentifier: MessageCell.id)
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = .greyColor()
+        return collectionView
+    }()
+    
+    let titleHeader: UILabel = {
+        let label = UILabel()
+        label.text = "Messages"
+        label.font = .poppinsMedium(size: .makeWidth(20))
+        label.textColor = .white
+        return label
+    }()
+    
+    let backButton: UIButton = {
+        let backButton = UIButton(frame: .zero)
+        let config = UIImage.SymbolConfiguration(pointSize: .makeHeight(30), weight: .semibold)
+        backButton.setImage(UIImage(systemName: "chevron.left", withConfiguration: config), for: .normal)
+        backButton.tintColor = .white
+        backButton.backgroundColor = .nearlyBlack().withAlphaComponent(0.2)
+        backButton.setDimensions(height: .makeWidth(40), width: .makeWidth(40))
+        backButton.layer.cornerRadius = .makeWidth(20)
+        backButton.layer.masksToBounds = true
+        return backButton
+    }()
+}
