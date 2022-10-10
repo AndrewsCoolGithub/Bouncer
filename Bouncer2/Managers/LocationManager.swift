@@ -79,7 +79,9 @@ class Location: NSObject, CLLocationManagerDelegate {
             let windowScene = scenes.first as! UIWindowScene
             let window = windowScene.windows.first!
             if window.rootViewController is LocationRequiredVC{
-                window.rootViewController = TabBarController()
+                let navCont = UINavigationController(rootViewController: TabBarController())
+                navCont.navigationBar.isHidden = true
+                window.rootViewController = navCont
             }
             manager.startUpdatingLocation()
         }else{

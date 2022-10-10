@@ -207,7 +207,8 @@ extension ChatEmoteSelectorCC: UICollectionViewDelegateFlowLayout{
                 }
             }
             
-            (self.parent as! ChatEmoteSelector).removePanelFromParent(animated: true)
+            (self.parent as! ChatEmoteSelector).removePanel(self)
+//            (self.parent as! ChatEmoteSelector).popupProp.barActions.showBar()
         }
     }
 }

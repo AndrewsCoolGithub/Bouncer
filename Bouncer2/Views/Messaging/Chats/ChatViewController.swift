@@ -11,7 +11,12 @@ import Combine
 import UIKit
 import InputBarAccessoryView
 
-class ChatViewController: MessagesViewController, MessagesLayoutDelegate, SkeletonLoadable, InputBarAccessoryViewDelegate{
+protocol MessageBarDelegate: AnyObject{
+    func showBar()
+    func hideBar()
+}
+
+class ChatViewController: MessagesViewController, MessagesLayoutDelegate, SkeletonLoadable, InputBarAccessoryViewDelegate, MessageBarDelegate{
 
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         
@@ -52,6 +57,8 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         return cell
     }
     
+    
+    
    
     
     //MARK: - Long Press Action
@@ -84,7 +91,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
                                     cellFrame: CGRect(origin: convertedPoint,
                                                       size: cell.frame.size),
                                     delegate: self,
-                                    keyboardUpdater: keyboardUpdater)
+                                    keyboardUpdater: keyboardUpdater, barActions: self)
         
         UIView.animate(withDuration: 0.3, animations: {
             cell.transform = CGAffineTransform(translationX: cell.frame.width * 0.1, y: 0)
@@ -94,7 +101,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
             }
         })
         
-        hideMessageInputBar(origin: messageInputBar.frame.origin)
+        hideBar()
         self.addChild(chatPopup)
         chatPopup.willMove(toParent: self)
         view.addSubview(chatPopup.view)
@@ -110,20 +117,21 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
 //        }
     }
     
-    ///Orgin must be the message bars original position, use var 'messageInputBarOrgin'
-    func hideMessageInputBar(origin: CGPoint){
-        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1.2, initialSpringVelocity: 1.5) {
-            self.messageInputBar.frame.origin.y = .makeHeight(900)
+     func showBar() {
+         UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1.2, initialSpringVelocity: 1.5) { [weak self] in
+            self?.messageInputBar.frame.origin = self?.messageInputBarOrgin ?? self!.messageInputBar.frame.origin
+            self?.messageInputBar.inputTextView.isEditable = true
+            self?.messageInputBar.isHidden = false
+           
         }
-        
-        NotificationCenter.default.addObserver(forName: Notification.Name("showMessageInputBar"), object: nil, queue: .main) { [weak self] notif in
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1) {
-                self?.messageInputBar.frame.origin = origin
-                self?.messageInputBar.inputTextView.isEditable = true
-                self?.messageInputBar.isHidden = false
-            }
-            
-            NotificationCenter.default.removeObserver(notif, name: Notification.Name("showMessageInputBar"), object: nil)
+         print("Show bar")
+    }
+    
+    func hideBar(){
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1.2, initialSpringVelocity: 1.5) { [weak self] in
+            self?.messageInputBar.frame.origin.y = .makeHeight(900)
+            self?.messageInputBar.inputTextView.isEditable = false
+            self?.messageInputBar.isHidden = true
         }
     }
     
@@ -416,19 +424,6 @@ extension ChatViewController: MessagesDataSource {
 
 extension ChatViewController: ChatReactDelegate{
     
-    
-    func hideMessageInputBar(_ animated: Bool) {
-        if animated{
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1.2, initialSpringVelocity: 1.5) {
-                self.messageInputBar.frame.origin.y = .makeHeight(900)
-            }
-        }else{
-            self.messageInputBar.frame.origin.y = .makeHeight(900)
-        }
-    }
-    
-    
-    
     func openEmoteSelector(_ message: Message, _ popUpProp: ChatPopupVC.ChatPopupProperties) {
         let emoteSelector = ChatEmoteSelector(viewModel: viewModel)
         emoteSelector.chatEmoteSelectorCC = ChatEmoteSelectorCC()
@@ -437,11 +432,6 @@ extension ChatViewController: ChatReactDelegate{
         emoteSelector.chatEmoteSelectorCC.message = message
         emoteSelector.addPanel(toParent: self, animated: true)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.31){
-            self.hideMessageInputBar(origin: self.messageInputBarOrgin)
-            self.messageInputBar.inputTextView.isEditable = false
-            self.messageInputBar.isHidden = true
-        }
     }
     
     func replyTo(_ message: Message) {
@@ -483,8 +473,6 @@ protocol ChatReactDelegate: NSObject{
     func emoteReaction(for message: Message, _ emote: String)
     
     func openEmoteSelector(_ message: Message, _ popUpProp: ChatPopupVC.ChatPopupProperties)
-    
-    func hideMessageInputBar(_ animated: Bool)
 }
 
 public class ChatKeyboardUpdater{

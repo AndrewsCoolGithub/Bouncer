@@ -12,8 +12,9 @@ import Firebase
 final class ChatEmoteSelector: FloatingPanelController{
     
     var chatEmoteSelectorCC: ChatEmoteSelectorCC!
-    
     var popupProp: ChatPopupVC.ChatPopupProperties!
+    
+    
     
      let blurEffectView: UIVisualEffectView = {
         let blur = UIBlurEffect(style: .regular)
@@ -159,7 +160,7 @@ final class ChatEmoteSelector: FloatingPanelController{
        //TODO: Animate to popup view origin
         guard let contentVC = contentViewController as? ChatEmoteSelectorCC else {return}
         
-        
+        removePanel(contentVC)
     }
     
     class PanelLayout: FloatingPanelLayout {
@@ -230,9 +231,7 @@ extension ChatEmoteSelector: FloatingPanelControllerDelegate{
         let startHeight: CGFloat = .makeHeight(530)
         let maxHeight: CGFloat = -(SafeArea.topSafeArea() + 10) + .makeHeight(790)
         
-        if didFinishEntryAnimation{
-            transitionCustomEmojiView(loc, startY)
-        }
+        
         
         
         guard let contentVC = (vc.contentViewController as? ChatEmoteSelectorCC) else {return}
@@ -245,11 +244,19 @@ extension ChatEmoteSelector: FloatingPanelControllerDelegate{
             blurEffectView.alpha = progressiveAlpha
             customizeHeaderView.alpha = progressiveAlpha
             if (loc.y >= .makeHeight(680) && velocity > 700) {
-                removePanel(vc, contentVC)
+                removePanel(contentVC)
+            }else{
+                if didFinishEntryAnimation{
+                    transitionCustomEmojiView(loc, startY)
+                }
             }
         }else{
             if (loc.y >= .makeHeight(550) && velocity > 500){
-                removePanel(vc, contentVC)
+                removePanel(contentVC)
+            }else{
+                if didFinishEntryAnimation{
+                    transitionCustomEmojiView(loc, startY)
+                }
             }
         }
     }
@@ -262,28 +269,44 @@ extension ChatEmoteSelector: FloatingPanelControllerDelegate{
     func floatingPanelWillRemove(_ fpc: FloatingPanelController) {
         
         if (fpc.contentViewController as! ChatEmoteSelectorCC).inCustomMode{
+            
+           
             let chatVC = fpc.parent as! ChatViewController
             let chatPopup = ChatPopupVC(popupProp.message,
                                         popupProp.touchPoint,
                                         cellFrame: popupProp.cellFrame,
                                         delegate: chatVC,
                                         keyboardUpdater: chatVC.keyboardUpdater,
+                                        barActions: chatVC,
                                         fromCustom: true)
             
-            //chatVC.hideMessageInputBar(origin: chatVC.messageInputBarOrgin)
+            UIView.animate(withDuration: 0.1) {
+                self.backgroundEmojiView.frame = CGRect(origin: CGPoint(x: ChatPopupVC.ViewDimensions.reactionX, y: self.popupProp.touchPoint.y - (ChatPopupVC.ViewDimensions.reactionH * 1.25)), size: CGSize(width: ChatPopupVC.ViewDimensions.reactionW, height: ChatPopupVC.ViewDimensions.reactionH))
+            }
             
-            chatVC.addChild(chatPopup)
-            chatPopup.willMove(toParent: chatVC)
-            chatVC.view.addSubview(chatPopup.view)
+            UIView.transition(with: blurEffectView, duration: 0.1, options: .transitionCrossDissolve) {
+                self.blurEffectView.alpha = 0
+            }
+            
+            
+            UIView.transition(with: customizeHeaderView, duration: 0.1, options: .transitionCrossDissolve) {
+                self.customizeHeaderView.alpha = 0
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                chatVC.addChild(chatPopup)
+                chatPopup.willMove(toParent: chatVC)
+                chatVC.view.addSubview(chatPopup.view)
+            }
         }
     }
     
-    fileprivate func removePanel(_ fpc: FloatingPanelController, _ contentVC: ChatEmoteSelectorCC) {
-        fpc.removePanelFromParent(animated: true) {
+     func removePanel( _ contentVC: ChatEmoteSelectorCC) {
+         self.removePanelFromParent(animated: true) {
             contentVC.delegate = nil
             contentVC.customizeEmojiDelegate = nil
             if !contentVC.inCustomMode{
-                NotificationCenter.default.post(name: Notification.Name("showMessageInputBar"), object: nil)
+                self.popupProp.barActions.showBar()
             }
         }
     }
