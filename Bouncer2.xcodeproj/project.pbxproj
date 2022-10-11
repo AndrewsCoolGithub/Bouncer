@@ -134,6 +134,7 @@
 		A4A996762813C63C009DED0B /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A996752813C63C009DED0B /* Colors.swift */; };
 		A4A996782813C64F009DED0B /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A996772813C64E009DED0B /* Layout.swift */; };
 		A4AA565628C0A65200DE0474 /* MessageCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AA565528C0A65200DE0474 /* MessageCodable.swift */; };
+		A4B9AD6628F3EE9000FAE6F1 /* ChatReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */; };
 		A4C4E6F22815377B000F7366 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A4C4E6F12815377B000F7366 /* GoogleService-Info.plist */; };
 		A4C4E6F42815961E000F7366 /* Shadows.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C4E6F32815961E000F7366 /* Shadows.swift */; };
 		A4CA8ECA285F20A900745B73 /* AllEventListHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CA8EC9285F20A900745B73 /* AllEventListHeaderCell.swift */; };
@@ -300,6 +301,7 @@
 		A4A996752813C63C009DED0B /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Colors.swift; path = "../New Group1/Colors.swift"; sourceTree = "<group>"; };
 		A4A996772813C64E009DED0B /* Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		A4AA565528C0A65200DE0474 /* MessageCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCodable.swift; sourceTree = "<group>"; };
+		A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReplyView.swift; sourceTree = "<group>"; };
 		A4C4E6F12815377B000F7366 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A4C4E6F32815961E000F7366 /* Shadows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shadows.swift; sourceTree = "<group>"; };
 		A4CA8EC8285F1FA100745B73 /* Bouncer2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Bouncer2.entitlements; sourceTree = "<group>"; };
@@ -629,7 +631,7 @@
 				A4DCCEB328BC9AC200E01D3E /* ChatViewModel.swift */,
 				A45FCFAE28B76C9B005B833B /* ChatViewController.swift */,
 				A45F8D5A28C9B4D700DDD90F /* ChatPopupView.swift */,
-				A4FFF25828D1C313007BED60 /* ChatEmoteView.swift */,
+				A4B9AD6428F3EE6000FAE6F1 /* Message Supplemental Views */,
 				A42DCBC528D4A18900C7CA84 /* EmoteSelector */,
 				A4FA2CA628E148EF001195D2 /* EmoteCustomize */,
 			);
@@ -773,6 +775,15 @@
 				A4A996552813C557009DED0B /* Poppins-Thin.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		A4B9AD6428F3EE6000FAE6F1 /* Message Supplemental Views */ = {
+			isa = PBXGroup;
+			children = (
+				A4FFF25828D1C313007BED60 /* ChatEmoteView.swift */,
+				A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */,
+			);
+			path = "Message Supplemental Views";
 			sourceTree = "<group>";
 		};
 		A4CD8BC928895338005B8E78 /* ProfileVC */ = {
@@ -1059,6 +1070,7 @@
 				A4EF369428390A0A000A95E5 /* EventOverview.swift in Sources */,
 				A4F6C133288150A300115972 /* ProfileEditCell.swift in Sources */,
 				A45FCFAD28B4CB0A005B833B /* MessageCellViews.swift in Sources */,
+				A4B9AD6628F3EE9000FAE6F1 /* ChatReplyView.swift in Sources */,
 				A4094159282291FF00094A64 /* ScheduleDayCell.swift in Sources */,
 				A45FCFA128B4789B005B833B /* MessageSuiteViewComponents.swift in Sources */,
 				A42D5E06287E2626005F5748 /* AllEventsTab.swift in Sources */,

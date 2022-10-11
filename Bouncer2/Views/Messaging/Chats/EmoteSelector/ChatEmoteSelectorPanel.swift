@@ -14,9 +14,7 @@ final class ChatEmoteSelector: FloatingPanelController{
     var chatEmoteSelectorCC: ChatEmoteSelectorCC!
     var popupProp: ChatPopupVC.ChatPopupProperties!
     
-    
-    
-     let blurEffectView: UIVisualEffectView = {
+    let blurEffectView: UIVisualEffectView = {
         let blur = UIBlurEffect(style: .regular)
         let effectView = UIVisualEffectView(effect: blur)
         effectView.frame = CGRect(x: 0, y: 0, width: .makeWidth(414), height: .makeHeight(896))
@@ -231,9 +229,6 @@ extension ChatEmoteSelector: FloatingPanelControllerDelegate{
         let startHeight: CGFloat = .makeHeight(530)
         let maxHeight: CGFloat = -(SafeArea.topSafeArea() + 10) + .makeHeight(790)
         
-        
-        
-        
         guard let contentVC = (vc.contentViewController as? ChatEmoteSelectorCC) else {return}
         let velocity = vc.panGestureRecognizer.velocity(in: view).y
         contentVC.searchCollectionView.frame.size.height = (min(startHeight + diff, maxHeight))
@@ -288,7 +283,6 @@ extension ChatEmoteSelector: FloatingPanelControllerDelegate{
                 self.blurEffectView.alpha = 0
             }
             
-            
             UIView.transition(with: customizeHeaderView, duration: 0.1, options: .transitionCrossDissolve) {
                 self.customizeHeaderView.alpha = 0
             }
@@ -340,14 +334,12 @@ extension ChatEmoteSelector: CustomizeEmojiDelegate{
         emojiCustomStack.insertArrangedSubview(button, at: currentSelectedIndex)
         
         
-        
         Task{
             try await AuthManager.shared.updateEmojis(contentVC.myReactions)
         }
     }
     
     private func removeEmojiFromDataSource(_ emoji: Emoji, _ lastEmoji: Emoji, _ cvPositon: Int, _ contentVC: ChatEmoteSelectorCC){
-        //var snapshot = NSDiffableDataSourceSnapshot<ChatEmoteSelectorCC.Section, Emoji>()
         
         
         if contentVC.inSearchMode{

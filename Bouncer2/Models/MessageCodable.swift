@@ -27,9 +27,13 @@ struct MessageCodable: Codable, Identifiable, Hashable{
     let text: String?
     let mediaURL: String?
     let duration: Float?
+    let replyReceipt: ReplyReceipt? 
     let emojiReactions: [EmoteReaction]?
     
-    func toMessage() -> Message{
-        return Message(senderID: senderID, displayName: displayName, messageId: messageID, sentDate: sentDate, emojiReactions: emojiReactions, dataType: DataType(rawValue: dataType)!, text: text)
+    
+    func toMessage() -> Message {
+        return Message(senderID: senderID, displayName: displayName, messageId: messageID, sentDate: sentDate, emojiReactions: emojiReactions, replyReceipt: replyReceipt, dataType: DataType(rawValue: dataType)!, text: text)
     }
 }
+
+

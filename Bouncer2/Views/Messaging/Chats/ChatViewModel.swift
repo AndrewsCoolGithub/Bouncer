@@ -44,7 +44,7 @@ class ChatViewModel: ObservableObject{
         }
     }
     
-    func sendMessage(_ dataType: DataType, content: Any){
+    func sendMessage(_ dataType: DataType, content: Any, replyReceipt: ReplyReceipt?){
         let doc = CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document()
         let messageID = doc.documentID
         let displayName = User.shared.displayName!
@@ -54,7 +54,7 @@ class ChatViewModel: ObservableObject{
         switch dataType {
         case .text:
             let text = content as! String
-            let message = Message(senderID: senderID, displayName: displayName, messageId: messageID, sentDate: .now, emojiReactions: nil, dataType: typeOfData, text: text, isDelivered: false)
+            let message = Message(senderID: senderID, displayName: displayName, messageId: messageID, sentDate: .now, emojiReactions: nil, replyReceipt: replyReceipt, dataType: typeOfData, text: text, isDelivered: false)
             let index = messages?.count ?? 0
             messages?.insert(message, at: index)
             

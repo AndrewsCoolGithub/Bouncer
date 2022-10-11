@@ -134,7 +134,18 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
             self?.messageInputBar.isHidden = true
         }
     }
-    
+    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+
+        // Get the view for the first header
+        let indexPath = IndexPath(row: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+
+        // Use this view to calculate the optimal size based on the collection view's width
+        
+        return headerView.systemLayoutSizeFitting(CGSize(width: 1, height: UIView.layoutFittingExpandedSize.height),
+                                                  withHorizontalFittingPriority: .required, // Width is fixed
+                                                  verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
+    }
     
     fileprivate func setupMessageInputBar() {
         messagesCollectionView.messagesDataSource = self
@@ -145,7 +156,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messagesCollectionView.messagesCollectionViewFlowLayout.setMessageIncomingAvatarPosition(AvatarPosition(horizontal: .natural, vertical: .messageBottom))
         messagesCollectionView.messagesCollectionViewFlowLayout.setMessageOutgoingAvatarSize(.zero)
         messageInputBar.sendButton.addTarget(self, action: #selector(sendClicked), for: .touchUpInside)
-       
+        
         
         let sendButton = messageInputBar.sendButton
         sendButton.tintColor = .systemCyan
@@ -160,7 +171,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messagesCollectionView.register(ChatEmoteView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
-        
+        messagesCollectionView.register(ChatReplyView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         let cameraItem = InputBarButtonItem(type: .system)
         cameraItem.tintColor = .systemCyan
         let cameraIcon = UIImage(named: "camera-filled-icon")?.withRenderingMode(.alwaysTemplate)
@@ -194,7 +205,9 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 6, left: 15, bottom: 6, right: 15)
     }
     
-    fileprivate func setupReplyHeader(_ displayName: String, _ messageKind: MessageKind) {
+    var replyMessage: Message?
+    fileprivate func setupReplyHeader(_ displayName: String, _ message: Message) {
+        replyMessage = message
         let myButton = UIButton()
         myButton.setDimensions(height: .makeHeight(.makeHeight(85)), width: .makeWidth(414))
         myButton.backgroundColor = .nearlyBlack()
@@ -208,6 +221,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         label.anchor(left: myButton.leftAnchor, paddingLeft: .makeWidth(15))
         
         lazy var contentText: String = {
+            let messageKind = message.kind
             switch messageKind {
             case .text(let string):
                 return string.count > 30 ? "\(string.prefix(30))..." : string
@@ -253,13 +267,12 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
     }
     
     @objc func endReply(){
-        
+        replyMessage = nil
         UIView.animate(withDuration: 0.6, delay: 0) {
             self.messageInputBar.topStackView.alpha = 0.0
             self.messageInputBar.backgroundView.alpha = 0.0
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//                self.messageInputBar.topStackView.removeFromSuperview()
                 self.messageInputBar.topStackViewPadding = UIEdgeInsets(top: -.makeHeight(62), left: 0, bottom: 0, right: 0)
             }
         }completion: { _ in
@@ -278,9 +291,16 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
     
     @objc func sendClicked(){
         guard let content = messageInputBar.inputTextView.text else {return}
-        viewModel?.sendMessage(.text, content: content)
+        
         messageInputBar.inputTextView.text = ""
        
+        if let replyMessage = replyMessage?.toCodable() {
+            let replyReceipt = ReplyReceipt(messageID: replyMessage.messageID, userID: replyMessage.senderID, displayName: replyMessage.displayName, dataType: replyMessage.dataType, text: replyMessage.text, mediaURL: replyMessage.mediaURL, duration: replyMessage.duration)
+            viewModel?.sendMessage(.text, content: content, replyReceipt: replyReceipt)
+            endReply()
+        }else{
+            viewModel?.sendMessage(.text, content: content, replyReceipt: nil)
+        }
     }
     
     
@@ -340,12 +360,23 @@ extension ChatViewController: MessagesDisplayDelegate{
     
     func messageFooterView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
         
-        let resuableView = messagesCollectionView.dequeueReusableFooterView(ChatEmoteView.self, for: indexPath)
-        guard let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell else {return resuableView}
-        guard let reactions = (self.messages[indexPath.section] as? Message)?.emojiReactions else { return  resuableView}
+        let reusableView = messagesCollectionView.dequeueReusableFooterView(ChatEmoteView.self, for: indexPath)
+        guard let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell else {return reusableView}
+        guard let reactions = (self.messages[indexPath.section] as? Message)?.emojiReactions else { return  reusableView}
         let convertedPoint = cell.convert(cell.messageContainerView.frame.origin, to: view)
-        resuableView.setup(with: reactions, viewModel!, convertedPoint.x)
-        return resuableView
+        reusableView.setup(with: reactions, viewModel!, convertedPoint.x)
+        return reusableView
+    }
+    
+    func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
+        
+        let reusableView = messagesCollectionView.dequeueReusableHeaderView(ChatReplyView.self, for: indexPath)
+        guard let data = (self.messages[indexPath.section] as? Message)?.replyReceipt else {return reusableView}
+        guard let text = data.text else {return reusableView}
+        reusableView.setup(text, displayName: data.displayName)
+//        reusableView.maxWidth = .makeWidth(414)
+//        reusableView.textView.text = text
+        return reusableView
     }
     
     
@@ -357,6 +388,7 @@ extension ChatViewController: MessageCellDelegate{
     func didTapMessage(in cell: MessageCollectionViewCell) {
         
     }
+    
     func didTapBackground(in cell: MessageCollectionViewCell) {
         
     }
@@ -377,6 +409,26 @@ extension ChatViewController: MessagesDataSource {
         guard let data = messages[section] as? Message, data.emojiReactions != nil else {return .zero}
         return CGSize(width: 35, height: 20)
     }
+    
+    func headerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+        guard let data = messages[section] as? Message,
+              let replyRec = data.replyReceipt,
+              let dataType = DataType(rawValue: replyRec.dataType) else {return .zero}
+        
+        switch dataType {
+        case .text:
+            return CGSize(width: 1, height: 1)
+        case .audio:
+            return .zero
+        case .image:
+            return .zero
+        case .video:
+            return .zero
+        }
+    }
+    
+    //HEY YOU, ADD HEADER VIEW SIZE FOR REPLY VIEW, ok bye
+    //FIRST ADD REPLY DATA and FireBase FUNCS
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
         return messages[indexPath.section]
@@ -435,7 +487,7 @@ extension ChatViewController: ChatReactDelegate{
     }
     
     func replyTo(_ message: Message) {
-        self.setupReplyHeader(message.sender.displayName, message.kind)
+        self.setupReplyHeader(message.sender.displayName, message)
     }
     
     func emoteReaction(for message: Message, _ emote: String) {

@@ -7,6 +7,7 @@
 
 import Foundation
 import MessageKit
+import Firebase
 
 struct Message: Hashable, MessageType{
     
@@ -18,13 +19,13 @@ struct Message: Hashable, MessageType{
         hasher.combine(messageId)
     }
     
+    var kind: MessageKind
+    
     let sender: SenderType
     
     let messageId: String
     
     let sentDate: Date
-    
-    var kind: MessageKind
     
     let readReceipts: [ReadReceipt]?
     
@@ -32,12 +33,15 @@ struct Message: Hashable, MessageType{
     
     var emojiReactions: [EmoteReaction]?
     
+    let replyReceipt: ReplyReceipt?
+    
     let dataType: DataType
+    
     private let mediaURL: String?
     private let text: String?
     private let duration: Float?
     
-    init(senderID: String, displayName: String, messageId: String, sentDate: Date, readReceipts: [ReadReceipt]? = nil, emojiReactions: [EmoteReaction]?, dataType: DataType, text: String? = nil, mediaURL: String? = nil, duration: Float? = nil, image: UIImage? = nil, placeholderImage: UIImage? = nil, isDelivered: Bool = true) {
+    init(senderID: String, displayName: String, messageId: String, sentDate: Date, readReceipts: [ReadReceipt]? = nil, emojiReactions: [EmoteReaction]?, replyReceipt: ReplyReceipt?, dataType: DataType, text: String? = nil, mediaURL: String? = nil, duration: Float? = nil, image: UIImage? = nil, placeholderImage: UIImage? = nil, isDelivered: Bool = true) {
         self.sender = Sender(senderId: senderID, displayName: displayName)
         self.messageId = messageId
         self.sentDate = sentDate
@@ -45,9 +49,11 @@ struct Message: Hashable, MessageType{
         self.kind = Message.getData(dataType, text: text, mediaURL: mediaURL, duration: duration, image: image, placeholderImage: placeholderImage)
         self.readReceipts = readReceipts
         self.emojiReactions = emojiReactions
+        self.replyReceipt = replyReceipt
+        self.dataType = dataType
+        
         
         //PRIVATE FOR CONVERSION
-        self.dataType = dataType
         self.text = text
         self.mediaURL = mediaURL
         self.duration = duration
@@ -55,7 +61,7 @@ struct Message: Hashable, MessageType{
     }
     
     func toCodable() -> MessageCodable{
-        return MessageCodable(id: messageId, senderID: sender.senderId, messageID: messageId, displayName: sender.displayName, sentDate: sentDate, readReceipts: readReceipts, dataType: dataType.rawValue, text: text, mediaURL: mediaURL, duration: duration, emojiReactions: emojiReactions)
+        return MessageCodable(id: messageId, senderID: sender.senderId, messageID: messageId, displayName: sender.displayName, sentDate: sentDate, readReceipts: readReceipts, dataType: dataType.rawValue, text: text, mediaURL: mediaURL, duration: duration, replyReceipt: replyReceipt, emojiReactions: emojiReactions)
     }
     
     private static func getData(_ dataType: DataType, text: String? = nil, mediaURL: String? = nil, duration: Float? = nil, image: UIImage? = nil, placeholderImage: UIImage? = nil) -> MessageKind{
@@ -119,7 +125,6 @@ public struct Sender: SenderType {
 }
 
 struct ReadReceipt: Codable{
-    
     let uid: String
     let timeRead: Date
     
@@ -130,17 +135,8 @@ struct ReadReceipt: Codable{
 }
 
 struct EmoteReaction: Codable, Hashable {
-    let emote: String
     let uid: String
-    
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(uid)
-//    }
-//
-//    static func == (lhs: EmoteReaction, rhs: EmoteReaction) -> Bool {
-//        return lhs.uid == rhs.uid
-//    }
-    
+    let emote: String
     
     init(emote: String, uid: String){
         self.emote = emote
@@ -148,3 +144,14 @@ struct EmoteReaction: Codable, Hashable {
     }
 }
 
+struct ReplyReceipt: Codable {
+    
+    let messageID: String
+    let userID: String
+    let displayName: String
+    let dataType: String
+    let text: String?
+    let mediaURL: String?
+    let duration: Float?
+    
+}
