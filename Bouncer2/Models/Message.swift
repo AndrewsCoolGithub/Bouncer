@@ -61,7 +61,7 @@ struct Message: Hashable, MessageType{
     }
     
     func toCodable() -> MessageCodable{
-        return MessageCodable(id: messageId, senderID: sender.senderId, messageID: messageId, displayName: sender.displayName, sentDate: sentDate, readReceipts: readReceipts, dataType: dataType.rawValue, text: text, mediaURL: mediaURL, duration: duration, replyReceipt: replyReceipt, emojiReactions: emojiReactions)
+        return MessageCodable(id: nil, senderID: sender.senderId, messageID: messageId, displayName: sender.displayName, sentDate: sentDate, readReceipts: readReceipts, dataType: dataType.rawValue, text: text, mediaURL: mediaURL, duration: duration, replyReceipt: replyReceipt, emojiReactions: emojiReactions)
     }
     
     private static func getData(_ dataType: DataType, text: String? = nil, mediaURL: String? = nil, duration: Float? = nil, image: UIImage? = nil, placeholderImage: UIImage? = nil) -> MessageKind{
@@ -149,9 +149,9 @@ struct ReplyReceipt: Codable {
     let messageID: String
     let userID: String
     let displayName: String
+    let senderDisplayName: String
     let dataType: String
     let text: String?
     let mediaURL: String?
     let duration: Float?
-    
 }

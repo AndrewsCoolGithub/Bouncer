@@ -53,11 +53,31 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         longPressedGesture.delaysTouchesBegan = true
         cell.contentView.addGestureRecognizer(longPressedGesture)
        
+        blurWithPastel(cell.messageContainerView)
+        
         
         return cell
     }
     
-    
+    func blurWithPastel(_ messageContainerView: MessageContainerView){
+        if let pastel = messageContainerView.subviews.first(where: {$0 is Pastel}) {
+            pastel.removeFromSuperview()
+        }
+        
+        if let blur = messageContainerView.subviews.first(where: {$0 is UIVisualEffectView}) {
+            blur.removeFromSuperview()
+        }
+        
+        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
+        blur.frame = messageContainerView.bounds
+        blur.alpha = 0.5
+      
+        let pastel = Pastel()
+        pastel.alpha = 1
+        pastel.frame = messageContainerView.bounds
+        messageContainerView.insertSubview(pastel, at: 0)
+        messageContainerView.insertSubview(blur, aboveSubview: pastel)
+    }
     
    
     
@@ -134,18 +154,18 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
             self?.messageInputBar.isHidden = true
         }
     }
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-
-        // Get the view for the first header
-        let indexPath = IndexPath(row: 0, section: section)
-        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-
-        // Use this view to calculate the optimal size based on the collection view's width
-        
-        return headerView.systemLayoutSizeFitting(CGSize(width: 1, height: UIView.layoutFittingExpandedSize.height),
-                                                  withHorizontalFittingPriority: .required, // Width is fixed
-                                                  verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
-    }
+//    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//
+//        // Get the view for the first header
+//        let indexPath = IndexPath(row: 0, section: section)
+//        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+//
+//        // Use this view to calculate the optimal size based on the collection view's width
+//        
+//        return headerView.systemLayoutSizeFitting(CGSize(width: 1, height: UIView.layoutFittingExpandedSize.height),
+//                                                  withHorizontalFittingPriority: .required, // Width is fixed
+//                                                  verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
+//    }
     
     fileprivate func setupMessageInputBar() {
         messagesCollectionView.messagesDataSource = self
@@ -295,7 +315,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messageInputBar.inputTextView.text = ""
        
         if let replyMessage = replyMessage?.toCodable() {
-            let replyReceipt = ReplyReceipt(messageID: replyMessage.messageID, userID: replyMessage.senderID, displayName: replyMessage.displayName, dataType: replyMessage.dataType, text: replyMessage.text, mediaURL: replyMessage.mediaURL, duration: replyMessage.duration)
+            let replyReceipt = ReplyReceipt(messageID: replyMessage.messageID, userID: replyMessage.senderID, displayName: sender.displayName, senderDisplayName: replyMessage.displayName, dataType: replyMessage.dataType, text: replyMessage.text, mediaURL: replyMessage.mediaURL, duration: replyMessage.duration)
             viewModel?.sendMessage(.text, content: content, replyReceipt: replyReceipt)
             endReply()
         }else{
@@ -352,7 +372,7 @@ extension ChatViewController: MessagesDisplayDelegate{
     
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         if message.sender.senderId == User.shared.id{
-            return .greyColor()
+            return .white
         }
         
         return .nearlyWhite()
@@ -373,7 +393,7 @@ extension ChatViewController: MessagesDisplayDelegate{
         let reusableView = messagesCollectionView.dequeueReusableHeaderView(ChatReplyView.self, for: indexPath)
         guard let data = (self.messages[indexPath.section] as? Message)?.replyReceipt else {return reusableView}
         guard let text = data.text else {return reusableView}
-        reusableView.setup(text, displayName: data.displayName)
+        reusableView.setup(text, displayName: data.displayName, senderDisplayName: data.senderDisplayName)
 //        reusableView.maxWidth = .makeWidth(414)
 //        reusableView.textView.text = text
         return reusableView
@@ -411,13 +431,14 @@ extension ChatViewController: MessagesDataSource {
     }
     
     func headerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        guard let data = messages[section] as? Message,
+        guard let data = (messages[section] as? Message)?.toCodable(),
               let replyRec = data.replyReceipt,
               let dataType = DataType(rawValue: replyRec.dataType) else {return .zero}
         
         switch dataType {
         case .text:
-            return CGSize(width: 1, height: 1)
+            let size = replyRec.text!.sizeOfString(usingFont: UIFont.systemFont(ofSize: 12), maxHeight: 120, maxWidth: .makeWidth(300))
+            return CGSize(width: size.width, height: size.height + 40)
         case .audio:
             return .zero
         case .image:

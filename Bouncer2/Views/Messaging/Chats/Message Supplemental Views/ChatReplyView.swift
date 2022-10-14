@@ -12,24 +12,17 @@ class ChatReplyView: MessageReusableView{
     
     static let id = "chat-reply-view"
     
-    let contentView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        
-        return view
-    }()
-    
-    fileprivate let label: UITextView = {
+    fileprivate lazy var label: UITextView = {
         let label = UITextView()
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .black.withAlphaComponent(0.8)
+        label.textColor = .white.withAlphaComponent(0.8)
         label.isScrollEnabled = false
         label.isEditable = false
         label.isSelectable = false
-        label.backgroundColor = .blueMinty().withAlphaComponent(0.8)
-        label.textContainer.maximumNumberOfLines = 5
+        label.backgroundColor = .clear
+        label.textContainer.maximumNumberOfLines = 3
         label.textContainer.lineBreakMode = .byTruncatingTail
-        label.setWidth(.makeWidth(300))
+        label.contentInset = UIEdgeInsets(top: 1, left: 3, bottom: 1, right: 3)
         label.textAlignment = .left
         return label
     }()
@@ -49,47 +42,95 @@ class ChatReplyView: MessageReusableView{
         return view
     }()
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        subviews.forEach({$0.removeFromSuperview()})
+    fileprivate lazy var pastel: Pastel = {
+        let pastel = Pastel(frame: .zero)
+        pastel.layer.cornerRadius = .makeWidth(15)
+        pastel.layer.masksToBounds = true
+        return pastel
+    }()
+    
+    fileprivate let blur: UIVisualEffectView = {
+        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
+        blur.alpha = 0.75
+        blur.layer.cornerRadius = .makeWidth(15)
+        blur.layer.masksToBounds = true
+        return blur
+    }()
+    
+    var labelSize: CGSize! {
+        didSet{
+            let x = .makeWidth(414) - labelSize.width - 25
+            let y = self.frame.height - labelSize.height - 5
+            pastel = Pastel(frame:  CGRect(x: x, y: CGFloat(y), width: labelSize.width, height: labelSize.height))
+            pastel.layer.cornerRadius = .makeWidth(15)
+            pastel.layer.masksToBounds = true
+            blur.frame = CGRect(x: x, y: CGFloat(y), width: labelSize.width, height: labelSize.height + 1)
+        }
     }
     
-    func setup(_ content: String?, displayName: String?){
-        guard let content = content, let displayName = displayName else {return}
-        addSubview(contentView)
-        contentView.anchor(top: self.topAnchor, left: self.leftAnchor, bottom: self.bottomAnchor, right: self.rightAnchor)
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.subviews.forEach({$0.removeFromSuperview()})
+    }
+    
+    func setup(_ content: String?, displayName: String?, senderDisplayName: String?){
+        guard let content = content, let displayName = displayName, let senderDisplayName = senderDisplayName else {return}
+        label.removeConstraints(label.constraints)
+//        pastel.removeConstraints(pastel.constraints)
+        let size = content.sizeOfString(usingFont: .systemFont(ofSize: 12, weight: .medium), maxHeight: 100, maxWidth: .makeWidth(300))
+        labelSize = size
+        label.setDimensions(height: size.height, width: size.width)
+//        pastel.frame.size = size
         
+        let x = .makeWidth(414) - size.width - 25
+        let y = self.frame.height - size.height - 5
+        pastel.frame = CGRect(x: x, y: CGFloat(y), width: size.width, height: size.height)
+        blur.frame = CGRect(x: x, y: CGFloat(y), width: size.width, height: size.height + 1)
         
-//        self.backgroundColor = .green
         label.text = content
-        contentView.addSubview(label)
-        contentView.addSubview(replyingToLabel)
-        contentView.addSubview(spacerView)
         label.layer.cornerRadius = .makeWidth(15)
         label.layer.masksToBounds = true
         
-        replyingToLabel.text = "You replied to \(displayName)"
-        
-        if label.intrinsicContentSize.width < .makeWidth(300){
-//            print(label.intrinsicContentSize.width)
-//            let w: CGFloat  = .makeWidth(300)
-//            print(d)
-            label.textAlignment = .right
-            label.setWidth(label.intrinsicContentSize.width)
+        if senderDisplayName == User.shared.displayName && displayName == User.shared.displayName {
+            replyingToLabel.text = "You replied to yourself"
+        }else if senderDisplayName == User.shared.displayName{
+            replyingToLabel.text = "You replied to \(displayName)"
         }else{
-            label.textAlignment = .left
+            replyingToLabel.text = "\(senderDisplayName) replied to \(displayName)"
         }
+        addSubview(pastel)
+        addSubview(blur)
+        addSubview(label)
+        label.anchor(right: self.rightAnchor, paddingRight: 25)
+        label.anchor(bottom: self.bottomAnchor, paddingBottom: 5)
         
-        label.anchor(top: contentView.topAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, paddingTop: 30, paddingRight: 25)
-        replyingToLabel.anchor(top: contentView.topAnchor, bottom: label.topAnchor, right: contentView.rightAnchor, paddingRight: 25)
-        spacerView.anchor(top: label.topAnchor, left: label.rightAnchor, bottom: label.bottomAnchor, right: contentView.rightAnchor, paddingLeft: 8, paddingRight: 14)
+       
+//        pastel.anchor(right: self.rightAnchor, paddingRight: 25)
+//        pastel.anchor(bottom: self.bottomAnchor, paddingBottom: 5)
         
-//        label.anchor(right: contentView.rightAnchor, paddingRight: 0)
+        addSubview(replyingToLabel)
+        replyingToLabel.anchor(bottom: label.topAnchor, right: self.rightAnchor, paddingBottom: 5, paddingRight: 25)
+        
+        addSubview(spacerView)
+        spacerView.anchor(top: label.topAnchor, left: label.rightAnchor, bottom: label.bottomAnchor, right: self.rightAnchor, paddingLeft: 8, paddingRight: 14)
+        
+       
         
         
+        
+        //blurWithPastel(self)
     }
     
-    
-    
-    
+    func blurWithPastel(_ messageContainerView: MessageReusableView){
+        if let pastel = messageContainerView.subviews.first(where: {$0 is Pastel}) {
+            pastel.removeFromSuperview()
+        }
+        
+        if let blur = messageContainerView.subviews.first(where: {$0 is UIVisualEffectView}) {
+            blur.removeFromSuperview()
+        }
+        
+        messageContainerView.insertSubview(pastel, at: 0)
+        messageContainerView.insertSubview(blur, aboveSubview: pastel)
+    }
 }

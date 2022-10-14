@@ -22,7 +22,9 @@ class Pastel: PastelView{
 //        if let colors = User.defaultColors{
         setColors(User.defaultColors.colors)
 //        }
-       
+        if let colors = User.shared.colors{
+            setColors(colors.uiColors())
+        }
         
         startAnimation()
     }
