@@ -33,6 +33,7 @@ class DraftManager: ObservableObject{
                 return nil
             }
         }
+        
         set{
             self.draftPublisher = newValue
         }
@@ -42,21 +43,10 @@ class DraftManager: ObservableObject{
     public func saveEventDraft(_ event: EventDraft, image: UIImage) throws{
          do {
              let encoder = JSONEncoder()
-             //if let eventDraft = DraftManager.shared.eventDraft{
-                 //if try self.removeEventDraft(id: eventDraft.id){
-                     try self.saveImage(image: image, id: event.id)
-                     let data = try encoder.encode(event)
-                     UserDefaults.standard.set(data, forKey: DraftKeys.events)
-                     self.eventDraft = event
-//                 }else{
-//                     throw ImageError.failedToDelete
-//                 }
-            // }else{
-//                 try self.saveImage(image: image, id: event.id)
-//                 let data = try encoder.encode(event)
-//                 UserDefaults.standard.set(data, forKey: DraftKeys.events)
-//                 self.eventDraft = event
-//             }
+             try self.saveImage(image: image, id: event.id)
+             let data = try encoder.encode(event)
+             UserDefaults.standard.set(data, forKey: DraftKeys.events)
+             self.eventDraft = event
          } catch {
              print("Unable to Encode Event (\(error.localizedDescription))")
              throw error

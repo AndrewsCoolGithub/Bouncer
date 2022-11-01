@@ -78,7 +78,7 @@ class Location: NSObject, CLLocationManagerDelegate {
             let scenes = UIApplication.shared.connectedScenes
             let windowScene = scenes.first as! UIWindowScene
             let window = windowScene.windows.first!
-            if window.rootViewController is LocationRequiredVC{
+            if window.rootViewController is LocationRequiredVC {
                 let navCont = UINavigationController(rootViewController: TabBarController())
                 navCont.navigationBar.isHidden = true
                 window.rootViewController = navCont

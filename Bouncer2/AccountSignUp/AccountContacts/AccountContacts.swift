@@ -142,15 +142,16 @@ class AccountContacts: UIViewController {
         let scenes = UIApplication.shared.connectedScenes
         let windowScene = scenes.first as! UIWindowScene
         let window = windowScene.windows.first!
+        let navCont = UINavigationController(rootViewController: TabBarController())
         
         Location.shared.start { info in
-            User.setup()
+            if window.rootViewController != navCont{
+                User.setup()
+                window.rootViewController = navCont
+            }
+            
             User.shared.locationInfo = info
-            let navCont = UINavigationController(rootViewController: TabBarController())
-            window.rootViewController = navCont
         }
-       
-        
     }
     
     //_: Called by SEARCH BAR - 'Cancel' / 'Search' && Tapping Background

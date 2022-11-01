@@ -31,12 +31,7 @@ class TabBarController: UITabBarController{
         tabBar.barTintColor = .clear
         view.backgroundColor = .clear
         
-        
-           
-       
-        
         User.shared.$imageURL.sink { [weak self] imageURL in
-            print("imageURL: \(imageURL)")
             guard let imageURL = imageURL, let self = self else {
                 return}
             let skeletonGradient = self.components.profileSkeletonGradient
@@ -49,9 +44,6 @@ class TabBarController: UITabBarController{
         }.store(in: &cancellable)
     }
     
-    
-    
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
@@ -62,7 +54,7 @@ class TabBarController: UITabBarController{
         setupUI()
     }
     
-    fileprivate func setupUI() {
+    fileprivate func setupUI(){
         let profileButton = components.profileButton
         view.addSubview(profileButton)
         profileButton.layer.cornerRadius = .makeWidth(25)

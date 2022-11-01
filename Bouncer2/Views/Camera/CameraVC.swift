@@ -516,21 +516,13 @@ extension CameraVC: UIImagePickerControllerDelegate{
                     
 extension CameraVC: AVCapturePhotoCaptureDelegate{
     
-   
-    
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let cgImage = photo.cgImageRepresentation() else {return}
         guard let data = photo.fileDataRepresentation() else {return}
         
         let image: UIImage = self.position == .front ? UIImage(cgImage: cgImage, scale: 1, orientation: .leftMirrored) : UIImage(data: data)!
         removeGestures()
-        //session?.stopRunning()
-        
         didGetPhoto(image)
-       
-        
-        
-        //openEventCreation(image)
     }
 }
 

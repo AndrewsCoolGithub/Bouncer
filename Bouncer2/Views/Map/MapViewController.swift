@@ -58,7 +58,8 @@ class MapViewController: UIViewController{
         }.store(in: &cancellable)
         
         viewModel.$centerOnEvent.sink { [weak self] event in
-            guard let event = event, let coordinate = CLLocationCoordinate2D(latitude: event.location.latitude, longitude: event.location.longitude) else {return}
+            guard let event = event else {return}
+            let coordinate = CLLocationCoordinate2D(latitude: event.location.latitude, longitude: event.location.longitude)
             self?.mapView.setCenter(coordinate, zoomLevel: 17, animated: true)
         }.store(in: &cancellable)
         
