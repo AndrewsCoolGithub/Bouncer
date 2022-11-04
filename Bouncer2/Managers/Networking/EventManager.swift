@@ -36,7 +36,7 @@ final class EventManager: ObservableObject{
     private init(){
         self.listenForEvents()
         self.listenForChanges()
-//        self.fetchEventHistory()
+        self.fetchEventHistory()
     }
     
     //MARK: - Create
@@ -115,13 +115,14 @@ final class EventManager: ObservableObject{
     }
     
     /** Find events previously hosted */
-//    private func fetchEventHistory()  {
-//        EVENTS_COLLECTION.whereField(EventFields.hostId, isEqualTo: Auth.auth().currentUser?.uid!) .whereField(EventFields.endsAt, isLessThanOrEqualTo: Date.now).addSnapshotListener { docs, e in
-//            self.previouslyHosted = docs?.documents.compactMap({ doc -> Event? in
-//                return try? doc.data(as: Event.self)
-//            }) ?? []
-//        }
-//    }
+    private func fetchEventHistory()  {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        EVENTS_COLLECTION.whereField(EventFields.hostId, isEqualTo: uid).whereField(EventFields.endsAt, isLessThanOrEqualTo: Date.now).addSnapshotListener { docs, e in
+            self.previouslyHosted = docs?.documents.compactMap({ doc -> Event? in
+                return try? doc.data(as: Event.self)
+            }).sorted(by: {$0.endsAt > $1.endsAt}) ?? []
+        }
+    }
    
     //MARK: - Update
     

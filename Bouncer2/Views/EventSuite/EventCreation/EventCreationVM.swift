@@ -58,12 +58,6 @@ final class EventCreationVM: ObservableObject{
                     
                 }catch let e{
                     print(e.localizedDescription)
-//                    if let type = e as? EventCreateVCTypes{
-//                        self.currentController = currentVC(type: type)
-//                    }else{
-//                        print(e.localizedDescription)
-//                    }
-                   
                 }
             }
         }else{

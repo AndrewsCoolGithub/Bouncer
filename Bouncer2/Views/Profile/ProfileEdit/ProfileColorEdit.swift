@@ -38,7 +38,7 @@ class ProfileColorEdit: UIViewController{
         gradient.colors = colorModel.cgColors()
         
         view.addSubview(gradientLine)
-        gradientLine.centerX(inView: view, topAnchor: view.topAnchor, paddingTop: .makeWidth(250))
+        gradientLine.centerX(inView: view, topAnchor: view.topAnchor, paddingTop: .makeHeight(300))
         
         let infoLabel = components.infoLabel
         view.addSubview(infoLabel)

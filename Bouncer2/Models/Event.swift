@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestoreSwift
 import Firebase
+import UIImageColors
 
 struct Event: Hashable, Codable, Equatable, Identifiable{
     func hash(into hasher: inout Hasher) {
@@ -53,6 +54,10 @@ struct Event: Hashable, Codable, Equatable, Identifiable{
         self.waitlistIds = waitlistIds
         self.invitedIds = invitedIds
         self.guestIds = guestIds
+    }
+    
+    func uiImageColors() -> UIImageColors{
+        return UIImageColors(background: .clear, primary: colors[0].uiColor(), secondary: colors[1].uiColor(), detail: colors[2].uiColor())
     }
 }
 

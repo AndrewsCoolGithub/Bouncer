@@ -26,14 +26,15 @@ class EventSuite: UIViewController{
     
     init(){
         super.init(nibName: nil, bundle: nil)
+        setupUI()
         DraftManager.shared.$draftPublisher.sink { [weak self] draft in
             self?.draft = draft
-            self?.makeDraft()
+            self?.updateSnapshot()
         }.store(in: &cancellable)
         
         EventManager.shared.$previouslyHosted.sink { [weak self] previous in
             self?.previous = previous
-            self?.makePrevious()
+            self?.updateSnapshot()
         }.store(in: &cancellable)
     }
     
@@ -57,7 +58,7 @@ class EventSuite: UIViewController{
         super.viewDidLoad()
         view.backgroundColor = .greyColor()
         NotificationCenter.default.addObserver(self, selector: #selector(self.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-        setupUI()
+        
     }
     
     
@@ -86,7 +87,14 @@ class EventSuite: UIViewController{
         dataSource?.supplementaryViewProvider = { [unowned self]
             (collectionView, elementKind, indexPath) -> UICollectionReusableView? in
             let header = self.components.collectionView.dequeueReusableSupplementaryView(ofKind: elementKind, withReuseIdentifier: EventHeaderCell.id, for: indexPath) as! EventHeaderCell
-            header.setup(title: "Draft")
+            
+            guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else {return header}
+            switch section {
+            case .draft:
+                header.setup(title: "Draft")
+            case .previous:
+                header.setup(title: "History")
+            }
             return header
         } //Header Datasource
         User.shared.$colors.sink { [weak self] colorModel in
@@ -96,30 +104,50 @@ class EventSuite: UIViewController{
         }.store(in: &cancellable) //Color Updater
     }
     
-    fileprivate func makePrevious(){
+    fileprivate func updateSnapshot(){
         var snapshot = NSDiffableDataSourceSnapshot<Section, EventSuiteCellViewModel>()
+        
+        
+        if let draft = draft{
+            snapshot.appendSections([.draft])
+            snapshot.appendItems([EventSuiteCellViewModel(draft: draft)], toSection: .draft)
+        }
         
         if let previous = previous{
             snapshot.appendSections([.previous])
             let events = previous.map({EventSuiteCellViewModel(event: $0) })
             snapshot.appendItems(events, toSection: .previous)
         }
+        
         dataSource?.apply(snapshot, animatingDifferences: true)
+        
+        
     }
     
-    fileprivate func makeDraft(){
-        var snapshot = NSDiffableDataSourceSnapshot<Section, EventSuiteCellViewModel>()
-        
-        if let draft = draft {
-            print(draft)
-            snapshot.appendSections([.first])
-            snapshot.appendItems([EventSuiteCellViewModel(draft: draft)], toSection: .first)
-        }
-        dataSource?.apply(snapshot, animatingDifferences: true)
-    }
+//    fileprivate func makePrevious(){
+//        var snapshot = NSDiffableDataSourceSnapshot<Section, EventSuiteCellViewModel>()
+//
+//        if let previous = previous{
+//            snapshot.appendSections([.previous])
+//            let events = previous.map({EventSuiteCellViewModel(event: $0) })
+//            snapshot.appendItems(events, toSection: .previous)
+//            print("Got previous: \(previous)")
+//        }
+//        dataSource?.apply(snapshot, animatingDifferences: true)
+//    }
+//
+//    fileprivate func makeDraft(){
+//        var snapshot = dataSource?.snapshot() != nil ? dataSource!.snapshot() : NSDiffableDataSourceSnapshot<Section, EventSuiteCellViewModel>()
+//
+//        if let draft = draft {
+//            snapshot.appendSections([.first])
+//            snapshot.appendItems([EventSuiteCellViewModel(draft: draft)], toSection: .first)
+//        }
+//        dataSource?.apply(snapshot, animatingDifferences: true)
+//    }
 
     enum Section{
-        case first
+        case draft
         case previous
     }
     

@@ -80,16 +80,16 @@ extension TimeInterval{
         let day: Double = 86400
         
         if timeDif >= 1 && timeDif < minute{ //Seconds
-            let result = Int(timeDif.rounded(.towardZero))
+            let result = abs(Int(timeDif.rounded(.towardZero)))
             return "\(result) seconds"
         }else if timeDif >= minute && timeDif < hour{ //Minutes
-            let result = Int(timeDif/minute.rounded(.towardZero))
+            let result = abs(Int(timeDif/minute.rounded(.towardZero)))
             return result > 1 ? "\(result) minutes" : "\(result) minute"
         }else if timeDif >= hour && timeDif < day{ //Hours
-            let result = Int(timeDif/hour.rounded(.towardZero))
+            let result = abs(Int(timeDif/hour.rounded(.towardZero)))
             return result > 1 ? "\(result) hours" : "\(result) hour"
         }else{ //Days
-            let result = Int(timeDif/day.rounded(.towardZero))
+            let result = abs(Int(timeDif/day.rounded(.towardZero)))
             return result > 1 ? "\(result) days" : "\(result) day"
         }
     }

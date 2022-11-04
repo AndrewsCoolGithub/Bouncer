@@ -482,11 +482,13 @@ class CameraVC: UIViewController, UINavigationControllerDelegate {
             self.discardImage()
         }
         
-        let currentVC: CurrentVC = currentVC != nil ? currentVC! :
-        CurrentVC(type: .eventTitle, controller: EventTitleSelect(), previous: nil)
+        
+        
         
         let colors: UIImageColors = EventCreationVC.colors != nil ? EventCreationVC.colors! : UIImageColors(background: .white, primary: .white, secondary: .white, detail: .white)
-        
+        EventCreationVC.colors = colors
+        let currentVC: CurrentVC = currentVC != nil ? currentVC! :
+        CurrentVC(type: .eventTitle, controller: EventTitleSelect(), previous: nil)
         EventCreationVC.setup(currentVC, image: image, colors: colors)
        
         if !(navigationController?.topViewController is EventCreationVC){

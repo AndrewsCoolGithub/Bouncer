@@ -18,6 +18,7 @@ class EventSuiteCell: UICollectionViewCell{
     
     override func prepareForReuse() {
         super.prepareForReuse()
+       
     }
     
     private let bottomSheet: UIView = {
@@ -61,6 +62,19 @@ class EventSuiteCell: UICollectionViewCell{
         return label
     }()
     
+    private var deleteButton: UIButton = {
+        let button = UIButton()
+        
+        return button
+    }()
+    
+    private var eventTypeIcon: UIImageView = {
+        let imageView = UIImageView()
+        
+        return imageView
+    }()
+   
+    
     weak var viewModel: EventSuiteCellViewModel?
     func create(with viewModel: EventSuiteCellViewModel){
         self.viewModel = viewModel
@@ -68,7 +82,7 @@ class EventSuiteCell: UICollectionViewCell{
         case .draft(let event):
             self.setupDraft(event)
         case .event(let event):
-            print("Set me up, thanks bae:  \(event)")
+            self.setupEvent(event)
         }
     }
     
@@ -81,27 +95,81 @@ class EventSuiteCell: UICollectionViewCell{
         return effectView
     }()
     
+    private func setupEvent(_ event: Event){
+        contentView.layer.cornerRadius = .makeHeight(25)
+        contentView.layer.masksToBounds = true
+        layer.applySketchShadow(alpha: 0.3, y: .makeHeight(9), blur: .makeWidth(9), spread: .makeWidth(7), withRounding: .makeHeight(25))
+        contentView.backgroundColor = .greyColor()
+        
+        eventTypeIcon = UIImageView(frame: CGRect(x: .makeWidth(10), y: .makeWidth(10), width: .makeWidth(40), height: .makeWidth(40)), cornerRadius: .makeWidth(20), colors: event.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
+        eventTypeIcon.contentMode = .center
+        eventTypeIcon.backgroundColor = .greyColor().withAlphaComponent(0.69)
+        let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(22))
+        
+        switch event.type{
+        case .exclusive:
+            eventTypeIcon.image = UIImage(named: "Group5")
+        case .open:
+            eventTypeIcon.image = UIImage(systemName: "mappin.and.ellipse", withConfiguration: config)
+        }
+       
+        eventTypeIcon.tintColor = .white
+        
+        self.deleteButton.removeFromSuperview()
+
+        backDrop.removeFromSuperview()
+        contentView.addSubview(imageView)
+
+        contentView.addSubview(eventTypeIcon)
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.masksToBounds = true
+        imageView.frame = contentView.bounds
+        imageView.sd_setImage(with: URL(string: event.imageURL))
+
+       
+        
+        
+        contentView.addSubview(bottomSheet)
+        bottomSheet.addSubview(titleLabel)
+        titleLabel.anchor(top: bottomSheet.topAnchor, paddingTop: .makeWidth(9))
+        titleLabel.anchor(left: bottomSheet.leftAnchor, paddingLeft: .makeWidth(11))
+        titleLabel.text = event.title.capitalized
+        
+        bottomSheet.addSubview(locationLabel)
+        locationLabel.anchor(top: titleLabel.bottomAnchor, left: bottomSheet.leftAnchor, paddingLeft: .makeWidth(11))
+       
+        locationLabel.text = event.locationName
+        
+        bottomSheet.addSubview(timeLabel)
+        timeLabel.centerYright(inView: bottomSheet, rightAnchor: bottomSheet.rightAnchor, paddingRight: .makeWidth(15))
+        
+        let endTime = event.endsAt
+        let timeSinceEnded = endTime.timeIntervalSinceNow.timeInUnits
+        timeLabel.text = "Hosted \(timeSinceEnded) ago"
+    }
+    
+    
     private func setupDraft(_ event: EventDraft){
         contentView.layer.cornerRadius = .makeHeight(25)
         contentView.layer.masksToBounds = true
         layer.applySketchShadow(alpha: 0.3, y: .makeHeight(9), blur: .makeWidth(9), spread: .makeWidth(7), withRounding: .makeHeight(25))
         contentView.backgroundColor = .greyColor()
         
-        let eventTypeIcon = UIImageView(frame: CGRect(x: .makeWidth(10), y: .makeWidth(10), width: .makeWidth(40), height: .makeWidth(40)), cornerRadius: .makeWidth(20), colors: event.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
+        eventTypeIcon = UIImageView(frame: CGRect(x: .makeWidth(10), y: .makeWidth(10), width: .makeWidth(40), height: .makeWidth(40)), cornerRadius: .makeWidth(20), colors: event.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
         eventTypeIcon.contentMode = .center
         eventTypeIcon.backgroundColor = .greyColor().withAlphaComponent(0.69)
         let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(22))
         eventTypeIcon.image = UIImage(systemName: "pencil", withConfiguration: config)
         eventTypeIcon.tintColor = .white
         
-        let deleteDraftButton = UIButton(frame: CGRect(x: contentView.frame.maxX - .makeWidth(45), y: .makeWidth(-10), width: .makeWidth(45), height: .makeWidth(45)), cornerRadius: .makeWidth(22.5), colors: event.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
-        deleteDraftButton.backgroundColor = .nearlyBlack()
-        deleteDraftButton.setImage(UIImage(systemName: "xmark", withConfiguration: config), for: .normal)
-        deleteDraftButton.tintColor = .white
-        deleteDraftButton.addTarget(self, action: #selector(deletePressed), for: .touchUpInside)
+        deleteButton = UIButton(frame: CGRect(x: contentView.frame.maxX - .makeWidth(45), y: .makeWidth(-10), width: .makeWidth(45), height: .makeWidth(45)), cornerRadius: .makeWidth(22.5), colors: event.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
+        deleteButton.backgroundColor = .nearlyBlack()
+        deleteButton.setImage(UIImage(systemName: "xmark", withConfiguration: config), for: .normal)
+        deleteButton.tintColor = .white
+        deleteButton.addTarget(self, action: #selector(deletePressed), for: .touchUpInside)
         
         contentView.addSubview(imageView)
-        self.addSubview(deleteDraftButton)
+        self.addSubview(deleteButton)
         contentView.addSubview(eventTypeIcon)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true

@@ -13,7 +13,7 @@ struct EventSuiteViewComponents{
      let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
 
-        let cv = UICollectionView(frame: CGRect(x: 0, y: .makeHeight(150), width: .makeWidth(414), height: .makeHeight(896)), collectionViewLayout: layout)
+        let cv = UICollectionView(frame: CGRect(x: 0, y: .makeHeight(150), width: .makeWidth(414), height: .makeHeight(896 - 60)), collectionViewLayout: layout)
         cv.register(EventSuiteCell.self, forCellWithReuseIdentifier: EventSuiteCell.id)
         cv.backgroundColor = .greyColor()
         cv.register(EventHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EventHeaderCell.id)

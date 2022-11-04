@@ -155,11 +155,11 @@ class ProfileViewController: UIViewController{
         
         view.addSubview(components.backButton)
         
-        components.backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: .makeHeight(20), paddingLeft: .makeWidth(20))
+        components.backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: .makeHeight(15), paddingLeft: .makeWidth(20))
         components.backButton.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
         
         view.addSubview(components.settingsButton)
-        components.settingsButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: .makeHeight(20), paddingRight: .makeWidth(20))
+        components.settingsButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: .makeHeight(15), paddingRight: .makeWidth(20))
         components.settingsButton.addTarget(self, action: #selector(openSettings), for: .touchUpInside)
         
         view.addSubview(components.displayNameLabel)

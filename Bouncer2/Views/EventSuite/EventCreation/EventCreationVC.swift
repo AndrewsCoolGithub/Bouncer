@@ -117,9 +117,9 @@ final class EventCreationVC: UIViewController, ObservableObject{
             fatalError("Error - you must call setup before accessing EventCreation.shared")
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.updateTextView(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.updateTextView(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.updateTextView(notification:)), name: UIResponder.keyboardDidShowNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.updateTextView(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
        
         panel.layout = PanelLayout()
         panel.delegate = self
@@ -141,7 +141,7 @@ final class EventCreationVC: UIViewController, ObservableObject{
         rectImageView.addSubview(effectView)
         
         view.addSubview(self.viewHeaderLabel)
-        viewHeaderLabel.centerX(inView: view, topAnchor: view.topAnchor, paddingTop: .makeWidth(414) * (163 / 414) / 1.85)
+        viewHeaderLabel.centerX(inView: view, topAnchor: view.topAnchor, paddingTop: .makeHeight(85))
         
         view.addSubview(self.navigator)
         navigator.nextButton.addTarget(self, action: #selector(nextController), for: .touchUpInside)
@@ -150,9 +150,9 @@ final class EventCreationVC: UIViewController, ObservableObject{
         view.sendSubviewToBack(self.rectImageView)
         
        
-        xButton.frame.origin = CGPoint(x:  .makeWidth(12.5), y: SafeArea.topSafeArea() + .makeWidth(10))
+        xButton.frame.origin = CGPoint(x:  .makeWidth(12.5), y: SafeArea.topSafeArea() + .makeHeight(5))
         view.addSubview(xButton)
-        
+
         let saveMenu = UIMenu(children: [
             UIAction(title: "Save", image: UIImage(systemName: "folder.fill")) { [weak self] _ in
                 self?.save()
@@ -161,11 +161,11 @@ final class EventCreationVC: UIViewController, ObservableObject{
                 self?.dismiss()
            }
         ])
-        
+
         xButton.showsMenuAsPrimaryAction = true
         xButton.menu = saveMenu
   
-        cameraButton.frame.origin = CGPoint(x:  .makeWidth(414 - 17.5) - cameraButton.frame.size.width, y: SafeArea.topSafeArea() + .makeWidth(10))
+        cameraButton.frame.origin = CGPoint(x:  .makeWidth(414 - 17.5) - cameraButton.frame.size.width, y: SafeArea.topSafeArea() + .makeHeight(5))
         view.addSubview(cameraButton)
         cameraButton.addTarget(self, action: #selector(openCamera), for: .touchUpInside)
         
@@ -187,6 +187,8 @@ final class EventCreationVC: UIViewController, ObservableObject{
                     indicator.removeFromSuperview()
                     HapticsManager.shared.vibrate(for: .success)
                     //Stop Loading, present success
+                    
+                    self.dismiss()
                 }catch{
                     //Stop Loading
                     indicator.stopAnimating()
@@ -260,27 +262,67 @@ final class EventCreationVC: UIViewController, ObservableObject{
     var previewVC: CurrentVC?
 
     
-    func listenForSuccess(){
-        
-    }
-    ///This is now broken, view starts to move up and pops back to original positon
+    
+    ///😡This is now broken, view starts to move up and pops back to original positon
     //MARK: - Keyboard
     lazy var dismissKeyboardGesture = UITapGestureRecognizer(target: panel, action: #selector(panel.dismissKeyboard))
-    @objc func updateTextView(notification: Notification){
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            if notification.name == UIResponder.keyboardWillHideNotification{
-                view.removeGestureRecognizer(dismissKeyboardGesture)
-                view.frame.origin.y = 0
-                self.navigator.frame = CGRect(x: 0, y: .makeHeight(816), width: .makeWidth(414), height: .makeHeight(80))
-            }else{
-                view.addGestureRecognizer(dismissKeyboardGesture)
-                let change: CGFloat = viewModel.currentController!.type == .eventLocation ? -.makeHeight(200) : -.makeHeight(60)
-                let navigatorChange: CGFloat = viewModel.currentController!.type == .eventLocation ? .makeHeight(896 + 120) : .makeHeight(896 - 20)
-                view.frame.origin.y = change
-                self.navigator.frame = CGRect(x: 0, y: navigatorChange - keyboardSize.height, width: .makeWidth(414), height: .makeHeight(80))
-            }
+//    @objc func updateTextView(notification: Notification){
+//        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+//            if notification.name == UIResponder.keyboardDidHideNotification{
+//                view.removeGestureRecognizer(dismissKeyboardGesture)
+//                view.frame.origin.y = 0
+//                self.navigator.frame = CGRect(x: 0, y: .makeHeight(816), width: .makeWidth(414), height: .makeHeight(80))
+//            }else{
+//                view.addGestureRecognizer(dismissKeyboardGesture)
+//                let change: CGFloat = viewModel.currentController!.type == .eventLocation ? -.makeHeight(200) : -.makeHeight(60)
+//                let navigatorChange: CGFloat = viewModel.currentController!.type == .eventLocation ? .makeHeight(896 + 120) : .makeHeight(896 - 20)
+//                view.frame.origin.y = change
+//                self.navigator.frame = CGRect(x: 0, y: navigatorChange - keyboardSize.height, width: .makeWidth(414), height: .makeHeight(80))
+//            }
+//        }
+//    }
+//    @objc func updateTextView(notification: Notification){
+//        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+//            if notification.name == UIResponder.keyboardWillHideNotification{
+//                view.removeGestureRecognizer(dismissKeyboardGesture)
+//                view.frame.origin.y = 0
+////                self.navigator.frame = CGRect(x: 0, y: .makeHeight(816), width: .makeWidth(414), height: .makeHeight(80))
+//            }else{
+//                view.addGestureRecognizer(dismissKeyboardGesture)
+////                let change: CGFloat = viewModel.currentController?.type == .eventLocation ? -.makeHeight(200) : -.makeHeight(60)
+////                let navigatorChange: CGFloat = viewModel.currentController?.type == .eventLocation ? .makeHeight(896 + 120) : .makeHeight(896 - 20)
+//                view.frame.origin.y -= keyboardSize.height
+////                self.navigator.frame = CGRect(x: 0, y: navigatorChange - keyboardSize.height, width: .makeWidth(414), height: .makeHeight(80))
+//            }
+//        }
+//    }
+    
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboard = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            
+
+            panel.layout = TypingLayout()
+            panel.invalidateLayout()
+            panel.move(to: .full, animated: true)
+            navigator.frame.origin.y = keyboard.origin.y - navigator.frame.height
         }
     }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        
+        
+//        panel.delegate = nil
+        panel.layout = PanelLayout()
+        panel.invalidateLayout()
+//        panel.delegate = self
+        panel.move(to: .full, animated: true)
+        navigator.frame.origin.y = .makeHeight(816)
+//        if self.tabBarController?.view.frame.origin.y != 0 {
+//            self.tabBarController?.view.frame.origin.y = 0
+//        }
+    }
+    
     
     //MARK: - UI Elements
     let panel = FloatingPanelController()
@@ -307,7 +349,7 @@ final class EventCreationVC: UIViewController, ObservableObject{
     
     private let viewHeaderLabel: UILabel = {
         let label = UILabel()
-        label.font = .poppinsMedium(size: .makeWidth(26))
+        label.font = .poppinsMedium(size: .makeWidth(22))
         label.textColor = .white
         label.alpha = 1
         return label
@@ -375,6 +417,14 @@ class CurrentVC: Hashable{ //Linked List with values being UIViewController
         self.controller = controller
         self.type = type
         self.previous = previous
+    }
+}
+
+class TypingLayout: FloatingPanelLayout{
+    var position: FloatingPanelPosition = .bottom
+    var initialState: FloatingPanelState = .full
+    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
+        return [.full: FloatingPanelLayoutAnchor(absoluteInset: .makeHeight(100), edge: .top, referenceGuide: .safeArea)]
     }
 }
 

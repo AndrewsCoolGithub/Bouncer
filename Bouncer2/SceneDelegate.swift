@@ -35,6 +35,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //            print("Succeeded")
 //        }
         
+//        let navCont = UINavigationController(rootViewController: EventSuite())
+//        navCont.navigationBar.isHidden = true
+//        self.window?.rootViewController = navCont
+        
         if Auth.auth().currentUser != nil{
             User.setup()
             let navCont = UINavigationController(rootViewController: TabBarController())

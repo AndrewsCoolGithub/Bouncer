@@ -86,8 +86,9 @@ class TabBarController: UITabBarController{
         navigationController?.pushViewController(searchController, animated: true)
     }
     
-    let messageController = MessageSuite()
+   
     @objc func openMessages(){
+        let messageController = MessageSuite()
         navigationController?.pushViewController(messageController, animated: true)
     }
     
