@@ -20,6 +20,7 @@ final class EventManager: ObservableObject{
     
     @Published var events = [Event]()
     @Published var modified = [Event]()
+    @Published var upcoming = [Event]()
     @Published var previouslyHosted = [Event]() {
         didSet{
             print("SO IT HAPPENS THAT I GOT EM")
@@ -37,6 +38,7 @@ final class EventManager: ObservableObject{
         self.listenForEvents()
         self.listenForChanges()
         self.fetchEventHistory()
+        self.fetchUpcoming()
     }
     
     //MARK: - Create
@@ -117,12 +119,33 @@ final class EventManager: ObservableObject{
     /** Find events previously hosted */
     private func fetchEventHistory()  {
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        EVENTS_COLLECTION.whereField(EventFields.hostId, isEqualTo: uid).whereField(EventFields.endsAt, isLessThanOrEqualTo: Date.now).addSnapshotListener { docs, e in
+        EVENTS_COLLECTION.whereField(EventFields.hostId, isEqualTo: uid).whereField(EventFields.endsAt, isLessThanOrEqualTo: Date.now).getDocuments { docs, e in
+            if let e = e{
+                print("‼️ Unable to load event history: \(e.localizedDescription)")
+                return
+            }
+            
             self.previouslyHosted = docs?.documents.compactMap({ doc -> Event? in
                 return try? doc.data(as: Event.self)
             }).sorted(by: {$0.endsAt > $1.endsAt}) ?? []
         }
     }
+    
+    /** Find events visible and upcoming hosted by current User */
+    private func fetchUpcoming(){
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        EVENTS_COLLECTION.whereField(EventFields.hostId, isEqualTo: uid).whereField(EventFields.startsAt, isGreaterThan: Date.now).addSnapshotListener { docs, e in
+            if let e = e{
+                print("‼️ Unable to load upcoming events: \(e.localizedDescription)")
+                return
+            }
+            
+            self.upcoming = docs?.documents.compactMap({ doc -> Event? in
+                return try? doc.data(as: Event.self)
+            }).sorted(by: {$0.startsAt < $1.startsAt}) ?? []
+        }
+    }
+    
    
     //MARK: - Update
     

@@ -142,14 +142,17 @@ class AccountContacts: UIViewController {
         let scenes = UIApplication.shared.connectedScenes
         let windowScene = scenes.first as! UIWindowScene
         let window = windowScene.windows.first!
-        let navCont = UINavigationController(rootViewController: TabBarController())
         
+        
+        var navCont: UINavigationController?
         Location.shared.start { info in
-            if window.rootViewController != navCont{
+            if navCont == nil{
                 User.setup()
+                User.shared.id = Auth.auth().currentUser?.uid
+                navCont = UINavigationController(rootViewController: TabBarController())
                 window.rootViewController = navCont
             }
-            
+          
             User.shared.locationInfo = info
         }
     }

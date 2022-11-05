@@ -48,8 +48,10 @@ extension UIView {
         let colorArray: [CGColor] = {
             if let colors = colors{
                 return [colors.primary.cgColor, colors.secondary.cgColor, colors.detail.cgColor]
+            }else if let uiColors = uiColors{
+                return uiColors.map({$0.cgColor})
             }else{
-                return uiColors!.map({$0.cgColor})
+                return Array(repeating: UIColor.greyColor().cgColor, count: 3)
             }
         }()
         gradient.colors = colorArray

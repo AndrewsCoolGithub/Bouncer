@@ -49,7 +49,7 @@ class User: ObservableObject{
         }
     }
     
-    @Published var id: String!
+    @Published var id: String! = Auth.auth().currentUser?.uid
     @Published var userName: String?
     @Published var imageURL: String?
     @Published var bio: String?

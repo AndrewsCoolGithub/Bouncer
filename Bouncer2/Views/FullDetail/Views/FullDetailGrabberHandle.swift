@@ -57,6 +57,8 @@ class FullDetailGrabberHandle: UIView {
         label.textColor = .white
         label.numberOfLines = 1
         label.textAlignment = .left
+        label.layer.cornerRadius = .makeHeight(12)
+        label.layer.masksToBounds = true
         return label
     }()
     
@@ -82,7 +84,7 @@ class FullDetailGrabberHandle: UIView {
         setupTitle(with: event.title, vm: vm)
         setupCityLabel(with: event.locationName, vm: vm)
         setupDistanceLabel(with: CLLocationCoordinate2D(latitude: event.location.latitude,
-                                                        longitude: event.location.longitude), vm: vm)
+                                                        longitude: event.location.longitude), colors: event.colors, vm: vm)
         setupColors(colors: event.colors, vm: vm)
         
     }
@@ -114,7 +116,7 @@ class FullDetailGrabberHandle: UIView {
         }.store(in: &vm.cancellable)
     }
     
-    fileprivate func setupDistanceLabel(with location: CLLocationCoordinate2D, vm: FullDetailVM){
+    fileprivate func setupDistanceLabel(with location: CLLocationCoordinate2D, colors: [ColorModel], vm: FullDetailVM){
         addSubview(distanceLabel)
 //        distanceLabel.centerX(inView: self, topAnchor: titleLabel.bottomAnchor, paddingTop: .makeWidth(5))
         let attrString = NSMutableAttributedString(string: ", ", attributes: [NSMutableAttributedString.Key.font : UIFont.poppinsThin(size: .makeHeight(18)), NSMutableAttributedString.Key.foregroundColor : UIColor.nearlyBlack()])
@@ -123,6 +125,7 @@ class FullDetailGrabberHandle: UIView {
         attrString.append(midString)
         attrString.append(attrString2)
         self.distanceLabel.attributedText = attrString
+        print("Instrinsic Content Size: \(self.distanceLabel.intrinsicContentSize)")
         vm.$location.sink { [weak self] newLocation in
             guard let self = self, let newLocation = newLocation else {return}
             UIView.transition(with: self.cityLabel, duration: 0.3, options: .transitionCrossDissolve) {
@@ -132,6 +135,15 @@ class FullDetailGrabberHandle: UIView {
                 attrString.append(midString)
                 attrString.append(attrString2)
                 self.distanceLabel.attributedText = attrString
+                
+                
+                ///Anchor Distance Label and City Label, add gradient to distance label
+                let viewsWidth = self.cityLabel.intrinsicContentSize.width + self.distanceLabel.intrinsicContentSize.width + .makeWidth(10)
+                let xVal = (.makeWidth(414) - viewsWidth) / 2
+                self.cityLabel.anchor(top: self.titleLabel.bottomAnchor, left: self.leftAnchor, paddingTop: .makeWidth(5), paddingLeft: xVal)
+                self.distanceLabel.centerY(inView: self.cityLabel, leftAnchor: self.cityLabel.rightAnchor, paddingLeft: .makeWidth(10))
+               
+                
             }
         }.store(in: &vm.cancellable)
         
@@ -150,6 +162,7 @@ class FullDetailGrabberHandle: UIView {
                 gradient.colors = [newColors[0].cgColor(), newColors[1].cgColor(), newColors[2].cgColor()]
             }
             self.typeIcon.gradientColors = UIImageColors(background: .clear, primary: newColors[0].uiColor(), secondary: newColors[1].uiColor(), detail: newColors[2].uiColor()) // gradient property already animates changes
+            self.distanceLabelGradient(colors.cgColors())
         }.store(in: &vm.cancellable)
     }
     
@@ -178,6 +191,32 @@ class FullDetailGrabberHandle: UIView {
                 }
             }.store(in: &vm.cancellable)
         }
+    }
+    
+    weak var gradient: CAGradientLayer?
+    fileprivate func distanceLabelGradient(_ colors: [CGColor]) {
+        distanceLabel.layer.cornerRadius = .makeHeight(12)
+        distanceLabel.layer.masksToBounds = true
+        let gradient = CAGradientLayer()
+        gradient.frame = CGRect(origin: distanceLabel.frame.origin, size: distanceLabel.frame.size)
+        gradient.colors = colors
+        gradient.startPoint = CGPoint(x: 0, y: 1)
+        gradient.endPoint = CGPoint(x: 1, y: 1)
+        
+        let shape = CAShapeLayer()
+        shape.lineWidth = 1
+        shape.path = UIBezierPath(roundedRect: distanceLabel.bounds.insetBy(dx: 0.45,
+                                                                                          dy: 0.45), cornerRadius: .makeHeight(12)).cgPath
+        shape.strokeColor = UIColor.black.cgColor
+        shape.fillColor = UIColor.clear.cgColor
+        gradient.mask = shape
+        if let _gradient = self.gradient{
+            self.layer.replaceSublayer(_gradient, with: gradient)
+        }else{
+            self.layer.addSublayer(gradient)
+        }
+        
+        self.gradient = gradient
     }
     
     required init?(coder: NSCoder) {

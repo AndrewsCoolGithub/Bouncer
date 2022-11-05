@@ -18,11 +18,10 @@ class EventSuiteCell: UICollectionViewCell{
     
     override func prepareForReuse() {
         super.prepareForReuse()
-       
     }
     
-    private let bottomSheet: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: .makeWidth(105), width: .makeWidth(375), height: .makeWidth(375) * 55/375))
+    private lazy var bottomSheet: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: .makeWidth(105), width: contentView.frame.width, height: contentView.frame.height - .makeWidth(105)))
         view.backgroundColor = .greyColor()
         let innerShadow = InnerShadowLayer(forView: view, edge: .Top, shadowRadius: 8, toColor: .clear, fromColor: .black.withAlphaComponent(0.3))
         view.layer.addSublayer(innerShadow)
@@ -62,15 +61,21 @@ class EventSuiteCell: UICollectionViewCell{
         return label
     }()
     
-    private var deleteButton: UIButton = {
-        let button = UIButton()
-        
+    private lazy var deleteButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: contentView.frame.maxX - .makeWidth(45), y: .makeWidth(-10), width: .makeWidth(45), height: .makeWidth(45)), cornerRadius: .makeWidth(22.5), colors: nil, uiColors: nil, lineWidth: 1.5, direction: .horizontal)
+        button.backgroundColor = .nearlyBlack()
+        let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(22))
+        button.setImage(UIImage(systemName: "xmark", withConfiguration: config), for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(deletePressed), for: .touchUpInside)
         return button
     }()
     
     private var eventTypeIcon: UIImageView = {
-        let imageView = UIImageView()
-        
+        let imageView = UIImageView(frame: CGRect(x: .makeWidth(10), y: .makeWidth(10), width: .makeWidth(40), height: .makeWidth(40)), cornerRadius: .makeWidth(20), colors: nil, uiColors: nil, lineWidth: 1.5, direction: .horizontal)
+        imageView.contentMode = .center
+        imageView.backgroundColor = .greyColor().withAlphaComponent(0.69)
+        imageView.tintColor = .white
         return imageView
     }()
    
@@ -101,33 +106,24 @@ class EventSuiteCell: UICollectionViewCell{
         layer.applySketchShadow(alpha: 0.3, y: .makeHeight(9), blur: .makeWidth(9), spread: .makeWidth(7), withRounding: .makeHeight(25))
         contentView.backgroundColor = .greyColor()
         
-        eventTypeIcon = UIImageView(frame: CGRect(x: .makeWidth(10), y: .makeWidth(10), width: .makeWidth(40), height: .makeWidth(40)), cornerRadius: .makeWidth(20), colors: event.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
-        eventTypeIcon.contentMode = .center
-        eventTypeIcon.backgroundColor = .greyColor().withAlphaComponent(0.69)
+       
         let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(22))
-        
+        eventTypeIcon.gradientColors = event.uiImageColors()
         switch event.type{
         case .exclusive:
             eventTypeIcon.image = UIImage(named: "Group5")
         case .open:
             eventTypeIcon.image = UIImage(systemName: "mappin.and.ellipse", withConfiguration: config)
         }
-       
-        eventTypeIcon.tintColor = .white
+        contentView.addSubview(eventTypeIcon)
         
-        self.deleteButton.removeFromSuperview()
-
+        deleteButton.removeFromSuperview()
         backDrop.removeFromSuperview()
         contentView.addSubview(imageView)
-
-        contentView.addSubview(eventTypeIcon)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.frame = contentView.bounds
         imageView.sd_setImage(with: URL(string: event.imageURL))
-
-       
-        
         
         contentView.addSubview(bottomSheet)
         bottomSheet.addSubview(titleLabel)
@@ -137,7 +133,6 @@ class EventSuiteCell: UICollectionViewCell{
         
         bottomSheet.addSubview(locationLabel)
         locationLabel.anchor(top: titleLabel.bottomAnchor, left: bottomSheet.leftAnchor, paddingLeft: .makeWidth(11))
-       
         locationLabel.text = event.locationName
         
         bottomSheet.addSubview(timeLabel)
@@ -155,19 +150,13 @@ class EventSuiteCell: UICollectionViewCell{
         layer.applySketchShadow(alpha: 0.3, y: .makeHeight(9), blur: .makeWidth(9), spread: .makeWidth(7), withRounding: .makeHeight(25))
         contentView.backgroundColor = .greyColor()
         
-        eventTypeIcon = UIImageView(frame: CGRect(x: .makeWidth(10), y: .makeWidth(10), width: .makeWidth(40), height: .makeWidth(40)), cornerRadius: .makeWidth(20), colors: event.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
-        eventTypeIcon.contentMode = .center
-        eventTypeIcon.backgroundColor = .greyColor().withAlphaComponent(0.69)
+        
+        eventTypeIcon.gradientColors = event.uiImageColors()
         let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(22))
         eventTypeIcon.image = UIImage(systemName: "pencil", withConfiguration: config)
-        eventTypeIcon.tintColor = .white
         
-        deleteButton = UIButton(frame: CGRect(x: contentView.frame.maxX - .makeWidth(45), y: .makeWidth(-10), width: .makeWidth(45), height: .makeWidth(45)), cornerRadius: .makeWidth(22.5), colors: event.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
-        deleteButton.backgroundColor = .nearlyBlack()
-        deleteButton.setImage(UIImage(systemName: "xmark", withConfiguration: config), for: .normal)
-        deleteButton.tintColor = .white
-        deleteButton.addTarget(self, action: #selector(deletePressed), for: .touchUpInside)
-        
+        deleteButton.gradientColors = event.uiImageColors()
+
         contentView.addSubview(imageView)
         self.addSubview(deleteButton)
         contentView.addSubview(eventTypeIcon)
@@ -176,7 +165,6 @@ class EventSuiteCell: UICollectionViewCell{
         imageView.frame = contentView.bounds
         imageView.image = getSavedImage(named: "\(event.id).jpeg") //Only works for drafts
 
-        
         backDrop.frame = imageView.bounds
         imageView.addSubview(backDrop)
         

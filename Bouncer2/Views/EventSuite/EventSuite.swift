@@ -17,6 +17,7 @@ class EventSuite: UIViewController{
     
     var draft: EventDraft?
     var previous: [Event]? = []
+    var upcoming: [Event]? = []
     private var dataSource: UICollectionViewDiffableDataSource<Section, EventSuiteCellViewModel>?
     private var cancellable = Set<AnyCancellable>()
     private let cameraVC = CameraVC()
@@ -34,6 +35,11 @@ class EventSuite: UIViewController{
         
         EventManager.shared.$previouslyHosted.sink { [weak self] previous in
             self?.previous = previous
+            self?.updateSnapshot()
+        }.store(in: &cancellable)
+        
+        EventManager.shared.$upcoming.sink { [weak self] upcoming in
+            self?.upcoming = upcoming
             self?.updateSnapshot()
         }.store(in: &cancellable)
     }
@@ -94,6 +100,8 @@ class EventSuite: UIViewController{
                 header.setup(title: "Draft")
             case .previous:
                 header.setup(title: "History")
+            case .upcoming:
+                header.setup(title: "Upcoming")
             }
             return header
         } //Header Datasource
@@ -113,11 +121,20 @@ class EventSuite: UIViewController{
             snapshot.appendItems([EventSuiteCellViewModel(draft: draft)], toSection: .draft)
         }
         
-        if let previous = previous{
+        if let upcoming = upcoming, !upcoming.isEmpty{
+            print("Upcoming: \(upcoming)")
+            snapshot.appendSections([.upcoming])
+            let events = upcoming.map({EventSuiteCellViewModel(event: $0)})
+            snapshot.appendItems(events, toSection: .upcoming)
+        }
+        
+        if let previous = previous, !previous.isEmpty{
             snapshot.appendSections([.previous])
             let events = previous.map({EventSuiteCellViewModel(event: $0) })
             snapshot.appendItems(events, toSection: .previous)
         }
+        
+        
         
         dataSource?.apply(snapshot, animatingDifferences: true)
         
@@ -149,6 +166,7 @@ class EventSuite: UIViewController{
     enum Section{
         case draft
         case previous
+        case upcoming
     }
     
     required init?(coder: NSCoder) {

@@ -49,7 +49,6 @@ class FullDetailViewController: UIViewController{
             self.contentController = nil
             self.vm = nil
         }
-        self.gradient = nil
         self.colors = nil
         self.grabberHandle = nil
     }
@@ -114,52 +113,31 @@ class FullDetailViewController: UIViewController{
     
     
     
-    weak var gradient: CAGradientLayer?
-    fileprivate func distanceLabelGradient(_ colors: [CGColor]) {
-        grabberHandle.distanceLabel.layer.cornerRadius = .makeHeight(12)
-        grabberHandle.distanceLabel.layer.masksToBounds = true
-        let gradient = CAGradientLayer()
-        gradient.frame = CGRect(origin: grabberHandle.distanceLabel.frame.origin, size: grabberHandle.distanceLabel.frame.size)
-        gradient.colors = colors
-        gradient.startPoint = CGPoint(x: 0, y: 1)
-        gradient.endPoint = CGPoint(x: 1, y: 1)
-        
-        let shape = CAShapeLayer()
-        shape.lineWidth = 1
-        shape.path = UIBezierPath(roundedRect: grabberHandle.distanceLabel.bounds.insetBy(dx: 0.45,
-                                                                                          dy: 0.45), cornerRadius: .makeHeight(12)).cgPath
-        shape.strokeColor = UIColor.black.cgColor
-        shape.fillColor = UIColor.clear.cgColor
-        gradient.mask = shape
-        if let _gradient = self.gradient{
-            grabberHandle.layer.replaceSublayer(_gradient, with: gradient)
-        }else{
-            grabberHandle.layer.addSublayer(gradient)
-        }
-        
-        self.gradient = gradient
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        /// Grab CITYLABEL width, DISTANCE LABEL width, add 10 padding.
-        /// Center the two views, by subtracting val from tot. width and divide by 2
-        ///
-
-        
-        guard let grabberHandle = grabberHandle else {return}
-        let cityLabel = grabberHandle.cityLabel
-        let distLabel = grabberHandle.distanceLabel
-        guard cityLabel.text != nil && distLabel.text != nil else {return}
-        
-        let viewsWidth = cityLabel.frame.width + distLabel.frame.width + .makeWidth(10)
-        let xVal = (.makeWidth(414) - viewsWidth) / 2
-
-        cityLabel.anchor(top: grabberHandle.titleLabel.bottomAnchor, left: self.view.leftAnchor, paddingTop: .makeWidth(5), paddingLeft: xVal)
-        distLabel.centerY(inView: cityLabel, leftAnchor: cityLabel.rightAnchor, paddingLeft: .makeWidth(10))
-//        distLabel.anchor(top: grabberHandle.titleLabel.bottomAnchor, left: cityLabel.rightAnchor, paddingLeft: .makeWidth(10))
-        distanceLabelGradient(self.colors)
-    }
+//    weak var gradient: CAGradientLayer?
+//    fileprivate func distanceLabelGradient(_ colors: [CGColor]) {
+//        grabberHandle.distanceLabel.layer.cornerRadius = .makeHeight(12)
+//        grabberHandle.distanceLabel.layer.masksToBounds = true
+//        let gradient = CAGradientLayer()
+//        gradient.frame = CGRect(origin: grabberHandle.distanceLabel.frame.origin, size: grabberHandle.distanceLabel.frame.size)
+//        gradient.colors = colors
+//        gradient.startPoint = CGPoint(x: 0, y: 1)
+//        gradient.endPoint = CGPoint(x: 1, y: 1)
+//
+//        let shape = CAShapeLayer()
+//        shape.lineWidth = 1
+//        shape.path = UIBezierPath(roundedRect: grabberHandle.distanceLabel.bounds.insetBy(dx: 0.45,
+//                                                                                          dy: 0.45), cornerRadius: .makeHeight(12)).cgPath
+//        shape.strokeColor = UIColor.black.cgColor
+//        shape.fillColor = UIColor.clear.cgColor
+//        gradient.mask = shape
+//        if let _gradient = self.gradient{
+//            grabberHandle.layer.replaceSublayer(_gradient, with: gradient)
+//        }else{
+//            grabberHandle.layer.addSublayer(gradient)
+//        }
+//
+//        self.gradient = gradient
+//    }
     
     @objc func goBack(){
         navigationController?.popViewController(animated: true)
