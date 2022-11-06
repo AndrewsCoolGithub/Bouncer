@@ -19,45 +19,18 @@ class FullDetailViewController: UIViewController{
     
     let panel = FloatingPanelController()
     var vm: FullDetailVM!
-//    var grabberHandle: FullDetailGrabberHandle!
-//    var colors: [CGColor]!
-    
-    var event: Event!
     
     init(event: Event, image: UIImage? = nil, from frame: CGRect? = nil){
         super.init(nibName: nil, bundle: nil)
-        self.event = event
         view.backgroundColor = event.colors.first?.uiColor()
         self.vm = FullDetailVM(id: event.id!, event: event)
-        
-       
         contentController = FullDetailContentVC(components: components, event: event, vm: vm)
-        
         setupImage(components.eventImageView, image: image, initURL: URL(string: event.imageURL)!)
         setupPanel(event)
         setupBackButton(components.backButton)
-        
-//        vm.$colors.sink { [weak self] colors in
-//            if let colors = colors{
-//                self?.colors = colors.cgColors()
-//            }
-//        }.store(in: &vm.cancellable)
     }
-//    override func didReceiveMemoryWarning() {
-//        super.didReceiveMemoryWarning()
-//
-//        if let vm = vm{
-//            FirestoreSubscription.cancel(id: vm.id)
-//            vm.cancellable.forEach({$0.cancel()})
-//            vm.timerCancellable?.cancel()
-//            vm.timerCancellable = nil
-//            self.contentController = nil
-//            self.vm = nil
-//        }
-//    }
     
     deinit{
-        print("DEINITED  ‼️")
         if let vm = vm{
             FirestoreSubscription.cancel(id: vm.id)
             vm.cancellable.forEach({$0.cancel()})
@@ -67,30 +40,6 @@ class FullDetailViewController: UIViewController{
         }
         vm = nil
     }
-    
-    
-//    override func viewDidDisappear(_ animated: Bool) {
-//        super.viewDidDisappear(animated)
-//        if let vm = vm{
-//            FirestoreSubscription.cancel(id: vm.id)
-//            vm.cancellable.forEach({$0.cancel()})
-//            vm.timerCancellable?.cancel()
-//            vm.timerCancellable = nil
-//            self.contentController = nil
-//            self.vm = nil
-//        }
-////        self.colors = nil
-////        self.grabberHandle = nil
-//    }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//
-//        if event != nil{
-//            self.vm = FullDetailVM(id: event.id!, event: event)
-//            contentController =
-//        }
-//    }
     
     fileprivate func setupPanel(_ data: Event) {
         panel.layout = PanelLayout()
@@ -110,10 +59,7 @@ class FullDetailViewController: UIViewController{
         panel.surfaceView.grabberHandleSize = .init(width: .makeWidth(414), height: .makeHeight(414) * 85/414)
         
         let grabberHandle = FullDetailGrabberHandle(event: data, vm: vm)
-//        self.grabberHandle = grabberHandle
         panel.surfaceView.addSubview(grabberHandle)
-      
-        
     }
     
     fileprivate func setupImage(_ imageView: UIImageView, image: UIImage? = nil, initURL: URL){
@@ -188,19 +134,5 @@ extension FullDetailViewController: FloatingPanelControllerDelegate{
     }
 }
 
-//extension FullDetailViewController: UIGestureRecognizerDelegate{
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//
-//        if gestureRecognizer is UITapGestureRecognizer && otherGestureRecognizer is UIPanGestureRecognizer {
-//            return true
-//        }
-//
-//        if gestureRecognizer is UIPanGestureRecognizer && otherGestureRecognizer is UITapGestureRecognizer {
-//            return true
-//        }
-//
-//        return false
-//    }
-//}
 
 

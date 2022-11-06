@@ -371,7 +371,6 @@ class FullDetailContentVC: UIViewController{
     }
    
     deinit{
-        print("DEINITED CONTENT VC 💙")
         vm = nil
     }
     
