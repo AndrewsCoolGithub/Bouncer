@@ -16,7 +16,6 @@ struct Event: Hashable, Codable, Equatable, Identifiable{
     }
     
     static func == (lhs: Event, rhs: Event) -> Bool {
-//        return lhs.id == rhs.id && lhs.guestIds?.count ?? 0 == rhs.guestIds?.count ?? 0
         return lhs.id == rhs.id
     }
     
@@ -33,13 +32,12 @@ struct Event: Hashable, Codable, Equatable, Identifiable{
     let hostId: String
     
     
-    let rsvpIds: [String]?
-    let waitlistIds: [String]?
+    let prospectIds: [String]?
     let invitedIds: [String]?
     let guestIds: [String]?
     
     
-    init(imageURL: String? = nil, title: String, description: String, location: GeoPoint, locationName: String, startsAt: Date, endsAt: Date, type: EventType, colors: [ColorModel], hostId: String, rsvpIds: [String]? = nil, waitlistIds: [String]? = nil, invitedIds: [String]? = nil, guestIds: [String]? = nil) {
+    init(imageURL: String? = nil, title: String, description: String, location: GeoPoint, locationName: String, startsAt: Date, endsAt: Date, type: EventType, colors: [ColorModel], hostId: String, prospectIds: [String]? = nil, invitedIds: [String]? = nil, guestIds: [String]? = nil) {
         self.imageURL = imageURL
         self.title = title
         self.description = description
@@ -50,8 +48,7 @@ struct Event: Hashable, Codable, Equatable, Identifiable{
         self.type = type
         self.colors = colors
         self.hostId = hostId
-        self.rsvpIds = rsvpIds
-        self.waitlistIds = waitlistIds
+        self.prospectIds = prospectIds
         self.invitedIds = invitedIds
         self.guestIds = guestIds
     }

@@ -17,13 +17,13 @@ class ListCellVM: ObservableObject{
     
     
     func updateActionForLive(){
-        let invited = event.invitedIds != nil ? event.invitedIds! : []
-        let waitlist = event.waitlistIds != nil ? event.waitlistIds! : []
+        let invited = event.invitedIds ?? []
+        let prospects = event.prospectIds ?? []
         switch event.type{
         case .exclusive:
             if invited.contains(where: {$0 == User.shared.id}){
                 self.action = .nav
-            }else if waitlist.contains(where: {$0 == User.shared.id}){
+            }else if prospects.contains(where: {$0 == User.shared.id}){
                 self.action = .leaveWaitlist
             }else{
                 self.action = .joinWaitlist
@@ -81,7 +81,7 @@ class ListCellVM: ObservableObject{
             Task{
                 do{
                     action = .leaveWaitlist
-                    try await EventManager.shared.addTo(collection: .waitlist, with: event.id!)
+                    try await EventManager.shared.addTo(collection: .prospects, with: event.id!)
                 }catch{
                     action = .joinWaitlist
                 }
@@ -90,7 +90,7 @@ class ListCellVM: ObservableObject{
             Task{
                 do{
                     action = .joinWaitlist
-                    try await EventManager.shared.remove(from: .waitlist, for: event.id!)
+                    try await EventManager.shared.remove(from: .prospects, for: event.id!)
                 }catch{
                     action = .leaveWaitlist
                 }
@@ -99,7 +99,7 @@ class ListCellVM: ObservableObject{
             Task{
                 do{
                     action = .unRSVP
-                    try await EventManager.shared.addTo(collection: .rsvp, with: event.id!)
+                    try await EventManager.shared.addTo(collection: .prospects, with: event.id!)
                 }catch{
                     action = .RSVP
                 }
@@ -108,7 +108,7 @@ class ListCellVM: ObservableObject{
             Task{
                 do{
                     action = .RSVP
-                    try await EventManager.shared.remove(from: .rsvp, for: event.id!)
+                    try await EventManager.shared.remove(from: .prospects, for: event.id!)
                 }catch{
                     action = .unRSVP
                 }
@@ -128,8 +128,8 @@ class ListCellVM: ObservableObject{
         
         self.event = event
         let invited = event.invitedIds != nil ? event.invitedIds! : []
-        let rsvps = event.rsvpIds != nil ? event.rsvpIds! : []
-        let waitlist = event.waitlistIds != nil ? event.waitlistIds! : []
+        let prospects = event.prospectIds ?? []
+        
         
         if event.startsAt.timeIntervalSinceNow > 0 {
             self.timeSymbolName = .calendar
@@ -148,7 +148,7 @@ class ListCellVM: ObservableObject{
             case .exclusive:
                 if invited.contains(where: {$0 == User.shared.id}){
                     self.action = .nav
-                }else if waitlist.contains(where: {$0 == User.shared.id}){
+                }else if prospects.contains(where: {$0 == User.shared.id}){
                     self.action = .leaveWaitlist
                 }else{
                     self.action = .joinWaitlist
@@ -162,13 +162,13 @@ class ListCellVM: ObservableObject{
             case .exclusive:
                 if invited.contains(where: {$0 == User.shared.id}){
                     self.action = .invited
-                }else if waitlist.contains(where: {$0 == User.shared.id}){
+                }else if prospects.contains(where: {$0 == User.shared.id}){
                     self.action = .leaveWaitlist
                 }else{
                     self.action = .joinWaitlist
                 }
             case .open:
-                if rsvps.contains(where: {$0 == User.shared.id}){
+                if prospects.contains(where: {$0 == User.shared.id}){
                     self.action = .unRSVP
                 }else{
                     self.action = .RSVP
@@ -179,11 +179,14 @@ class ListCellVM: ObservableObject{
     
     func removeFromInvited(){
         let eventID = event.id!
+        let prospects = event.prospectIds ?? []
+        let invited = event.invitedIds ?? []
+        guard let uid = User.shared.id else {return}
         Task{
-            if (event.invitedIds?.contains(User.shared.id!) ?? false){
+            if (invited.contains(uid) && event.type == .exclusive){
                 try await EventManager.shared.remove(from: .invited, for: eventID)
-            }else if (event.rsvpIds?.contains(User.shared.id!) ?? false) && event.startsAt < .now{
-                try await EventManager.shared.remove(from: .rsvp, for: eventID)
+            }else if (prospects.contains(uid) && event.type == .open){
+                try await EventManager.shared.remove(from: .prospects, for: eventID)
             }
         }
     }

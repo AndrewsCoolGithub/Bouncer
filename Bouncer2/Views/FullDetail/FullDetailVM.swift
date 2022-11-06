@@ -27,7 +27,7 @@ class FullDetailVM: ObservableObject{
             startDate = event?.startsAt
             endDate = event?.endsAt
             determineAction(event)
-            if let rsvpIds = event?.rsvpIds{
+            if let rsvpIds = event?.prospectIds{
                 Task{
                    try await grabUserInfo(rsvpIds)
                 }
@@ -95,8 +95,7 @@ class FullDetailVM: ObservableObject{
     func determineAction(_ event: Event?){
         guard let event = event else {return}
         let invited = event.invitedIds != nil ? event.invitedIds! : []
-        let rsvps = event.rsvpIds != nil ? event.rsvpIds! : []
-        let waitlist = event.waitlistIds != nil ? event.waitlistIds! : []
+        let prospects = event.prospectIds ?? []
         
         guard event.endsAt > .now else{
             self.action = .unavailable
@@ -117,7 +116,7 @@ class FullDetailVM: ObservableObject{
                 if invited.contains(where: {$0 == User.shared.id}){
                     self.action = .nav
                     self.buttonCount = "Directions"
-                }else if waitlist.contains(where: {$0 == User.shared.id}){
+                }else if prospects.contains(where: {$0 == User.shared.id}){
                     self.action = .leaveWaitlist
                     self.buttonCount = "Leave Waitlist"
                 }else{
@@ -135,15 +134,15 @@ class FullDetailVM: ObservableObject{
                 if invited.contains(where: {$0 == User.shared.id}){
                     self.action = .invited
                     self.buttonCount = "\(invited.count) Invited"
-                }else if waitlist.contains(where: {$0 == User.shared.id}){
+                }else if prospects.contains(where: {$0 == User.shared.id}){
                     self.action = .leaveWaitlist
-                    self.buttonCount = "\(waitlist.count) Waiting"
+                    self.buttonCount = "\(prospects.count) Waiting"
                 }else{
                     self.action = .joinWaitlist
-                    self.buttonCount = "\(waitlist.count) Waiting"
+                    self.buttonCount = "\(prospects.count) Waiting"
                 }
             case .open:
-                if rsvps.contains(where: {$0 == User.shared.id}){
+                if prospects.contains(where: {$0 == User.shared.id}){
                     self.action = .unRSVP
                     self.buttonCount = "\(rsvps.count) Going"
                 }else{
@@ -162,7 +161,7 @@ class FullDetailVM: ObservableObject{
             Task{
                 do{
                     action = .leaveWaitlist
-                    try await EventManager.shared.addTo(collection: .waitlist, with: eventID)
+                    try await EventManager.shared.addTo(collection: .prospects, with: eventID)
                 }catch{
                     action = .joinWaitlist
                 }
@@ -171,7 +170,7 @@ class FullDetailVM: ObservableObject{
             Task{
                 do{
                     action = .joinWaitlist
-                    try await EventManager.shared.remove(from: .waitlist, for: eventID)
+                    try await EventManager.shared.remove(from: .prospects, for: eventID)
                 }catch{
                     action = .leaveWaitlist
                 }
@@ -180,7 +179,7 @@ class FullDetailVM: ObservableObject{
             Task{
                 do{
                     action = .unRSVP
-                    try await EventManager.shared.addTo(collection: .rsvp, with: eventID)
+                    try await EventManager.shared.addTo(collection: .prospects, with: eventID)
                 }catch{
                     action = .RSVP
                 }
@@ -189,7 +188,7 @@ class FullDetailVM: ObservableObject{
             Task{
                 do{
                     action = .RSVP
-                    try await EventManager.shared.remove(from: .rsvp, for: eventID)
+                    try await EventManager.shared.remove(from: .prospects, for: eventID)
                 }catch{
                     action = .unRSVP
                 }

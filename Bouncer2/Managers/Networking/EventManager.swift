@@ -168,8 +168,7 @@ final class EventManager: ObservableObject{
 }
 
 enum EventCollections: String{
-    case rsvp = "rsvpIds"
-    case waitlist = "waitlistIds"
+    case prospects = "prospectIds"
     case invited = "invitedIds"
     case guest = "guestIds"
 }

@@ -94,22 +94,50 @@ class MyEventsViewController: UIViewController{
     
     func makeSnapshot(with events: [Event]){
         self.snapshot = NSDiffableDataSourceSnapshot<Section, Event>()
+        guard let uid = User.shared.id else {return}
         
-        var invited = events.filter({$0.invitedIds?.contains(User.shared.id!) ?? false})
-            invited.append(contentsOf: events.filter({($0.rsvpIds?.contains(User.shared.id!) ?? false) && $0.startsAt < .now}))
-        if invited.count > 0{
+        
+        ///Invited
+        var invited = events.filter({$0.invitedIds?.contains(uid) ?? false})
+        invited.append(contentsOf: events.filter({ event in
+            if let prospects = event.prospectIds{
+                return (prospects.contains(uid) && event.startsAt < .now && event.type == .open)
+            }else{
+                return false
+            }
+        }))
+                               
+        if !invited.isEmpty{
             snapshot?.appendSections([.Invites])
             snapshot?.appendItems(invited, toSection: .Invites)
         }
         
-        let rsvp = events.filter({($0.rsvpIds?.contains(User.shared.id!) ?? false) && $0.startsAt > .now && !($0.invitedIds?.contains(User.shared.id!) ?? false)})
-        if rsvp.count > 0{
+        ///RSVP
+        let rsvp = events.filter { event in
+            if let prospects = event.prospectIds{
+                return (prospects.contains(uid) && event.type == .open && event.startsAt > .now)
+            }else{
+                return false
+            }
+        }
+        
+        if !rsvp.isEmpty{
             snapshot?.appendSections([.Rsvp])
             snapshot?.appendItems(rsvp, toSection: .Rsvp)
         }
         
-        let waitlist = events.filter({($0.waitlistIds?.contains(User.shared.id!) ?? false) && !($0.invitedIds?.contains(User.shared.id!) ?? false)})
-        if waitlist.count > 0{
+        
+        ///WAITLIST
+        let waitlist = events.filter { event in
+            if let prospects = event.prospectIds{
+                return prospects.contains(uid) && event.type == .exclusive && !(event.invitedIds?.contains(uid) ?? false)
+            }else{
+                return false
+            }
+        }
+        
+        
+        if !waitlist.isEmpty {
             snapshot?.appendSections([.Waitlist])
             snapshot?.appendItems(waitlist, toSection: .Waitlist)
         }

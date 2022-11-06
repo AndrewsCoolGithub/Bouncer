@@ -276,7 +276,7 @@ final class ListCell: UICollectionViewCell{
         
         // - Remove Button for invited
         let isInvited = (viewModel.event.invitedIds?.contains(User.shared.id!) ?? false)
-        let rsvpInvited = (viewModel.event.rsvpIds?.contains(User.shared.id!) ?? false) && viewModel.event.startsAt < .now
+        let rsvpInvited = (viewModel.event.prospectIds?.contains(User.shared.id!) ?? false) && viewModel.event.startsAt < .now && viewModel.event.type == .open
         if vcType == .My && (isInvited || rsvpInvited){
             let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(22))
             let deleteDraftButton = UIButton(frame: CGRect(x: contentView.frame.maxX - .makeWidth(45), y: .makeWidth(-10), width: .makeWidth(45), height: .makeWidth(45)), cornerRadius: .makeWidth(22.5), colors: viewModel.event.colors.uiImageColors(), lineWidth: 1.5, direction: .horizontal)
@@ -299,8 +299,7 @@ final class ListCell: UICollectionViewCell{
     private func configureCount(_ viewModel: ListCellVM){
         
         let guests = viewModel.event.guestIds
-        let rsvps = viewModel.event.rsvpIds
-        let waitlist = viewModel.event.waitlistIds
+        let prospects = viewModel.event.prospectIds
         let eventType = viewModel.event.type
         let startDate = viewModel.event.startsAt
         
@@ -314,7 +313,7 @@ final class ListCell: UICollectionViewCell{
                 updateLabelCount(guests?.count ?? 0)
             }else{
                 statIcon1.image = UIImage(systemName: "bell.fill")
-                updateLabelCount(rsvps?.count ?? 0)
+                updateLabelCount(prospects?.count ?? 0)
             }
         }else if eventType == .exclusive{
             if startDate < .now{
@@ -322,7 +321,7 @@ final class ListCell: UICollectionViewCell{
                 updateLabelCount(guests?.count ?? 0)
             }else{
                 statIcon1.image = UIImage(systemName: "list.bullet.rectangle.portrait.fill")
-                updateLabelCount(waitlist?.count ?? 0)
+                updateLabelCount(prospects?.count ?? 0)
             }
         }
     }

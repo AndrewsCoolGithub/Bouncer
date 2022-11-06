@@ -71,15 +71,15 @@ class AllEventListVM: ObservableObject{
         
         var invitedCount: Int = 0
         invitedCount += events.filter({$0.invitedIds?.contains(User.shared.id!) ?? false}).count
-        invitedCount += events.filter({($0.rsvpIds?.contains(User.shared.id!) ?? false) && $0.startsAt < .now}).count
+        invitedCount += events.filter({($0.prospectIds?.contains(User.shared.id!) ?? false) && $0.startsAt < .now && $0.type == .open}).count
         self.invitedCount = invitedCount
         
         var rsvpCount: Int = 0
-        rsvpCount += events.filter({($0.rsvpIds?.contains(User.shared.id!) ?? false) && $0.startsAt > .now && !($0.invitedIds?.contains(User.shared.id!) ?? false)}).count
+        rsvpCount += events.filter({($0.prospectIds?.contains(User.shared.id!) ?? false) && $0.startsAt > .now && !($0.invitedIds?.contains(User.shared.id!) ?? false) && $0.type == .open}).count
         self.rsvpCount = rsvpCount
         
         var waitlistCount: Int = 0
-        waitlistCount += events.filter({($0.waitlistIds?.contains(User.shared.id!) ?? false) && !($0.invitedIds?.contains(User.shared.id!) ?? false)}).count
+        waitlistCount += events.filter({($0.prospectIds?.contains(User.shared.id!) ?? false) && !($0.invitedIds?.contains(User.shared.id!) ?? false) && $0.type == .exclusive}).count
         self.waitlistCount = waitlistCount
     }
 }
