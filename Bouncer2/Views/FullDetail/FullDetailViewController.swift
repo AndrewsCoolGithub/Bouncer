@@ -15,43 +15,82 @@ class FullDetailViewController: UIViewController{
     /*Top Level of event's full detail view, includes image, back button, and floating panel */
     
     fileprivate var components = FullDetailViewComponents()
-    fileprivate var contentController: TestScroll!
+    fileprivate var contentController: FullDetailContentVC!
     
     let panel = FloatingPanelController()
     var vm: FullDetailVM!
-    var grabberHandle: FullDetailGrabberHandle!
-    var colors: [CGColor]!
+//    var grabberHandle: FullDetailGrabberHandle!
+//    var colors: [CGColor]!
+    
+    var event: Event!
     
     init(event: Event, image: UIImage? = nil, from frame: CGRect? = nil){
         super.init(nibName: nil, bundle: nil)
+        self.event = event
         view.backgroundColor = event.colors.first?.uiColor()
         self.vm = FullDetailVM(id: event.id!, event: event)
         
-        contentController = TestScroll(components: components, event: event, vm: vm)
+       
+        contentController = FullDetailContentVC(components: components, event: event, vm: vm)
+        
         setupImage(components.eventImageView, image: image, initURL: URL(string: event.imageURL)!)
         setupPanel(event)
         setupBackButton(components.backButton)
         
-        vm.$colors.sink { [weak self] colors in
-            if let colors = colors{
-                self?.colors = colors.cgColors()
-            }
-        }.store(in: &vm.cancellable)
+//        vm.$colors.sink { [weak self] colors in
+//            if let colors = colors{
+//                self?.colors = colors.cgColors()
+//            }
+//        }.store(in: &vm.cancellable)
     }
+//    override func didReceiveMemoryWarning() {
+//        super.didReceiveMemoryWarning()
+//
+//        if let vm = vm{
+//            FirestoreSubscription.cancel(id: vm.id)
+//            vm.cancellable.forEach({$0.cancel()})
+//            vm.timerCancellable?.cancel()
+//            vm.timerCancellable = nil
+//            self.contentController = nil
+//            self.vm = nil
+//        }
+//    }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    deinit{
+        print("DEINITED  ‼️")
         if let vm = vm{
             FirestoreSubscription.cancel(id: vm.id)
             vm.cancellable.forEach({$0.cancel()})
             vm.timerCancellable?.cancel()
             vm.timerCancellable = nil
-            self.contentController = nil
-            self.vm = nil
+            contentController = nil
         }
-        self.colors = nil
-        self.grabberHandle = nil
+        vm = nil
     }
+    
+    
+//    override func viewDidDisappear(_ animated: Bool) {
+//        super.viewDidDisappear(animated)
+//        if let vm = vm{
+//            FirestoreSubscription.cancel(id: vm.id)
+//            vm.cancellable.forEach({$0.cancel()})
+//            vm.timerCancellable?.cancel()
+//            vm.timerCancellable = nil
+//            self.contentController = nil
+//            self.vm = nil
+//        }
+////        self.colors = nil
+////        self.grabberHandle = nil
+//    }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//
+//        if event != nil{
+//            self.vm = FullDetailVM(id: event.id!, event: event)
+//            contentController =
+//        }
+//    }
     
     fileprivate func setupPanel(_ data: Event) {
         panel.layout = PanelLayout()
@@ -71,7 +110,7 @@ class FullDetailViewController: UIViewController{
         panel.surfaceView.grabberHandleSize = .init(width: .makeWidth(414), height: .makeHeight(414) * 85/414)
         
         let grabberHandle = FullDetailGrabberHandle(event: data, vm: vm)
-        self.grabberHandle = grabberHandle
+//        self.grabberHandle = grabberHandle
         panel.surfaceView.addSubview(grabberHandle)
       
         
@@ -110,34 +149,6 @@ class FullDetailViewController: UIViewController{
         view.addSubview(button)
         button.addTarget(self, action: #selector(goBack), for: .touchUpInside)
     }
-    
-    
-    
-//    weak var gradient: CAGradientLayer?
-//    fileprivate func distanceLabelGradient(_ colors: [CGColor]) {
-//        grabberHandle.distanceLabel.layer.cornerRadius = .makeHeight(12)
-//        grabberHandle.distanceLabel.layer.masksToBounds = true
-//        let gradient = CAGradientLayer()
-//        gradient.frame = CGRect(origin: grabberHandle.distanceLabel.frame.origin, size: grabberHandle.distanceLabel.frame.size)
-//        gradient.colors = colors
-//        gradient.startPoint = CGPoint(x: 0, y: 1)
-//        gradient.endPoint = CGPoint(x: 1, y: 1)
-//
-//        let shape = CAShapeLayer()
-//        shape.lineWidth = 1
-//        shape.path = UIBezierPath(roundedRect: grabberHandle.distanceLabel.bounds.insetBy(dx: 0.45,
-//                                                                                          dy: 0.45), cornerRadius: .makeHeight(12)).cgPath
-//        shape.strokeColor = UIColor.black.cgColor
-//        shape.fillColor = UIColor.clear.cgColor
-//        gradient.mask = shape
-//        if let _gradient = self.gradient{
-//            grabberHandle.layer.replaceSublayer(_gradient, with: gradient)
-//        }else{
-//            grabberHandle.layer.addSublayer(gradient)
-//        }
-//
-//        self.gradient = gradient
-//    }
     
     @objc func goBack(){
         navigationController?.popViewController(animated: true)

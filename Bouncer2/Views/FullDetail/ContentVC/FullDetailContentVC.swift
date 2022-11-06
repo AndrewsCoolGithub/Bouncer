@@ -8,13 +8,15 @@
 import Foundation
 import UIKit
 
-class TestScroll: UIViewController{
+class FullDetailContentVC: UIViewController{
     var shouldAnimateButton: Bool = false
     var vm: FullDetailVM!
     var lastButtonCount: Int = 0
     let scrollView = UIScrollView()
     let contentView = UIView()
-   
+    
+    enum Section{ case people}
+    var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
         
     let subtitleLabel: UILabel = {
         let label = UILabel()
@@ -26,14 +28,16 @@ class TestScroll: UIViewController{
         return label
     }()
     
+    var components: FullDetailViewComponents!
+    
     init(components: FullDetailViewComponents, event: Event, vm: FullDetailVM){
         super.init(nibName: nil, bundle: nil)
         self.vm = vm
+        self.components = components
         view.frame = view.frame.offsetBy(dx: 0, dy: .makeWidth(414) * 85/414)
         setupScrollView()
         setupViews(components: components)
         setupListeners(components: components)
-       
     }
     
 
@@ -60,6 +64,7 @@ class TestScroll: UIViewController{
     }
 
     @objc func buttonTapped(sender: UIButton){
+        print("Button tapped")
         shouldAnimateButton = true
         vm?.perform()
     }
@@ -69,7 +74,10 @@ class TestScroll: UIViewController{
         contentView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        
+        scrollView.alwaysBounceVertical = true
+        scrollView.isUserInteractionEnabled = true
+        scrollView.isExclusiveTouch = true
+        scrollView.delaysContentTouches = false
         scrollView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         scrollView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: .makeWidth(414) * 85/414).isActive = true
@@ -79,28 +87,10 @@ class TestScroll: UIViewController{
         contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
         contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
         contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-    }
-    
-    func setupViews(components: FullDetailViewComponents){
-        let descriptionLabel = components.descriptionLabel
-        contentView.addSubview(descriptionLabel)
-        descriptionLabel.text = vm.description
-        descriptionLabel.centerX(inView: contentView, topAnchor: contentView.topAnchor, paddingTop: .makeHeight(20))
+        contentView.isUserInteractionEnabled = true
 
-        let actionButton = components.actionButton
-        contentView.addSubview(actionButton)
-        actionButton.addTarget(self, action: #selector(buttonTapped(sender:)), for: .touchUpInside)
-        actionButton.centerX(inView: contentView, topAnchor: descriptionLabel.bottomAnchor, paddingTop: .makeWidth(414) * 20/414)
         
-        let timeLabel = components.timeLabel
-        contentView.addSubview(timeLabel)
-        timeLabel.centerX(inView: contentView, topAnchor: actionButton.bottomAnchor, paddingTop: .makeWidth(414) * 20/414)
         
-        contentView.addSubview(subtitleLabel)
-        subtitleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        subtitleLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 25).isActive = true
-        subtitleLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 3/4).isActive = true
-        subtitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
     
     func setupListeners(components: FullDetailViewComponents){
@@ -109,9 +99,113 @@ class TestScroll: UIViewController{
         setupButtonSymbol(components.actionButton, vm: vm)
         setupUpcomingTimeLabel(components.timeLabel, vm: vm)
         setupTimeRemainingLabel(components.timeLabel, vm: vm)
+        listenForCVUpdates(components, vm: vm)
+    }
+    
+    func setupViews(components: FullDetailViewComponents){
+        let descriptionLabel = components.descriptionLabel
+        contentView.addSubview(descriptionLabel)
+        descriptionLabel.text = vm.description
+        descriptionLabel.centerX(inView: contentView, topAnchor: contentView.topAnchor, paddingTop: .makeHeight(25))
+
+        let actionButton = components.actionButton
+        contentView.addSubview(actionButton)
+        actionButton.addTarget(self, action: #selector(buttonTapped(sender:)), for: .touchUpInside)
+        actionButton.centerX(inView: contentView, topAnchor: descriptionLabel.bottomAnchor, paddingTop: .makeWidth(414) * 35/414)
+        
+        let timeLabel = components.timeLabel
+        contentView.addSubview(timeLabel)
+        timeLabel.centerX(inView: contentView, topAnchor: actionButton.bottomAnchor, paddingTop: .makeWidth(414) * 20/414)
+        components.peopleCV.delegate = self
+        if !vm.rsvps.isEmpty{
+            addCV(components.peopleCountLabel, components.peopleCV, timeLabel)
+        }
+        
+//        contentView.addSubview(subtitleLabel)
+//        subtitleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+//        subtitleLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 25).isActive = true
+//        subtitleLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 3/4).isActive = true
+//        subtitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+//
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        print(contentView.intrinsicContentSize)
+    }
+    
+    func setupDataSource(_ collectionView: UICollectionView){
+        
+        dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, profile in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FullDetailPeopleCVCell.id, for: indexPath) as! FullDetailPeopleCVCell
+            cell.setup(with: profile)
+            return cell
+        })
+    }
+    
+    
+    fileprivate func addCV(_ peopleCountLabel: UILabel, _ peopleCV: UICollectionView,  _ timeLabel: UILabel) {
+       
+        setupDataSource(peopleCV)
+        DispatchQueue.main.async { [weak self] in
+            self?.contentView.addSubview(peopleCountLabel)
+            peopleCountLabel.anchor(top: timeLabel.bottomAnchor, left: self?.view.leftAnchor, paddingTop: .makeWidth(414) * 50/414, paddingLeft: .makeWidth(15))
+            
+            
+            if let rsvps = self?.vm.rsvps{
+                peopleCountLabel.text =  rsvps.count > 1 ? "\(rsvps.count) People Going" : "\(rsvps.count) Person Going"
+            }
+           
+            
+            peopleCV.setDimensions(height: .makeWidth(414) * 65/414, width: .makeWidth(414))
+            
+            self?.contentView.addSubview(peopleCV)
+            peopleCV.centerX(inView: self?.contentView ?? UIView(), topAnchor: peopleCountLabel.bottomAnchor, paddingTop: .makeWidth(414) * 15/414)
+            peopleCV.bottomAnchor.constraint(equalTo: self?.contentView.bottomAnchor ?? UIView().bottomAnchor).isActive = true
+        }
+    }
+    
+    
+    
+   
+    
+    func updateDatasource(_ profiles: [Profile]){
+        
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
+        
+        if !profiles.isEmpty{
+            DispatchQueue.main.async {
+                snapshot.appendSections([.people])
+                snapshot.appendItems(profiles, toSection: .people)
+            }
+        }else{
+            DispatchQueue.main.async { [weak self] in
+                self?.components.peopleCV.removeFromSuperview()
+                self?.components.peopleCountLabel.removeFromSuperview()
+            }
+        }
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.dataSource?.apply(snapshot, animatingDifferences: true)
+        }
     }
     
     //MARK: - Listeners
+    
+    fileprivate func listenForCVUpdates(_ components: FullDetailViewComponents, vm: FullDetailVM) {
+      
+//        DispatchQueue.main.async {
+            vm.$rsvps.receive(on: DispatchQueue.main).sink { [weak self] profiles in
+               
+                self?.addCV(components.peopleCountLabel, components.peopleCV, components.timeLabel)
+            
+                
+                self?.updateDatasource(profiles)
+            }.store(in: &vm.cancellable)
+//        }
+    }
+    
     fileprivate func setupDescription(_ component: UILabel, vm: FullDetailVM) {
         let descriptionLabel = component
         vm.$description.sink { newDescription in
@@ -236,12 +330,12 @@ class TestScroll: UIViewController{
     fileprivate func setupTimeRemainingLabel(_ component: UILabel, vm: FullDetailVM){
         vm.$endDate.sink { [weak self] endDate in
             guard let self = self else {return}
-            if let endDate = endDate, endDate > .now{
-                let timeRemaining = endDate.timeIntervalSinceNow
+            if let endDate = endDate, endDate > .now && vm.startDate ?? .now < .now {
+//                let timeRemaining = endDate.timeIntervalSinceNow
                 self.timerForRemaining?.invalidate()
                 self.timerForRemaining = nil
                 self.timerForRemaining = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateLabelForTimeRemaining), userInfo: component, repeats: true)
-            }else{
+            }else if vm.startDate ?? .now < .now && endDate == nil{
                 component.text = nil
                 self.timerForRemaining?.invalidate()
                 self.timerForRemaining = nil
@@ -275,9 +369,36 @@ class TestScroll: UIViewController{
         
         
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.vm = nil
+   
+    deinit{
+        print("DEINITED CONTENT VC 💙")
+        vm = nil
     }
+    
+}
+
+
+extension FullDetailContentVC: UICollectionViewDelegateFlowLayout{
+
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        return CGSize(width: .makeWidth(65), height: .makeWidth(414) * 65/414)
+//    }
+}
+
+extension FullDetailContentVC: UICollectionViewDelegate{
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let profile = dataSource?.itemIdentifier(for: indexPath){
+            let controller = ProfileViewController(profile: profile)
+            navigationController?.pushViewController(controller, animated: true)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: .makeWidth(414) * 65/414, height: .makeWidth(414) * 65/414)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: .makeWidth(15), bottom: 0, right: .makeWidth(15))
+    }
+    
 }

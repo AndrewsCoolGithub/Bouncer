@@ -125,7 +125,7 @@ class FullDetailGrabberHandle: UIView {
         attrString.append(midString)
         attrString.append(attrString2)
         self.distanceLabel.attributedText = attrString
-        print("Instrinsic Content Size: \(self.distanceLabel.intrinsicContentSize)")
+
         vm.$location.sink { [weak self] newLocation in
             guard let self = self, let newLocation = newLocation else {return}
             UIView.transition(with: self.cityLabel, duration: 0.3, options: .transitionCrossDissolve) {

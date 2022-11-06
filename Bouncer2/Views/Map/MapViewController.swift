@@ -24,8 +24,6 @@ class MapViewController: UIViewController{
         return mapView
     }()
     
-   // var pageController: MapAnnotationPageController!
-    
     let viewModel = MapViewModel()
     var cancellable = Set<AnyCancellable>()
     var initialLocation: AnyCancellable?
@@ -35,6 +33,7 @@ class MapViewController: UIViewController{
         return detail
     }()
 
+    var annotations = Set<Event>()
     
     
     override func viewDidLoad() {
@@ -43,18 +42,15 @@ class MapViewController: UIViewController{
         mapView.delegate = self
         mapView.frame = view.frame
         
-        
-        
-       
-        
         viewModel.delegate = self
         
         viewModel.$publicEvents.sink { [weak self] events in
-            guard let events = events else {return}
-
-            let annotations = events.compactMap({self?.createAnnotation(for:$0)})
-            self?.mapView.addAnnotations(annotations)
-           
+            guard let events = events, !events.isEmpty else {return}
+            let annots = events.compactMap { event -> MapEventAnnotation? in
+                return self?.createAnnotation(for: event)
+            }
+            guard !annots.isEmpty else {return}
+            self?.mapView.addAnnotations(annots)
         }.store(in: &cancellable)
         
         viewModel.$centerOnEvent.sink { [weak self] event in
@@ -92,24 +88,28 @@ class MapViewController: UIViewController{
         dismissDetail()
     }
     
-    func createAnnotation(for event: Event) -> MapEventAnnotation{
-        return MapEventAnnotation(event: event)
+    func createAnnotation(for event: Event) -> MapEventAnnotation?{
+        if annotations.contains(event){
+            return nil
+        }else{
+            annotations.update(with: event)
+            return MapEventAnnotation(event: event)
+        }
     }
     var count: Int = 0
 }
 extension MapViewController: MGLMapViewDelegate{
     func mapView(_ mapView: MGLMapView, didFinishLoading style: MGLStyle) {
         var bool: Bool = true
-            self.initialLocation =  User.shared.$locationInfo.sink { location in
-                guard let location = location else {return}
-                if bool{
-                    mapView.setCenter(location.coordinates, zoomLevel: 11, animated: true)
-                    bool = false
-                }
-               
+        self.initialLocation = User.shared.$locationInfo.sink { location in
+            guard let location = location else {return}
+            if bool{
+                mapView.setCenter(location.coordinates, zoomLevel: 11, animated: true)
+                bool = false
             }
-        
+        }
     }
+    
     func mapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
         guard let eventAnnotation = annotation as? MapEventAnnotation, let id = eventAnnotation.event.id else {return nil}
         guard let view = mapView.dequeueReusableAnnotationView(withIdentifier: id) else {

@@ -147,8 +147,8 @@ final class AccountInfo{
     }
     
     static func stopListeningForUpdates(){
-//        let uid = Auth.auth().currentUser!.uid
-//        FirestoreSubscription.cancel(id: uid)
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        FirestoreSubscription.cancel(id: uid)
     }
     
     static func checkForMissingData() -> MissingAccountData? {

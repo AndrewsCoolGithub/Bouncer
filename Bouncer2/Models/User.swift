@@ -10,7 +10,7 @@ import FirebaseAuth
 import UIImageColors
 import Combine
 
-class User: ObservableObject{
+final class User: ObservableObject{
     
     static let shared = User()
     

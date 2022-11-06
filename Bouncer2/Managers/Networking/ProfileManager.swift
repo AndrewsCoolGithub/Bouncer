@@ -22,6 +22,17 @@ actor ProfileManager: ObservableObject{
         case unfollow
     }
     
+    func fetchProfiles(_ ids: [String]) async throws -> [Profile]{
+        var currentProfiles = [Profile]()
+        
+        for id in ids {
+            var data = try await USERS_COLLECTION.document(id).getDocument(as: Profile.self)
+            currentProfiles.append(data)
+        }
+        
+        return currentProfiles
+    }
+    
     func followOperation(with id: String, action: FollowingOpertionAction) async throws {
         guard let uid = User.shared.id else {fatalError("no UID")}
         switch action{

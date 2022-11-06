@@ -27,6 +27,11 @@ class FullDetailVM: ObservableObject{
             startDate = event?.startsAt
             endDate = event?.endsAt
             determineAction(event)
+            if let rsvpIds = event?.rsvpIds{
+                Task{
+                   try await grabUserInfo(rsvpIds)
+                }
+            }
         }
     }
     
@@ -39,6 +44,7 @@ class FullDetailVM: ObservableObject{
     @Published var location: CLLocationCoordinate2D?
     @Published var action: ListAction!
     @Published var buttonCount: String!
+    @Published var rsvps: [Profile] = []
     @Published var startDate: Date? {
         didSet{
             guard let startDate = startDate, let event = event, startDate > .now else {
@@ -78,6 +84,12 @@ class FullDetailVM: ObservableObject{
             .map({$0})
             .assign(to: \.event, on: self)
             .store(in: &cancellable)
+    }
+    
+    func grabUserInfo(_ rsvpIds: [String]) async throws{
+        if let profiles = try? await ProfileManager.shared.fetchProfiles(rsvpIds){
+            rsvps = profiles
+        }
     }
     
     func determineAction(_ event: Event?){

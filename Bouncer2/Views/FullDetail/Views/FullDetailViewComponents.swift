@@ -94,5 +94,26 @@ struct FullDetailViewComponents: SkeletonLoadable{
         return label
     }()
     
+    let peopleCountLabel: UILabel = {
+        let label = UILabel()
+        label.font = .poppinsMedium(size: .makeWidth(17.5))
+        label.textAlignment = .left
+        label.textColor = .white
+        return label
+    }()
+    
+    let peopleCV: UICollectionView = {
+        let layout =  UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: .makeWidth(414) * 65/414, height: .makeWidth(414) * 65/414)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(FullDetailPeopleCVCell.self, forCellWithReuseIdentifier: FullDetailPeopleCVCell.id)
+        collectionView.backgroundColor = .greyColor()
+        collectionView.alwaysBounceHorizontal = true
+        collectionView.isDirectionalLockEnabled = true
+        return collectionView
+    }()
+    
+    
+    
     
 }
