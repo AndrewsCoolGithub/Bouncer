@@ -9,6 +9,9 @@ import Foundation
 import UIKit
 import Combine
 
+//TODO: 1. Add Last Seen (City, State)
+
+
 class ProfileViewController: UIViewController{
     
     var components = ProfileViewComponents()

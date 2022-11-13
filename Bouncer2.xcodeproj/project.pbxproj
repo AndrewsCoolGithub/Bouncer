@@ -27,6 +27,14 @@
 		A4124CCF2851CC3600979D26 /* UIViewExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CCE2851CC3600979D26 /* UIViewExt.swift */; };
 		A4124CD22851E63900979D26 /* AccountSignUpEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CD12851E63900979D26 /* AccountSignUpEntry.swift */; };
 		A4124CD42851FC1800979D26 /* PastelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CD32851FC1800979D26 /* PastelButton.swift */; };
+		A42731D0291E4FB200CB6B66 /* EventSuiteDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731CF291E4FB200CB6B66 /* EventSuiteDetail.swift */; };
+		A42731D3291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731D2291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift */; };
+		A42731D6291E705600CB6B66 /* EventSuiteDetailVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731D5291E705600CB6B66 /* EventSuiteDetailVM.swift */; };
+		A42731D8291F599000CB6B66 /* SuggestedCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731D7291F599000CB6B66 /* SuggestedCard.swift */; };
+		A42731DC291F8B3C00CB6B66 /* FirestoreShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731DB291F8B3C00CB6B66 /* FirestoreShortcuts.swift */; };
+		A42731DE291FC9D200CB6B66 /* SuggestedCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731DD291FC9D200CB6B66 /* SuggestedCollectionView.swift */; };
+		A42731E0291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731DF291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift */; };
+		A42731E2291FD82700CB6B66 /* SuiteCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731E1291FD82700CB6B66 /* SuiteCellDelegate.swift */; };
 		A42B7B27288A5FF5005D7B5C /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42B7B26288A5FF5005D7B5C /* SearchViewModel.swift */; };
 		A42B7B29288A60FE005D7B5C /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42B7B28288A60FE005D7B5C /* SearchManager.swift */; };
 		A42C3D40282896EA00B96381 /* EventFullPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42C3D3F282896EA00B96381 /* EventFullPreview.swift */; };
@@ -44,6 +52,7 @@
 		A43A47A32897A8FC00A6EDC7 /* SearchCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A47A22897A8FC00A6EDC7 /* SearchCells.swift */; };
 		A43A47A52897AA9B00A6EDC7 /* SearchCellViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A47A42897AA9B00A6EDC7 /* SearchCellViews.swift */; };
 		A43D6FAB2858699000D1509C /* ListCellVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43D6FAA2858699000D1509C /* ListCellVM.swift */; };
+		A43D8AB92919776700D5387D /* FullDetailHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43D8AB82919776700D5387D /* FullDetailHostView.swift */; };
 		A43F7BB22859BDA100AE7883 /* UIImageExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43F7BB12859BDA100AE7883 /* UIImageExt.swift */; };
 		A440F53128574E15003E7690 /* MediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A440F53028574E15003E7690 /* MediaManager.swift */; };
 		A440F53328575B41003E7690 /* EventCreationLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A440F53228575B41003E7690 /* EventCreationLoadingView.swift */; };
@@ -53,7 +62,6 @@
 		A44267E52813E2F8003ED294 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44267E42813E2F8003ED294 /* Profile.swift */; };
 		A44267E72813E306003ED294 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44267E62813E306003ED294 /* Event.swift */; };
 		A44267E92813E950003ED294 /* FirestoreFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44267E82813E950003ED294 /* FirestoreFields.swift */; };
-		A44267EB2813EDF0003ED294 /* FirestoreTypeAlias.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44267EA2813EDF0003ED294 /* FirestoreTypeAlias.swift */; };
 		A451A9F128D5E44400C0EAA1 /* CharacterExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A451A9F028D5E44400C0EAA1 /* CharacterExt.swift */; };
 		A451A9F328DCC26800C0EAA1 /* EmojiArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A451A9F228DCC26800C0EAA1 /* EmojiArray.swift */; };
 		A4536DFE28A535D000DD8E17 /* EventSuiteViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4536DFD28A535D000DD8E17 /* EventSuiteViewComponents.swift */; };
@@ -193,6 +201,14 @@
 		A4124CCE2851CC3600979D26 /* UIViewExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExt.swift; sourceTree = "<group>"; };
 		A4124CD12851E63900979D26 /* AccountSignUpEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSignUpEntry.swift; sourceTree = "<group>"; };
 		A4124CD32851FC1800979D26 /* PastelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastelButton.swift; sourceTree = "<group>"; };
+		A42731CF291E4FB200CB6B66 /* EventSuiteDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteDetail.swift; sourceTree = "<group>"; };
+		A42731D2291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteDetailViewComponents.swift; sourceTree = "<group>"; };
+		A42731D5291E705600CB6B66 /* EventSuiteDetailVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteDetailVM.swift; sourceTree = "<group>"; };
+		A42731D7291F599000CB6B66 /* SuggestedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestedCard.swift; sourceTree = "<group>"; };
+		A42731DB291F8B3C00CB6B66 /* FirestoreShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreShortcuts.swift; sourceTree = "<group>"; };
+		A42731DD291FC9D200CB6B66 /* SuggestedCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestedCollectionView.swift; sourceTree = "<group>"; };
+		A42731DF291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteDetailTableViewCell.swift; sourceTree = "<group>"; };
+		A42731E1291FD82700CB6B66 /* SuiteCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteCellDelegate.swift; sourceTree = "<group>"; };
 		A42B7B26288A5FF5005D7B5C /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		A42B7B28288A60FE005D7B5C /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
 		A42C3D3F282896EA00B96381 /* EventFullPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFullPreview.swift; sourceTree = "<group>"; };
@@ -210,6 +226,7 @@
 		A43A47A22897A8FC00A6EDC7 /* SearchCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCells.swift; sourceTree = "<group>"; };
 		A43A47A42897AA9B00A6EDC7 /* SearchCellViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCellViews.swift; sourceTree = "<group>"; };
 		A43D6FAA2858699000D1509C /* ListCellVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCellVM.swift; sourceTree = "<group>"; };
+		A43D8AB82919776700D5387D /* FullDetailHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullDetailHostView.swift; sourceTree = "<group>"; };
 		A43F7BB12859BDA100AE7883 /* UIImageExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UIImageExt.swift; path = "../New Group/UIImageExt.swift"; sourceTree = "<group>"; };
 		A440F53028574E15003E7690 /* MediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaManager.swift; sourceTree = "<group>"; };
 		A440F53228575B41003E7690 /* EventCreationLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationLoadingView.swift; sourceTree = "<group>"; };
@@ -219,7 +236,6 @@
 		A44267E42813E2F8003ED294 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		A44267E62813E306003ED294 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		A44267E82813E950003ED294 /* FirestoreFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreFields.swift; sourceTree = "<group>"; };
-		A44267EA2813EDF0003ED294 /* FirestoreTypeAlias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreTypeAlias.swift; sourceTree = "<group>"; };
 		A451A9F028D5E44400C0EAA1 /* CharacterExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterExt.swift; sourceTree = "<group>"; };
 		A451A9F228DCC26800C0EAA1 /* EmojiArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiArray.swift; sourceTree = "<group>"; };
 		A4536DFD28A535D000DD8E17 /* EventSuiteViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteViewComponents.swift; sourceTree = "<group>"; };
@@ -404,7 +420,7 @@
 				A44267E82813E950003ED294 /* FirestoreFields.swift */,
 				A4721D392871787100F763AF /* FirestoreSubscription.swift */,
 				A4721D3B287178BF00F763AF /* FirestoreCollections.swift */,
-				A44267EA2813EDF0003ED294 /* FirestoreTypeAlias.swift */,
+				A42731DB291F8B3C00CB6B66 /* FirestoreShortcuts.swift */,
 			);
 			path = Firestore;
 			sourceTree = "<group>";
@@ -531,9 +547,34 @@
 				A4721D372871764C00F763AF /* FullDetailVM.swift */,
 				A4F7DDD9286DB5F40029BEB9 /* FullDetailViewController.swift */,
 				A4721D36287175E200F763AF /* Views */,
-				A4721D35287175CB00F763AF /* ContentVC */,
 			);
 			path = FullDetail;
+			sourceTree = "<group>";
+		};
+		A42731D1291E4FB500CB6B66 /* EventSuiteDetail */ = {
+			isa = PBXGroup;
+			children = (
+				A42731D2291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift */,
+				A42731CF291E4FB200CB6B66 /* EventSuiteDetail.swift */,
+				A42731E1291FD82700CB6B66 /* SuiteCellDelegate.swift */,
+				A42731D5291E705600CB6B66 /* EventSuiteDetailVM.swift */,
+				A42731DF291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift */,
+				A42731DD291FC9D200CB6B66 /* SuggestedCollectionView.swift */,
+				A42731D7291F599000CB6B66 /* SuggestedCard.swift */,
+			);
+			path = EventSuiteDetail;
+			sourceTree = "<group>";
+		};
+		A42731D4291E657700CB6B66 /* EventSuiteMain */ = {
+			isa = PBXGroup;
+			children = (
+				A49CD70A283217DC00BD8594 /* EventSuite.swift */,
+				A4536DFD28A535D000DD8E17 /* EventSuiteViewComponents.swift */,
+				A49CD7132832311900BD8594 /* EventSuiteCell.swift */,
+				A490ABF3283CFDBD006405C4 /* EventHeaderCell.swift */,
+				A49CD72428325C1B00BD8594 /* EventSuiteCellViewModel.swift */,
+			);
+			path = EventSuiteMain;
 			sourceTree = "<group>";
 		};
 		A42DCBC528D4A18900C7CA84 /* EmoteSelector */ = {
@@ -654,19 +695,13 @@
 			path = Messaging;
 			sourceTree = "<group>";
 		};
-		A4721D35287175CB00F763AF /* ContentVC */ = {
-			isa = PBXGroup;
-			children = (
-				A463526C28729BB30070BF8E /* FullDetailContentVC.swift */,
-			);
-			path = ContentVC;
-			sourceTree = "<group>";
-		};
 		A4721D36287175E200F763AF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A463526C28729BB30070BF8E /* FullDetailContentVC.swift */,
 				A4F7DDE1286E1A120029BEB9 /* FullDetailGrabberHandle.swift */,
 				A4F7DDDB286DBA780029BEB9 /* FullDetailViewComponents.swift */,
+				A43D8AB82919776700D5387D /* FullDetailHostView.swift */,
 				A4D85BA5291731BE00789B46 /* FullDetailPeopleCVCell.swift */,
 			);
 			path = Views;
@@ -718,11 +753,8 @@
 			isa = PBXGroup;
 			children = (
 				A409411F281BCDCD00094A64 /* EventCreation */,
-				A49CD70A283217DC00BD8594 /* EventSuite.swift */,
-				A4536DFD28A535D000DD8E17 /* EventSuiteViewComponents.swift */,
-				A49CD7132832311900BD8594 /* EventSuiteCell.swift */,
-				A490ABF3283CFDBD006405C4 /* EventHeaderCell.swift */,
-				A49CD72428325C1B00BD8594 /* EventSuiteCellViewModel.swift */,
+				A42731D4291E657700CB6B66 /* EventSuiteMain */,
+				A42731D1291E4FB500CB6B66 /* EventSuiteDetail */,
 			);
 			path = EventSuite;
 			sourceTree = "<group>";
@@ -1033,15 +1065,16 @@
 				A409412D281DA4A300094A64 /* EventDescriptionSelect.swift in Sources */,
 				A45FCFAF28B76C9B005B833B /* ChatViewController.swift in Sources */,
 				A4124CCF2851CC3600979D26 /* UIViewExt.swift in Sources */,
-				A44267EB2813EDF0003ED294 /* FirestoreTypeAlias.swift in Sources */,
 				A49CD70B283217DC00BD8594 /* EventSuite.swift in Sources */,
 				A4763EA4285DB9BA001B5929 /* AccountContactPerm.swift in Sources */,
 				A409415028204C0900094A64 /* EventTypeSelect.swift in Sources */,
+				A42731D8291F599000CB6B66 /* SuggestedCard.swift in Sources */,
 				A409411E281BCDA900094A64 /* EventTitleSelect.swift in Sources */,
 				A46438E728E3A00900AAC51E /* CustomEmoteCell.swift in Sources */,
 				A49624BB2898090E003F8368 /* SearchHeaderCell.swift in Sources */,
 				A4A996762813C63C009DED0B /* Colors.swift in Sources */,
 				A4721D3A2871787100F763AF /* FirestoreSubscription.swift in Sources */,
+				A42731DE291FC9D200CB6B66 /* SuggestedCollectionView.swift in Sources */,
 				A46438E928E58B6F00AAC51E /* CLLocationCoord.swift in Sources */,
 				A493F2492816ACB500488A60 /* ImageExt.swift in Sources */,
 				A4CA8ECA285F20A900745B73 /* AllEventListHeaderCell.swift in Sources */,
@@ -1056,9 +1089,11 @@
 				A49AA8FF287773B800265F13 /* AccountData.swift in Sources */,
 				A4124CD22851E63900979D26 /* AccountSignUpEntry.swift in Sources */,
 				A409415B2822980B00094A64 /* Date&TImeIntervalExt.swift in Sources */,
+				A43D8AB92919776700D5387D /* FullDetailHostView.swift in Sources */,
 				A4A55ACF2855C43C005EBD78 /* SkeletonLoadable.swift in Sources */,
 				A46438EB28E5932D00AAC51E /* Doubles.swift in Sources */,
 				A474E7E428798604007F271F /* ProfileViewComponents.swift in Sources */,
+				A42731E2291FD82700CB6B66 /* SuiteCellDelegate.swift in Sources */,
 				A49AA9012877EBC600265F13 /* AccountLocationPerm1.swift in Sources */,
 				A4CAD694287F46FA00332178 /* ProfileEditPanel.swift in Sources */,
 				A4A9962F2813C46B009DED0B /* EventList.swift in Sources */,
@@ -1081,6 +1116,7 @@
 				A49CD7142832311900BD8594 /* EventSuiteCell.swift in Sources */,
 				A474AA0C285C8E5E00DE93C9 /* PastelIcon.swift in Sources */,
 				A44267E52813E2F8003ED294 /* Profile.swift in Sources */,
+				A42731D0291E4FB200CB6B66 /* EventSuiteDetail.swift in Sources */,
 				A4C4E6F42815961E000F7366 /* Shadows.swift in Sources */,
 				A46438E528E39F6500AAC51E /* EmojiCustomizeCV.swift in Sources */,
 				A42D5E08287E262E005F5748 /* MyEventsTab.swift in Sources */,
@@ -1098,6 +1134,7 @@
 				A43D6FAB2858699000D1509C /* ListCellVM.swift in Sources */,
 				A49CD718283244E200BD8594 /* EventDraft.swift in Sources */,
 				A474E7E1287974B4007F271F /* ProfileViewController.swift in Sources */,
+				A42731E0291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift in Sources */,
 				A4A55AD12855C577005EBD78 /* EventListVM.swift in Sources */,
 				A49CD7112832284B00BD8594 /* DraftManager.swift in Sources */,
 				A42DCBC228D49D7E00C7CA84 /* ChatEmoteSelector.swift in Sources */,
@@ -1109,6 +1146,7 @@
 				A4A55ACD2855BEEF005EBD78 /* ListCell.swift in Sources */,
 				A4FEBCBC2877198000918FA8 /* ContactsManager.swift in Sources */,
 				A43A47A128979CC100A6EDC7 /* SearchViewComponents.swift in Sources */,
+				A42731D3291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift in Sources */,
 				A4094154282238E400094A64 /* EventAnnotation.swift in Sources */,
 				A4FFF25728D19671007BED60 /* EmojiStringToImage.swift in Sources */,
 				A4F6C1352881513700115972 /* ProfileTextEdit.swift in Sources */,
@@ -1136,6 +1174,8 @@
 				A45404672847FCFE00D59BA0 /* EventCreationEnum.swift in Sources */,
 				A4A9962D2813C46B009DED0B /* SceneDelegate.swift in Sources */,
 				A42D5E04287E1C75005F5748 /* SegmentView.swift in Sources */,
+				A42731DC291F8B3C00CB6B66 /* FirestoreShortcuts.swift in Sources */,
+				A42731D6291E705600CB6B66 /* EventSuiteDetailVM.swift in Sources */,
 				A4581D022860A2FB008FF2BC /* MapEventAnnotation.swift in Sources */,
 				A409415628224EA800094A64 /* EventAnnotationView.swift in Sources */,
 				A42DCBC728D4A1A200C7CA84 /* EmoteCVSectionHeader.swift in Sources */,

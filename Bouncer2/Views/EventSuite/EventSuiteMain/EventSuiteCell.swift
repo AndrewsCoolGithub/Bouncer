@@ -18,6 +18,7 @@ class EventSuiteCell: UICollectionViewCell{
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
     }
     
     private lazy var bottomSheet: UIView = {
@@ -246,5 +247,9 @@ class EventSuiteCell: UICollectionViewCell{
             return UIImage(contentsOfFile: URL(fileURLWithPath: dir.absoluteString).appendingPathComponent(named).path)
         }
         return nil
+    }
+    
+    deinit{
+        viewModel = nil
     }
 }

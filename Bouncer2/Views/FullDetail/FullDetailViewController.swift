@@ -20,11 +20,11 @@ class FullDetailViewController: UIViewController{
     let panel = FloatingPanelController()
     var vm: FullDetailVM!
     
-    init(event: Event, image: UIImage? = nil, from frame: CGRect? = nil){
+    init(event: Event, image: UIImage?, hostImage: UIImage?, from frame: CGRect? = nil){
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = event.colors.first?.uiColor()
         self.vm = FullDetailVM(id: event.id!, event: event)
-        contentController = FullDetailContentVC(components: components, event: event, vm: vm)
+        contentController = FullDetailContentVC(components: components, event: event, vm: vm, hostImage: hostImage)
         setupImage(components.eventImageView, image: image, initURL: URL(string: event.imageURL)!)
         setupPanel(event)
         setupBackButton(components.backButton)

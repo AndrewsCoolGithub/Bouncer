@@ -151,13 +151,9 @@ extension AllEventsViewController: UICollectionViewDelegateFlowLayout{
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let event = dataSource?.itemIdentifier(for: indexPath) {
-            
-            guard let image = (collectionView.cellForItem(at: indexPath) as? ListCell)?.eventImageView.image else {
-                let fullDetail = FullDetailViewController(event: event)
-                navigationController?.pushViewController(fullDetail, animated: true)
-                return
-            }
-            let fullDetail = FullDetailViewController(event: event, image: image)
+            let eventImage: UIImage? = (collectionView.cellForItem(at: indexPath) as? ListCell)?.eventImageView.image
+            let hostImage: UIImage? = (collectionView.cellForItem(at: indexPath) as? ListCell)?.profileImageView.image
+            let fullDetail = FullDetailViewController(event: event, image: eventImage, hostImage: hostImage)
             navigationController?.pushViewController(fullDetail, animated: true)
         }
     }

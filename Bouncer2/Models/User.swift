@@ -14,6 +14,12 @@ final class User: ObservableObject{
     
     static let shared = User()
     
+    var profile: Profile {
+        get{
+            return Profile(id: id!, image_url: imageURL!, display_name: displayName!, user_name: userName!, latitude: latitude!, longitude: longitude!, timeJoined: timeJoined, backdrop_url: backdropImageURL, bio: bio, followers: followers, following: following, blocked: blocked, blockedBy: blockedBy, colors: colors, number: number, email: email, emojis: emojis, recentEmojis: recentEmojis)
+        }
+    }
+    
     private init(){
         print("DID INIT")
         
@@ -43,6 +49,7 @@ final class User: ObservableObject{
                 shared.recentEmojis = profile.recentEmojis
                 shared.number = profile.number ?? ""
                 shared.email = profile.email ?? ""
+                shared.timeJoined = profile.timeJoined ?? .now
             }catch{
                 print("Error fetching user data, yikes 😡: \(error.localizedDescription)")
             }
@@ -65,6 +72,7 @@ final class User: ObservableObject{
     @Published var recentEmojis: [Emoji]?
     @Published var number: String!
     @Published var email: String!
+    @Published var timeJoined: Date! = .now
         
     @Published var locationInfo: LocationInformation!
     

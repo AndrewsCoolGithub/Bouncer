@@ -30,6 +30,10 @@ extension CALayer {
         shadowRadius = 0
         shadowPath = nil
     }
+    
+    func defaultShadow(_ rounding: CGFloat){
+        applySketchShadow(color: .black.withAlphaComponent(0.3), alpha: 1, x: 0, y: 6, blur: 9, spread: 5, withRounding: rounding)
+    }
 }
 public class InnerShadowLayer: CAGradientLayer {
 

@@ -34,13 +34,13 @@ class EventCreationValidator{
             }
         case .eventLocation:
             guard let eventlocation = EventCreationVC.shared.viewModel.location else { return false }
-            guard EventManager.shared.events.filter({CLLocation(latitude: $0.location.latitude, longitude: $0.location.longitude).distance(from: CLLocation(latitude: eventlocation.latitude, longitude: eventlocation.longitude)) < 100}).count == 0 else {
-                
-                if EventCreationVC.Static.isDisposed == false{
-                    EventCreationVC.shared.showMessage(withTitle: "Oops", message: "There is already an event in this area.")
-                }
-                return false
-            }
+//            guard EventManager.shared.events.filter({CLLocation(latitude: $0.location.latitude, longitude: $0.location.longitude).distance(from: CLLocation(latitude: eventlocation.latitude, longitude: eventlocation.longitude)) < 100}).count == 0 else {
+//
+//                if EventCreationVC.Static.isDisposed == false{
+//                    EventCreationVC.shared.showMessage(withTitle: "Oops", message: "There is already an event in this area.")
+//                }
+//                return false
+//            }
             
             let coordinate₀ = CLLocation(latitude: eventlocation.latitude, longitude: eventlocation.longitude)
             let coordinate₁ = CLLocation(latitude: User.shared.locationInfo.latitude, longitude: User.shared.locationInfo.longitude)
@@ -58,8 +58,14 @@ class EventCreationValidator{
             }
             
             let endDate = startDate.addingTimeInterval(duration)
-            let bool = endDate > startDate && startDate > .now ? true : false
-            return bool
+            if EventCreationVC.shared.viewModel.oldEvent == nil{
+                let bool = endDate > startDate && startDate > .now ? true : false
+                return bool
+            }else{
+                let bool = endDate > startDate && endDate > .now ? true : false
+                return bool
+            }
+           
             
         case .eventType:
             let bool = EventCreationVC.shared.viewModel.eventType != nil ? true : false

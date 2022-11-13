@@ -122,7 +122,6 @@ class EventSuite: UIViewController{
         }
         
         if let upcoming = upcoming, !upcoming.isEmpty{
-            print("Upcoming: \(upcoming)")
             snapshot.appendSections([.upcoming])
             let events = upcoming.map({EventSuiteCellViewModel(event: $0)})
             snapshot.appendItems(events, toSection: .upcoming)
@@ -205,7 +204,8 @@ extension EventSuite: UICollectionViewDelegate{
                 EventCreationVC.setup(image: cell.imageView.image!, colors: event.uiImageColors(), with: event)
                 self.navigationController?.pushViewController(EventCreationVC.shared, animated: true)
             case .event(event: let event):
-                print("Make this view")
+                let suiteDetail = EventSuiteDetail(event, cell.imageView.image)
+                navigationController?.pushViewController(suiteDetail, animated: true)
             }
         }
     }

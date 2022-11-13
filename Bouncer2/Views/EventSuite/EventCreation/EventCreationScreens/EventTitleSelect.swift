@@ -23,7 +23,7 @@ class EventTitleSelect: UIViewController{
         textView.tintColor = EventCreationVC.colors.detail
         textView.font = .poppinsMedium(size: .makeWidth(22))
         textView.alpha = 1
-       
+        textView.autocapitalizationType = .words
         textView.textContainerInset = UIEdgeInsets(top: .makeHeight(15), left: .makeWidth(15), bottom: .makeHeight(15), right: .makeWidth(15))
         return textView
     }()

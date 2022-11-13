@@ -22,9 +22,19 @@ final class ListCell: UICollectionViewCell{
     
     private var cancellable = Set<AnyCancellable>()
     
+    ///Public access for using image in full detail so it won't be download twice
      let eventImageView: UIImageView = { // 160 x 375
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: .makeWidth(265), height: .makeWidth(375) * 160/375))
         imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    ///Public access for using image in full detail so it won't be download twice
+    let profileImageView: UIImageView = { // 61 x 61
+        let imageView = UIImageView(frame: CGRect(x: .makeWidth(25.75), y: .makeHeight(10) + .makeWidth(2), width: .makeWidth(61), height: .makeWidth(61)))
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = .makeWidth(20)
         return imageView
     }()
     
@@ -50,13 +60,7 @@ final class ListCell: UICollectionViewCell{
         return backGroundView
     }()
     
-    fileprivate let profileImageView: UIImageView = { // 61 x 61
-        let imageView = UIImageView(frame: CGRect(x: .makeWidth(25.75), y: .makeHeight(10) + .makeWidth(2), width: .makeWidth(61), height: .makeWidth(61)))
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.masksToBounds = true
-        imageView.layer.cornerRadius = .makeWidth(20)
-        return imageView
-    }()
+    
     
     fileprivate let profileBackgroundGradient: UIView = { // 65 x 65
         let gradientView = UIView(frame: CGRect(x: .makeWidth(23.75), y: .makeHeight(10), width: .makeWidth(65), height: .makeWidth(65)))
@@ -165,8 +169,6 @@ final class ListCell: UICollectionViewCell{
         label.adjustsFontSizeToFitWidth = true
         return label
     }()
-    
-    
     
     lazy var skeletonGradient: CAGradientLayer = {
         let gradient = CAGradientLayer()
@@ -420,9 +422,11 @@ final class ListCell: UICollectionViewCell{
     }
     
     private func loadImage(){
-        let randInt: Int = Int.random(in: 300...1920)
-        let randInt2: Int = Int.random(in: 300...1920)
-        profileImageView.sd_setImage(with: URL(string: "https://source.unsplash.com/random/?person/\(randInt)x\(randInt2)")) { i, e, c, u in
+//        let randInt: Int = Int.random(in: 300...1920)
+//        let randInt2: Int = Int.random(in: 300...1920)
+//        //"https://source.unsplash.com/random/?person/\(randInt)x\(randInt2)"
+        
+        profileImageView.sd_setImage(with: URL(string: viewModel.event.hostProfile.image_url)) { i, e, c, u in
             self.skeletonGradientForImage.removeFromSuperlayer()
         }
     }

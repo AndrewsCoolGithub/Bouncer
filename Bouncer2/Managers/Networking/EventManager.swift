@@ -10,6 +10,7 @@ import FirebaseFirestoreSwift
 import FirebaseAuth
 import Firebase
 import Combine
+import CoreLocation
 
 let EVENTS_COLLECTION = Firestore.firestore().collection("Events")
 final class EventManager: ObservableObject{
@@ -21,11 +22,7 @@ final class EventManager: ObservableObject{
     @Published var events = [Event]()
     @Published var modified = [Event]()
     @Published var upcoming = [Event]()
-    @Published var previouslyHosted = [Event]() {
-        didSet{
-            print("SO IT HAPPENS THAT I GOT EM")
-        }
-    }
+    @Published var previouslyHosted = [Event]()
     
     public func stopListeningForEvents() {
         if listener != nil {
@@ -49,7 +46,7 @@ final class EventManager: ObservableObject{
             let eventRef = EVENTS_COLLECTION.document()
             if let image = image{
                 let url = try await MediaManager.uploadImage(image, path: Storage.storage().reference().child("Event").child(eventRef.documentID))
-                try eventRef.setData(from: Event(imageURL: url, title: event.title, description: event.description, location: event.location, locationName: event.locationName, startsAt: event.startsAt, endsAt: event.endsAt, type: event.type, colors: event.colors, hostId: event.hostId))
+                try eventRef.setData(from: Event(imageURL: url, title: event.title, description: event.description, location: event.location, locationName: event.locationName, startsAt: event.startsAt, endsAt: event.endsAt, type: event.type, colors: event.colors, hostId: event.hostId, hostProfile: User.shared.profile))
             }else{
                 try eventRef.setData(from: event)
             }
@@ -58,6 +55,20 @@ final class EventManager: ObservableObject{
         }catch{
             throw error
         }
+    }
+    
+    //MARK: - Update
+    func update(_ event: Event, image: UIImage? = nil) async throws {
+        guard let id = event.id else {return}
+        if let image = image{
+            let url = try await MediaManager.uploadImage(image, path: Storage.storage().reference().child("Event").child(id))
+            var event = Event(id: id, imageURL: url, title: event.title, description: event.description, location: event.location, locationName: event.locationName, startsAt: event.startsAt, endsAt: event.endsAt, type: event.type, colors: event.colors, hostId: event.hostId, hostProfile: event.hostProfile, prospectIds: event.prospectIds, invitedIds: event.invitedIds, guestIds: event.guestIds)
+            try EVENTS_COLLECTION.document(id).setData(from: event, merge: true)
+        }else{
+            try EVENTS_COLLECTION.document(id).setData(from: event, merge: true)
+            return
+        }
+       
     }
     
     //MARK: - Read
@@ -146,12 +157,19 @@ final class EventManager: ObservableObject{
         }
     }
     
+    /** Get 20 closest events to user, for region monitoring */
+    func getEventsForRegionMonitoring(_ currentLocation: CLLocation) -> [Event]{
+        var events = events.filter({$0.type == .open && $0.startsAt < .now && $0.endsAt > .now && $0.getLocation().distance(from: currentLocation) < 50000})
+        events.sort(by: {$0.getLocation().distance(from: currentLocation) > $1.getLocation().distance(from: currentLocation)})
+        return events.suffix(20)
+    }
+    
    
     //MARK: - Update
     
     /** Add to Event Collection (rsvp, waitlist, invited, guest)*/
-    func addTo(collection: EventCollections, with eventID: String) async throws{
-        try await EVENTS_COLLECTION.document(eventID).updateData([collection.rawValue: FieldValue.arrayUnion([User.shared.id!])])
+    func addTo(collection: EventCollections, with eventID: String, userID uid: String? = nil) async throws{
+        try await EVENTS_COLLECTION.document(eventID).updateData([collection.rawValue: FieldValue.arrayUnion([uid != nil ? uid! : User.shared.id!])])
     }
     
     /** Modify Event Data, replaces given field with new data */
@@ -162,8 +180,8 @@ final class EventManager: ObservableObject{
     //MARK: - Delete
     
     /** Remove from Event Collection (rsvp, waitlist, invited, guest) */
-    func remove(from collection: EventCollections, for eventID: String) async throws{
-        try await EVENTS_COLLECTION.document(eventID).updateData([collection.rawValue: FieldValue.arrayRemove([User.shared.id!])])
+    func remove(from collection: EventCollections, for eventID: String, userID uid: String? = nil) async throws{
+        try await EVENTS_COLLECTION.document(eventID).updateData([collection.rawValue: FieldValue.arrayRemove([uid != nil ? uid! : User.shared.id!])])
     }
 }
 

@@ -26,7 +26,7 @@ class FullDetailPeopleCVCell: UICollectionViewCell, SkeletonLoadable {
 
     private lazy var imageView: UIImageView = {
        
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: .makeWidth(414) * 65/414, height: .makeWidth(414) * 65/414), cornerRadius: (.makeWidth(414) * 65/414)/2, uiColors: nil, lineWidth: 1.5, direction: .horizontal)
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: .makeWidth(414) * 65/414, height: .makeWidth(414) * 65/414), cornerRadius: (.makeWidth(414) * 65/414)/2, uiColors: nil, lineWidth: 2, direction: .horizontal)
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView

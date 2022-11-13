@@ -48,7 +48,7 @@ class Location: NSObject, CLLocationManagerDelegate {
         info.latitude = mostRecentLocation.coordinate.latitude
         info.longitude = mostRecentLocation.coordinate.longitude
 
-
+        checkForUpdate(mostRecentLocation)
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(mostRecentLocation) { (placemarks, error) in
             guard let placemarks = placemarks, let placemark = placemarks.first else { return }
@@ -92,6 +92,34 @@ class Location: NSObject, CLLocationManagerDelegate {
             window.rootViewController = noAlwaysVC
             
         }
+    }
+    
+    /* 1m/s = 2.236 mph
+        
+        */
+    
+    func checkForUpdate(_ location: CLLocation){
+        let events = EventManager.shared.getEventsForRegionMonitoring(location)
+        guard !events.isEmpty else {return}
+        
+        var newRegions = [String : CLCircularRegion]()
+        events.forEach { event in
+            newRegions[event.id!] = CLCircularRegion(center: event.getLocation().coordinate,
+                                                     radius: 69,
+                                                     identifier: event.id!)
+        }
+        
+        for region in locationManager.monitoredRegions{
+            if newRegions[region.identifier] == nil{
+                locationManager.stopMonitoring(for: region)
+            }
+        }
+        
+        newRegions.values.forEach { region in
+            locationManager.startMonitoring(for: region)
+        }
+        
+        print("Monitering \(locationManager.monitoredRegions.count) regions: \(locationManager.monitoredRegions)")
     }
 }
 

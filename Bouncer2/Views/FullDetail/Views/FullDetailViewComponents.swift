@@ -113,6 +113,15 @@ struct FullDetailViewComponents: SkeletonLoadable{
         return collectionView
     }()
     
+    let hostLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Hosted by"
+        label.font = .poppinsMedium(size: .makeWidth(17.5))
+        label.textAlignment = .left
+        return label
+    }()
+    
+    
     
     
     

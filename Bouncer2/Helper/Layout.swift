@@ -348,7 +348,13 @@ extension CGFloat{
         return UIScreen.main.bounds.width * (CGFloat(points)/CGFloat(414))
     }
     
+    static func wProportioned(_ points: CGFloat) -> CGFloat {
+        return .makeWidth(414) * points/414
+    }
     
+    static func hProportioned(_ points: CGFloat) -> CGFloat {
+        return .makeHeight(896) * points/896
+    }
     
     static var midX: CGFloat {
         return UIScreen.main.bounds.midX

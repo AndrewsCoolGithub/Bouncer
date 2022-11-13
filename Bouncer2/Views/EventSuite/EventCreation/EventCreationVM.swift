@@ -13,6 +13,7 @@ import Firebase
 
 final class EventCreationVM: ObservableObject{
     
+    public var oldEvent: Event?
     @Published public var image: UIImage?
     @Published public var eventTitle: String?
     @Published public var descrip: String?
@@ -69,9 +70,25 @@ final class EventCreationVM: ObservableObject{
         do {
             guard EventCreationValidator.firstMissingProp == .eventOverview else {throw EventCreationValidator.firstMissingProp}
             let locationName = try await fetchLocationName()
-            let id = try await EventManager.shared.create(Event(title: eventTitle!, description: descrip!, location: GeoPoint(latitude: location!.latitude, longitude: location!.longitude), locationName: locationName, startsAt: startDate!, endsAt: startDate!.addingTimeInterval(duration!), type: eventType!, colors: colors!.colors.map({$0.getColorModel()}), hostId: User.shared.id!), image: image!)
+            let id = try await EventManager.shared.create(Event(title: eventTitle!, description: descrip!, location: GeoPoint(latitude: location!.latitude, longitude: location!.longitude), locationName: locationName, startsAt: startDate!, endsAt: startDate!.addingTimeInterval(duration!), type: eventType!, colors: colors!.colors.map({$0.getColorModel()}), hostId: User.shared.id!, hostProfile: User.shared.profile), image: image!)
             print("Successfully created event w/ id: \(id)")
         }
+    }
+    
+    func updateEvent() async throws{
+        guard let oldEvent = oldEvent, let id = oldEvent.id else {return}
+        guard EventCreationValidator.firstMissingProp == .eventOverview else {throw EventCreationValidator.firstMissingProp}
+        let locationName = try await fetchLocationName()
+       
+        
+        let image = self.image
+        let initImage = await EventCreationVC.initImage
+        
+       
+        let newEvent = Event(id: id, imageURL: nil, title: eventTitle!, description: descrip!, location: GeoPoint(latitude: location!.latitude, longitude: location!.longitude), locationName: locationName, startsAt: startDate!, endsAt: startDate!.addingTimeInterval(duration!), type: eventType!, colors: colors!.colors.map({$0.getColorModel()}), hostId: User.shared.id!, hostProfile: User.shared.profile)
+        try await EventManager.shared.update(newEvent, image: image)
+        
+        print("Successfully updated event w/ id: \(id)")
     }
     
     fileprivate func fetchLocationName() async throws -> String{
@@ -130,7 +147,6 @@ final class EventCreationVM: ObservableObject{
                 controllerInMemory.update(with: eventType)
                 return eventType
             case .eventOverview:
-              
                 let overView = CurrentVC(type: type, controller: EventPreview(event: eventDraft, image: EventCreationVC.initImage!) , previous: nil)
                 controllerInMemory.update(with: overView)
                 self.onPreview = true

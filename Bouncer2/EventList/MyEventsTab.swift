@@ -53,12 +53,16 @@ class MyEventsViewController: UIViewController{
             return cell
         })
         
+        
+        
         //MARK: Header Dequeue
         dataSource?.supplementaryViewProvider = { [unowned self]
             (collectionView, elementKind, indexPath) -> UICollectionReusableView? in
             let header = self.collectionView.dequeueReusableSupplementaryView(ofKind: elementKind, withReuseIdentifier: AllEventListHeaderCell.id, for: indexPath) as! AllEventListHeaderCell
+            
             guard let section = snapshot?.sectionIdentifiers[indexPath.section] else {return nil}
             header.setup(sectionMy: section, vm: self.viewModel)
+            
             return header
         }
         
@@ -184,14 +188,9 @@ extension MyEventsViewController: UICollectionViewDelegateFlowLayout{
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let event = dataSource?.itemIdentifier(for: indexPath) {
-            
-            guard let image = (collectionView.cellForItem(at: indexPath) as? ListCell)?.eventImageView.image else {
-                let fullDetail = FullDetailViewController(event: event)
-                navigationController?.pushViewController(fullDetail, animated: true)
-                return
-            }
-            
-            let fullDetail = FullDetailViewController(event: event, image: image)
+            let eventImage: UIImage? = (collectionView.cellForItem(at: indexPath) as? ListCell)?.eventImageView.image
+            let hostImage: UIImage? = (collectionView.cellForItem(at: indexPath) as? ListCell)?.profileImageView.image
+            let fullDetail = FullDetailViewController(event: event, image: eventImage, hostImage: hostImage)
             navigationController?.pushViewController(fullDetail, animated: true)
         }
     }

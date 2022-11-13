@@ -1,5 +1,5 @@
 //
-//  TestScroll.swift
+//  FullDetailContentVC.swift
 //  Bouncer2
 //
 //  Created by Andrew Kestler on 7/3/22.
@@ -8,39 +8,30 @@
 import Foundation
 import UIKit
 
-class FullDetailContentVC: UIViewController{
-    var shouldAnimateButton: Bool = false
-    var vm: FullDetailVM!
-    var lastButtonCount: Int = 0
-    let scrollView = UIScrollView()
-    let contentView = UIView()
+class FullDetailContentVC: UIViewController {
+    fileprivate var shouldAnimateButton: Bool = false
+    fileprivate var lastButtonCount: Int = 0
     
-    enum Section{ case people}
-    var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
+    fileprivate var vm: FullDetailVM!
+    fileprivate var components: FullDetailViewComponents!
+    fileprivate var hostView: FullDetailHostView!
+    fileprivate let scrollView = UIScrollView()
+    fileprivate let contentView = UIView()
+    
+    fileprivate enum Section{ case people}
+    fileprivate var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
         
-    let subtitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
-        label.numberOfLines = 0
-        label.sizeToFit()
-        label.textColor = UIColor.white
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
     
-    var components: FullDetailViewComponents!
-    
-    init(components: FullDetailViewComponents, event: Event, vm: FullDetailVM){
+    init(components: FullDetailViewComponents, event: Event, vm: FullDetailVM, hostImage: UIImage?){
         super.init(nibName: nil, bundle: nil)
         self.vm = vm
         self.components = components
-        view.frame = view.frame.offsetBy(dx: 0, dy: .makeWidth(414) * 85/414)
+        self.hostView = FullDetailHostView(event.hostProfile, hostImage)
+        view.frame.origin.y = .makeWidth(414) * 85/414
         setupScrollView()
         setupViews(components: components)
         setupListeners(components: components)
     }
-    
-
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -53,7 +44,6 @@ class FullDetailContentVC: UIViewController{
                 button.transform = button.transform.scaledBy(x: 0.8, y: 0.8)
                 button.setImage(newImage, for: .normal)
             }, completion: { _ in
-              // Step 2
               UIView.animate(withDuration: 0.1, animations: {
                   button.transform = CGAffineTransform.identity
               })
@@ -64,7 +54,6 @@ class FullDetailContentVC: UIViewController{
     }
 
     @objc func buttonTapped(sender: UIButton){
-        print("Button tapped")
         shouldAnimateButton = true
         vm?.perform()
     }
@@ -89,8 +78,6 @@ class FullDetailContentVC: UIViewController{
         contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         contentView.isUserInteractionEnabled = true
 
-        
-        
     }
     
     func setupListeners(components: FullDetailViewComponents){
@@ -106,7 +93,7 @@ class FullDetailContentVC: UIViewController{
         let descriptionLabel = components.descriptionLabel
         contentView.addSubview(descriptionLabel)
         descriptionLabel.text = vm.description
-        descriptionLabel.centerX(inView: contentView, topAnchor: contentView.topAnchor, paddingTop: .makeHeight(25))
+        descriptionLabel.centerX(inView: contentView, topAnchor: contentView.topAnchor, paddingTop: .makeWidth(414) * 25/414)
 
         let actionButton = components.actionButton
         contentView.addSubview(actionButton)
@@ -117,26 +104,24 @@ class FullDetailContentVC: UIViewController{
         contentView.addSubview(timeLabel)
         timeLabel.centerX(inView: contentView, topAnchor: actionButton.bottomAnchor, paddingTop: .makeWidth(414) * 20/414)
         components.peopleCV.delegate = self
+
+        let hostLabel = components.hostLabel
+        contentView.addSubview(hostLabel)
+        hostLabel.anchor(left: view.leftAnchor, paddingLeft: .makeWidth(15))
+        
         if !vm.rsvps.isEmpty{
             addCV(components.peopleCountLabel, components.peopleCV, timeLabel)
+            hostLabel.anchor(top: components.timeLabel.bottomAnchor, paddingTop: .makeWidth(414) * 164/414)
+        }else{
+            hostLabel.anchor(top: components.timeLabel.bottomAnchor, paddingTop: .makeWidth(414) * 40/414)
         }
         
-//        contentView.addSubview(subtitleLabel)
-//        subtitleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-//        subtitleLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 25).isActive = true
-//        subtitleLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 3/4).isActive = true
-//        subtitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-//
-        
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        print(contentView.intrinsicContentSize)
+        contentView.addSubview(hostView)
+        hostView.centerX(inView: contentView, topAnchor: hostLabel.bottomAnchor, paddingTop: .makeWidth(414) * 15/414)
+        hostView.anchor(bottom: contentView.bottomAnchor, paddingBottom: .makeWidth(414) * 20/414)
     }
     
     func setupDataSource(_ collectionView: UICollectionView){
-        
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, profile in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FullDetailPeopleCVCell.id, for: indexPath) as! FullDetailPeopleCVCell
             cell.setup(with: profile)
@@ -146,64 +131,49 @@ class FullDetailContentVC: UIViewController{
     
     
     fileprivate func addCV(_ peopleCountLabel: UILabel, _ peopleCV: UICollectionView,  _ timeLabel: UILabel) {
-       
         setupDataSource(peopleCV)
-        DispatchQueue.main.async { [weak self] in
-            self?.contentView.addSubview(peopleCountLabel)
-            peopleCountLabel.anchor(top: timeLabel.bottomAnchor, left: self?.view.leftAnchor, paddingTop: .makeWidth(414) * 50/414, paddingLeft: .makeWidth(15))
-            
-            
-            if let rsvps = self?.vm.rsvps{
-                peopleCountLabel.text =  rsvps.count > 1 ? "\(rsvps.count) People Going" : "\(rsvps.count) Person Going"
-            }
-           
-            
-            peopleCV.setDimensions(height: .makeWidth(414) * 65/414, width: .makeWidth(414))
-            
-            self?.contentView.addSubview(peopleCV)
-            peopleCV.centerX(inView: self?.contentView ?? UIView(), topAnchor: peopleCountLabel.bottomAnchor, paddingTop: .makeWidth(414) * 15/414)
-            peopleCV.bottomAnchor.constraint(equalTo: self?.contentView.bottomAnchor ?? UIView().bottomAnchor).isActive = true
-        }
+        self.contentView.addSubview(peopleCountLabel)
+        peopleCountLabel.anchor(top: timeLabel.bottomAnchor, left: self.view.leftAnchor, paddingTop: .makeWidth(414) * 40/414, paddingLeft: .makeWidth(15))
+        
+        let rsvps = self.vm.rsvps
+        peopleCountLabel.text =  rsvps.count > 1 ? "\(rsvps.count) People Going" : "\(rsvps.count) Person Going"
+
+        peopleCV.setDimensions(height: .makeWidth(414) * 65/414, width: .makeWidth(414))
+        self.contentView.addSubview(peopleCV)
+        peopleCV.centerX(inView: self.contentView , topAnchor: peopleCountLabel.bottomAnchor, paddingTop: .makeWidth(414) * 15/414)
     }
     
-    
-    
-   
-    
     func updateDatasource(_ profiles: [Profile]){
-        
         var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
         
         if !profiles.isEmpty{
-            DispatchQueue.main.async {
-                snapshot.appendSections([.people])
-                snapshot.appendItems(profiles, toSection: .people)
+            snapshot.appendSections([.people])
+            snapshot.appendItems(profiles, toSection: .people)
+            self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 0.1) {
+                self.components.hostLabel.topConstraint?.constant = .makeWidth(414) * 164/414
+                self.view.layoutIfNeeded()
             }
         }else{
-            DispatchQueue.main.async { [weak self] in
-                self?.components.peopleCV.removeFromSuperview()
-                self?.components.peopleCountLabel.removeFromSuperview()
+            self.components.peopleCV.removeFromSuperview()
+            self.components.peopleCountLabel.removeFromSuperview()
+            self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 0.1) {
+                self.components.hostLabel.topConstraint?.constant = .makeWidth(414) * 40/414
+                self.view.layoutIfNeeded()
             }
         }
         
-        DispatchQueue.main.async { [weak self] in
-            self?.dataSource?.apply(snapshot, animatingDifferences: true)
-        }
+        self.dataSource?.apply(snapshot, animatingDifferences: true)
     }
     
     //MARK: - Listeners
     
     fileprivate func listenForCVUpdates(_ components: FullDetailViewComponents, vm: FullDetailVM) {
-      
-//        DispatchQueue.main.async {
-            vm.$rsvps.receive(on: DispatchQueue.main).sink { [weak self] profiles in
-               
-                self?.addCV(components.peopleCountLabel, components.peopleCV, components.timeLabel)
-            
-                
-                self?.updateDatasource(profiles)
-            }.store(in: &vm.cancellable)
-//        }
+        vm.$rsvps.receive(on: DispatchQueue.main).sink { [weak self] profiles in
+            self?.addCV(components.peopleCountLabel, components.peopleCV, components.timeLabel)
+            self?.updateDatasource(profiles)
+        }.store(in: &vm.cancellable)
     }
     
     fileprivate func setupDescription(_ component: UILabel, vm: FullDetailVM) {
@@ -331,7 +301,6 @@ class FullDetailContentVC: UIViewController{
         vm.$endDate.sink { [weak self] endDate in
             guard let self = self else {return}
             if let endDate = endDate, endDate > .now && vm.startDate ?? .now < .now {
-//                let timeRemaining = endDate.timeIntervalSinceNow
                 self.timerForRemaining?.invalidate()
                 self.timerForRemaining = nil
                 self.timerForRemaining = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateLabelForTimeRemaining), userInfo: component, repeats: true)
@@ -366,28 +335,20 @@ class FullDetailContentVC: UIViewController{
         attributedString.setAttributes([NSAttributedString.Key.foregroundColor: UIColor.white],
                                        range: rangeOfColoredString)
         label.attributedText = attributedString
-        
-        
     }
    
     deinit{
         vm = nil
+        hostView = nil
     }
     
 }
 
 
-extension FullDetailContentVC: UICollectionViewDelegateFlowLayout{
-
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: .makeWidth(65), height: .makeWidth(414) * 65/414)
-//    }
-}
-
 extension FullDetailContentVC: UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let profile = dataSource?.itemIdentifier(for: indexPath){
-            let controller = ProfileViewController(profile: profile)
+            let controller = profile.id != User.shared.id ? ProfileViewController(profile: profile) : ProfileViewController()
             navigationController?.pushViewController(controller, animated: true)
         }
     }
@@ -399,5 +360,4 @@ extension FullDetailContentVC: UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: .makeWidth(15), bottom: 0, right: .makeWidth(15))
     }
-    
 }

@@ -43,14 +43,16 @@ final class EventCreationVC: UIViewController, ObservableObject{
     let viewModel = EventCreationVM()
     
     static var isDraft: Bool = false
-    class func setup(_ currentVC: CurrentVC? = nil, image: UIImage, colors: UIImageColors, with data: EventDraft? = nil){
+    class func setup(_ currentVC: CurrentVC? = nil, image: UIImage, colors: UIImageColors, with draft: EventDraft? = nil, with event: Event? = nil){
         EventCreationVC.initController = currentVC
         EventCreationVC.initImage = image
         EventCreationVC.colors = colors
+        
         shared.viewModel.colors = EventCreationVC.colors
         shared.viewModel.image = image
        
-        if let data = data {
+       
+        if let data = draft {
             EventCreationVC.isDraft = true
             shared.viewModel.eventTitle = data.title
             shared.viewModel.descrip = data.description
@@ -70,6 +72,20 @@ final class EventCreationVC: UIViewController, ObservableObject{
             shared.viewModel.duration = data.duration ?? 3600
             shared.viewModel.eventType = data.type
             shared.viewModel.currentController = shared.viewModel.currentVC(type: EventCreationValidator.firstMissingProp)
+        }else if let event = event{
+            shared.viewModel.oldEvent = event
+            shared.viewModel.eventTitle = event.title
+            shared.viewModel.descrip = event.description
+            
+            
+            let location = event.location
+            shared.viewModel.location = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+            
+            let startDate = event.startsAt
+            shared.viewModel.startDate = startDate
+            shared.viewModel.duration = event.startsAt.distance(to: event.endsAt)
+            shared.viewModel.eventType = event.type
+            shared.viewModel.currentController = shared.viewModel.currentVC(type: EventCreationValidator.firstMissingProp)
         }else{
             shared.viewModel.currentController = currentVC
         }
@@ -85,7 +101,7 @@ final class EventCreationVC: UIViewController, ObservableObject{
     //MARK: - Dismiss and Dispose
     public func dismiss(){
         if let navController = navigationController{
-                navController.popToRootViewController(animated: true)
+                navController.popViewController(animated: true)
                 viewModel.currentController = nil
                 viewModel.controllerInMemory.removeAll()
                 cancellable.forEach({$0.cancel()})
@@ -99,9 +115,9 @@ final class EventCreationVC: UIViewController, ObservableObject{
         if let index = navigationController?.tabBarController?.selectedViewController?.navigationController?.viewControllers.firstIndex(where: {$0 is CameraVC}){
             navigationController?.tabBarController?.selectedViewController?.navigationController?.viewControllers.remove(at: index)
         }
-//        if let cameraVCIndex = navigationController?.viewControllers.firstIndex(where: {$0 is CameraVC}){
-//            navigationController?.viewControllers.remove(at: cameraVCIndex)
-//        }
+        if let cameraVCIndex = navigationController?.viewControllers.firstIndex(where: {$0 is CameraVC}){
+            navigationController?.viewControllers.remove(at: cameraVCIndex)
+        }
         let cameraVC = CameraVC(currentVC: viewModel.currentController)
         navigationController?.pushViewController(cameraVC, animated: true)
     }
@@ -182,7 +198,11 @@ final class EventCreationVC: UIViewController, ObservableObject{
                     //Loading Indicator
                     indicator.startAnimating()
                     view.addSubview(indicator)
-                    try await viewModel.postEvent()
+                    if viewModel.oldEvent == nil{
+                        try await viewModel.postEvent()
+                    }else{
+                        try await viewModel.updateEvent()
+                    }
                     indicator.stopAnimating()
                     indicator.removeFromSuperview()
                     HapticsManager.shared.vibrate(for: .success)

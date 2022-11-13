@@ -98,9 +98,11 @@ class EventPreview: UIViewController, UIPageViewControllerDelegate{
         
         //for map
 //
-
-        UIView.transition(with: EventCreationVC.shared.navigator.nextButton.titleLabel!, duration: 1, options: [.curveEaseOut, .transitionCrossDissolve]) { EventCreationVC.shared.navigator.nextButton.setTitle("Post It", for: .normal)
-           
+        let nextButtonTitle = EventCreationVC.shared.viewModel.oldEvent == nil ? "Post It" : "Update"
+        UIView.transition(with: EventCreationVC.shared.navigator.nextButton.titleLabel!, duration: 1, options: [.curveEaseOut, .transitionCrossDissolve]) {
+            
+            EventCreationVC.shared.navigator.nextButton.setTitle(nextButtonTitle, for: .normal)
+            
         }
         
         UIView.transition(with: EventCreationVC.shared.navigator.backButton.titleLabel!, duration: 1, options: [.curveEaseOut, .transitionCrossDissolve]) { EventCreationVC.shared.navigator.backButton.setAttributedTitle(NSAttributedString(string: "Edit", attributes:  [NSAttributedString.Key.underlineStyle : NSUnderlineStyle.single, NSAttributedString.Key.font: UIFont.poppinsMedium(size: .makeHeight(20)), NSAttributedString.Key.foregroundColor: UIColor.darkerGreyText()]), for: .normal)

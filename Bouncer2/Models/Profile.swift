@@ -23,6 +23,7 @@ struct Profile: Codable, Identifiable, Equatable, Hashable{
     let user_name: String
     let latitude: Double
     let longitude: Double
+    var timeJoined: Date? = .now
     let backdrop_url: String?
     let bio: String?
     let followers: [String]?
@@ -34,4 +35,10 @@ struct Profile: Codable, Identifiable, Equatable, Hashable{
     let email: String?
     let emojis: [Emoji]?
     let recentEmojis: [Emoji]?
+    
+    var isConnection: Bool {
+        guard let uid = User.shared.id else {return false}
+        return (following ?? []).contains(uid) && (followers ?? []).contains(uid)
+    }
+    
 }

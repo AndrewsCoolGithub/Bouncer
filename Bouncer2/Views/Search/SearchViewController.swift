@@ -107,7 +107,7 @@ class SearchViewController: UIViewController{
         if inSearchMode{
             var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
             
-            let profiles = filtered
+            let profiles = Array(Set(filtered))
             snapshot.appendSections([.filtered])
             snapshot.appendItems(profiles, toSection: .filtered)
         
@@ -115,7 +115,7 @@ class SearchViewController: UIViewController{
         }else{
             var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
             
-            let profiles = suggested
+            let profiles = Array(Set(suggested))
             snapshot.appendSections([.suggested])
             snapshot.appendItems(profiles, toSection: .suggested)
         
