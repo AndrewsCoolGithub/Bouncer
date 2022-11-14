@@ -47,7 +47,7 @@ class EventTypeSelect: UIViewController{
                     return self.publicButton
                 }
             }
-            selectedButton.gradientColors = EventCreationVC.shared.viewModel.colors
+            selectedButton.gradientColors = (EventCreationVC.shared.viewModel.colors, true)
             EventCreationVC.shared.navigator.activateButton()
         }
     }
@@ -86,11 +86,11 @@ class EventTypeSelect: UIViewController{
         EventCreationVC.shared.viewModel.eventType = eventType
         switch eventType {
         case .exclusive:
-            self.exclusiveButton.gradientColors = EventCreationVC.shared.viewModel.colors
-            self.publicButton.gradientColors = UIImageColors(background: .buttonFill(), primary: .buttonFill(), secondary: .buttonFill(), detail: .buttonFill())
+            self.exclusiveButton.gradientColors = (EventCreationVC.shared.viewModel.colors, true)
+            self.publicButton.gradientColors = (UIImageColors(background: .buttonFill(), primary: .buttonFill(), secondary: .buttonFill(), detail: .buttonFill()), true)
         case .open:
-            self.publicButton.gradientColors = EventCreationVC.shared.viewModel.colors
-            self.exclusiveButton.gradientColors = UIImageColors(background: .buttonFill(), primary: .buttonFill(), secondary: .buttonFill(), detail: .buttonFill())
+            self.publicButton.gradientColors = (EventCreationVC.shared.viewModel.colors, true)
+            self.exclusiveButton.gradientColors = (UIImageColors(background: .buttonFill(), primary: .buttonFill(), secondary: .buttonFill(), detail: .buttonFill()), true)
         }
     }
 }

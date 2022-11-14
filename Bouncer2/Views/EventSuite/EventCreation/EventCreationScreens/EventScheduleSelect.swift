@@ -94,7 +94,7 @@ class EventScheduleSelect: UIViewController, UICollectionViewDelegate{
         super.viewWillAppear(animated)
 
         guard let selectedIndex = dataSource.firstIndex(of: self.selectedDate), let cell = daysCV.cellForItem(at: IndexPath(row: selectedIndex, section: 0)) as? ScheduleDayCell else {return}
-        cell.content?.gradientColors = EventCreationVC.shared.viewModel.colors
+        cell.content?.gradientColors = (EventCreationVC.shared.viewModel.colors, true)
         
     }
     

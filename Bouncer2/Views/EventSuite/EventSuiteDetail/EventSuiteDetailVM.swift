@@ -15,16 +15,19 @@ final class EventSuiteDetailVM: ObservableObject{
     var cancellable = Set<AnyCancellable>()
     var event: Event!
     
-    var detailType: DetailType
+    @Published var detailType: DetailType
     init(_ event: Event){
         self.event = event
         
-//        guard event.startsAt > .now else {detailType = .live; return}
         switch event.type{
         case .exclusive:
             detailType = .exclusive
         case .open:
             detailType = .open
+        }
+        
+        for sec in EventSuiteDetail.Section.allCases{
+            data[sec] = ([], false)
         }
         
         
@@ -38,47 +41,52 @@ final class EventSuiteDetailVM: ObservableObject{
         cancellable.forEach({$0.cancel()})
     }
     
-    @Published var suggested: [Profile]?
+    @Published var suggested = [Profile]()
     @Published var prospects = [Profile]()
+    @Published var guest = [Profile]()
+    @Published var data = [EventSuiteDetail.Section: (profiles: [Profile], isHidden: Bool)]()
+    
     var prospectDictionary = Set<String>()
     
-    //TODO: Clean this up
-    var prospectIds = [String]() {
-        didSet{
-            
-            if prospectIds.isEmpty{
-                prospects = []
-                return
-            }
-            
-            for id in prospectIds{
-                if !prospectDictionary.contains(id){
-                    prospectDictionary.update(with: id)
-                    Task{
-                        let profile = try await USERS_COLLECTION.document(id).getDocument(as: Profile.self)
-                        
-                        prospects.append(profile)
-                        
-                    }
-                }
+    fileprivate func getProspectUsers() async {
+        if prospectIds.isEmpty{ prospects = []; return}
+        var profiles = [Profile]()
+        for id in prospectIds{
+            if let profile = try? await USERS_COLLECTION.document(id).getDocument(as: Profile.self){
+                profiles.append(profile)
             }
         }
+        print("profiles check for async: \(profiles)")
+        prospects = profiles
+        let isHidden = data[EventSuiteDetail.Section.one]!.isHidden
+        data[EventSuiteDetail.Section.one] = (prospects, isHidden)
     }
+    
+    var prospectIds = [String]() {didSet { Task{await getProspectUsers()} }}
     
     func fetchSuggestedUsers(){
         Task{
             suggested = await User.shared.following.getUsers()
+            suggested.sort(by: {$0.isConnection == true && $1.isConnection == false})
+            let isHidden = data[EventSuiteDetail.Section.three]!.isHidden
+            data[EventSuiteDetail.Section.three] = (suggested, isHidden)
         }
-        self.suggested?.sort(by: {$0.isConnection == true && $1.isConnection == false})
     }
     
     func listenForProspectUpdates(_ id: String){
         FirestoreSubscription.subscribe(id: id, collection: .Events) .compactMap(FirestoreDecoder.decode(Event.self))
-            .receive(on: DispatchQueue.main)
-            .compactMap({$0.prospectIds})
-            .assign(to: \.prospectIds, on: self)
+            .receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] event in
+                self?.prospectIds = (event.prospectIds ?? [])
+                
+                if event.startsAt > .now{
+                    self?.detailType = event.type == .open ? .open : .exclusive
+                }else if event.startsAt < .now && event.endsAt > .now{
+                    self?.detailType = .live
+                }else{
+                    self?.detailType = .history
+                }
+            })
             .store(in: &cancellable)
-       
     }
     
     
@@ -97,23 +105,58 @@ final class EventSuiteDetailVM: ObservableObject{
         case open
         case exclusive
         case live
+        case history
     }
     
-    public enum OpenSection: Int {
+    public enum OpenSection: String {
         case RSVPs
         case Pending
         case Suggested
+        
+        public init?(_ section: EventSuiteDetail.Section) {
+            switch section {
+            case .one:
+                self = .RSVPs
+            case .two:
+                self = .Pending
+            case .three:
+                self = .Suggested
+            }
+        }
     }
     
-    public enum ExclusiveSection: Int {
-        case Requested
+    public enum ExclusiveSection: String {
+        case Request
         case Invited
         case Suggested
+        
+        public init?(_ section: EventSuiteDetail.Section) {
+            switch section {
+            case .one:
+                self = .Request
+            case .two:
+                self = .Invited
+            case .three:
+                self = .Suggested
+            }
+        }
     }
     
-    public enum LiveSection: Int {
+    public enum LiveSection: String {
         case Guests
         case Invited
+        case Suggested
+        
+        public init?(_ section: EventSuiteDetail.Section) {
+            switch section {
+            case .one:
+                self = .Guests
+            case .two:
+                self = .Invited
+            case .three:
+                self = .Suggested
+            }
+        }
     }
     
     

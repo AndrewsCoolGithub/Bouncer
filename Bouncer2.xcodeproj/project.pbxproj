@@ -33,8 +33,9 @@
 		A42731D8291F599000CB6B66 /* SuggestedCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731D7291F599000CB6B66 /* SuggestedCard.swift */; };
 		A42731DC291F8B3C00CB6B66 /* FirestoreShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731DB291F8B3C00CB6B66 /* FirestoreShortcuts.swift */; };
 		A42731DE291FC9D200CB6B66 /* SuggestedCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731DD291FC9D200CB6B66 /* SuggestedCollectionView.swift */; };
-		A42731E0291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731DF291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift */; };
+		A42731E0291FD18C00CB6B66 /* SuiteDetailRSVPCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731DF291FD18C00CB6B66 /* SuiteDetailRSVPCell.swift */; };
 		A42731E2291FD82700CB6B66 /* SuiteCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731E1291FD82700CB6B66 /* SuiteCellDelegate.swift */; };
+		A42731E42920BB8100CB6B66 /* SuiteHeaderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731E32920BB8100CB6B66 /* SuiteHeaderButton.swift */; };
 		A42B7B27288A5FF5005D7B5C /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42B7B26288A5FF5005D7B5C /* SearchViewModel.swift */; };
 		A42B7B29288A60FE005D7B5C /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42B7B28288A60FE005D7B5C /* SearchManager.swift */; };
 		A42C3D40282896EA00B96381 /* EventFullPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42C3D3F282896EA00B96381 /* EventFullPreview.swift */; };
@@ -92,6 +93,7 @@
 		A46438E728E3A00900AAC51E /* CustomEmoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46438E628E3A00900AAC51E /* CustomEmoteCell.swift */; };
 		A46438E928E58B6F00AAC51E /* CLLocationCoord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46438E828E58B6F00AAC51E /* CLLocationCoord.swift */; };
 		A46438EB28E5932D00AAC51E /* Doubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46438EA28E5932D00AAC51E /* Doubles.swift */; };
+		A467B1FD29223BDE000D1B91 /* SuiteDetailRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A467B1FC29223BDE000D1B91 /* SuiteDetailRequestCell.swift */; };
 		A4721D382871764C00F763AF /* FullDetailVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4721D372871764C00F763AF /* FullDetailVM.swift */; };
 		A4721D3A2871787100F763AF /* FirestoreSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4721D392871787100F763AF /* FirestoreSubscription.swift */; };
 		A4721D3C287178BF00F763AF /* FirestoreCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4721D3B287178BF00F763AF /* FirestoreCollections.swift */; };
@@ -207,8 +209,9 @@
 		A42731D7291F599000CB6B66 /* SuggestedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestedCard.swift; sourceTree = "<group>"; };
 		A42731DB291F8B3C00CB6B66 /* FirestoreShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreShortcuts.swift; sourceTree = "<group>"; };
 		A42731DD291FC9D200CB6B66 /* SuggestedCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestedCollectionView.swift; sourceTree = "<group>"; };
-		A42731DF291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteDetailTableViewCell.swift; sourceTree = "<group>"; };
+		A42731DF291FD18C00CB6B66 /* SuiteDetailRSVPCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteDetailRSVPCell.swift; sourceTree = "<group>"; };
 		A42731E1291FD82700CB6B66 /* SuiteCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteCellDelegate.swift; sourceTree = "<group>"; };
+		A42731E32920BB8100CB6B66 /* SuiteHeaderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteHeaderButton.swift; sourceTree = "<group>"; };
 		A42B7B26288A5FF5005D7B5C /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		A42B7B28288A60FE005D7B5C /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
 		A42C3D3F282896EA00B96381 /* EventFullPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFullPreview.swift; sourceTree = "<group>"; };
@@ -266,6 +269,7 @@
 		A46438E628E3A00900AAC51E /* CustomEmoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEmoteCell.swift; sourceTree = "<group>"; };
 		A46438E828E58B6F00AAC51E /* CLLocationCoord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationCoord.swift; sourceTree = "<group>"; };
 		A46438EA28E5932D00AAC51E /* Doubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Doubles.swift; sourceTree = "<group>"; };
+		A467B1FC29223BDE000D1B91 /* SuiteDetailRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteDetailRequestCell.swift; sourceTree = "<group>"; };
 		A4721D372871764C00F763AF /* FullDetailVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullDetailVM.swift; sourceTree = "<group>"; };
 		A4721D392871787100F763AF /* FirestoreSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreSubscription.swift; sourceTree = "<group>"; };
 		A4721D3B287178BF00F763AF /* FirestoreCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreCollections.swift; sourceTree = "<group>"; };
@@ -557,9 +561,9 @@
 				A42731D2291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift */,
 				A42731CF291E4FB200CB6B66 /* EventSuiteDetail.swift */,
 				A42731E1291FD82700CB6B66 /* SuiteCellDelegate.swift */,
+				A42731E32920BB8100CB6B66 /* SuiteHeaderButton.swift */,
 				A42731D5291E705600CB6B66 /* EventSuiteDetailVM.swift */,
-				A42731DF291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift */,
-				A42731DD291FC9D200CB6B66 /* SuggestedCollectionView.swift */,
+				A467B1FB29223BA7000D1B91 /* Cells */,
 				A42731D7291F599000CB6B66 /* SuggestedCard.swift */,
 			);
 			path = EventSuiteDetail;
@@ -693,6 +697,16 @@
 				A45FCFAC28B4CB0A005B833B /* MessageCellViews.swift */,
 			);
 			path = Messaging;
+			sourceTree = "<group>";
+		};
+		A467B1FB29223BA7000D1B91 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				A42731DF291FD18C00CB6B66 /* SuiteDetailRSVPCell.swift */,
+				A467B1FC29223BDE000D1B91 /* SuiteDetailRequestCell.swift */,
+				A42731DD291FC9D200CB6B66 /* SuggestedCollectionView.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		A4721D36287175E200F763AF /* Views */ = {
@@ -1042,6 +1056,7 @@
 				A4CFCD46284D87A60060CB44 /* WelcomeScreen.swift in Sources */,
 				A43A47A32897A8FC00A6EDC7 /* SearchCells.swift in Sources */,
 				A45FCFAB28B4CAD1005B833B /* MessageCell.swift in Sources */,
+				A467B1FD29223BDE000D1B91 /* SuiteDetailRequestCell.swift in Sources */,
 				A4FFF25928D1C313007BED60 /* ChatEmoteView.swift in Sources */,
 				A4577AA0282CC1AA00B1750D /* EventCellView.swift in Sources */,
 				A4AA565628C0A65200DE0474 /* MessageCodable.swift in Sources */,
@@ -1105,6 +1120,7 @@
 				A49AA8FD28774EFA00265F13 /* AccountUserName.swift in Sources */,
 				A4577AB3282E31BF00B1750D /* User.swift in Sources */,
 				A4094131281DAB3900094A64 /* EventCreationNavigator.swift in Sources */,
+				A42731E42920BB8100CB6B66 /* SuiteHeaderButton.swift in Sources */,
 				A42C8A8A2853421C0080C1BB /* UIImageColorsExt.swift in Sources */,
 				A4EF369428390A0A000A95E5 /* EventOverview.swift in Sources */,
 				A4F6C133288150A300115972 /* ProfileEditCell.swift in Sources */,
@@ -1134,7 +1150,7 @@
 				A43D6FAB2858699000D1509C /* ListCellVM.swift in Sources */,
 				A49CD718283244E200BD8594 /* EventDraft.swift in Sources */,
 				A474E7E1287974B4007F271F /* ProfileViewController.swift in Sources */,
-				A42731E0291FD18C00CB6B66 /* SuiteDetailTableViewCell.swift in Sources */,
+				A42731E0291FD18C00CB6B66 /* SuiteDetailRSVPCell.swift in Sources */,
 				A4A55AD12855C577005EBD78 /* EventListVM.swift in Sources */,
 				A49CD7112832284B00BD8594 /* DraftManager.swift in Sources */,
 				A42DCBC228D49D7E00C7CA84 /* ChatEmoteSelector.swift in Sources */,
@@ -1272,7 +1288,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1326,7 +1342,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1359,7 +1375,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1396,7 +1412,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

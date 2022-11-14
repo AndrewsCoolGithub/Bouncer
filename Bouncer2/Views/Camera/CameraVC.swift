@@ -450,7 +450,7 @@ class CameraVC: UIViewController, UINavigationControllerDelegate {
         self.imageView.image = image
         image.getColors(quality: .high, { [weak self] colors in
             EventCreationVC.colors = colors
-            self?.continueButton.gradientColors = colors
+            self?.continueButton.gradientColors = (colors, false)
         })
         UIView.transition(with: view, duration: 0.1, options: .transitionCrossDissolve) { [self]  in
             view.insertSubview(imageView, aboveSubview: cancelButton)

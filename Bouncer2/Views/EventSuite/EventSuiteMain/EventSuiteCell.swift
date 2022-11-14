@@ -109,7 +109,7 @@ class EventSuiteCell: UICollectionViewCell{
         
        
         let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(22))
-        eventTypeIcon.gradientColors = event.uiImageColors()
+        eventTypeIcon.gradientColors = (event.uiImageColors(), true)
         switch event.type{
         case .exclusive:
             eventTypeIcon.image = UIImage(named: "Group5")
@@ -152,11 +152,11 @@ class EventSuiteCell: UICollectionViewCell{
         contentView.backgroundColor = .greyColor()
         
         
-        eventTypeIcon.gradientColors = event.uiImageColors()
+        eventTypeIcon.gradientColors = (event.uiImageColors(), true)
         let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(22))
         eventTypeIcon.image = UIImage(systemName: "pencil", withConfiguration: config)
         
-        deleteButton.gradientColors = event.uiImageColors()
+        deleteButton.gradientColors = (event.uiImageColors(), true)
 
         contentView.addSubview(imageView)
         self.addSubview(deleteButton)

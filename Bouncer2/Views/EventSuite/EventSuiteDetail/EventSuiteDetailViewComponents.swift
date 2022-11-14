@@ -52,7 +52,7 @@ public struct EventSuiteDetailViewComponents: SkeletonLoadable{
     let timeTillLiveLabel: UILabel = {
         let label = UILabel()
         label.setWidth(.makeWidth(160))
-        label.font = .poppinsMedium(size: .makeWidth(23))
+        label.font = .poppinsMedium(size: .makeWidth(18))
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .center
         return label

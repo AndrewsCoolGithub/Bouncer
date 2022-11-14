@@ -13,17 +13,20 @@ class EventSuiteDetail: UIViewController{
     var components = EventSuiteDetailViewComponents()
 
     var vm: EventSuiteDetailVM!
+    var hiddenSections = Set<[Profile]>()
+    let dummyProfile = Profile(image_url: "", display_name: "", user_name: "", latitude: 90, longitude: 90, backdrop_url: nil, bio: nil, followers: nil, following: nil, blocked: nil, blockedBy: nil, colors: nil, number: nil, email: nil, emojis: nil, recentEmojis: nil)
     
     var dataSource: UITableViewDiffableDataSource<Section, Profile>?
     
     private let tableView: UITableView = {
         let tv = UITableView(frame: CGRect(x: 0, y: .wProportioned(170), width: .makeWidth(414), height: .makeHeight(896) - .wProportioned(170)))
+    
         tv.register(SuiteDetailRSVPCell.self, forCellReuseIdentifier: SuiteDetailRSVPCell.id)
         tv.register(SuggestedCollectionView.self, forCellReuseIdentifier: SuggestedCollectionView.id)
         return tv
     }()
     
-    enum Section: Int {
+    enum Section: Int, CaseIterable {
         case one
         case two
         case three
@@ -36,19 +39,27 @@ class EventSuiteDetail: UIViewController{
         view.addSubview(tableView)
         tableView.delegate = self
         dataSource = UITableViewDiffableDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, profile in
-            switch self?.dataSource?.sectionIdentifier(for: indexPath.section){
+            
+            guard let section = self?.dataSource?.sectionIdentifier(for: indexPath.section) else {return nil}
+            switch section{
+                
                
             case .three:
                 let cell = tableView.dequeueReusableCell(withIdentifier: SuggestedCollectionView.id) as! SuggestedCollectionView
-                guard let vm = self?.vm else {return nil}
-                cell.setup(vm)
-                return cell
-            default:
+                cell.setup(self?.vm)
+               return cell
+            case .one:  //Should be .one
                 let cell = tableView.dequeueReusableCell(withIdentifier: SuiteDetailRSVPCell.id, for: indexPath) as! SuiteDetailRSVPCell
                 cell.setup(profile)
                 return cell
+            case .two: //TODO: Make this the right cell
+//                let cell = tableView.dequeueReusableCell(withIdentifier: SuiteDetailRSVPCell.id, for: indexPath) as! SuiteDetailRSVPCell
+//                cell.setup(profile)
+                return nil
             }
         })
+        
+        
         
         vm.$prospects.receive(on: DispatchQueue.main).sink { [weak self] profiles in
             
@@ -74,14 +85,32 @@ class EventSuiteDetail: UIViewController{
     }
     
     func makeSnapshot(_ prospects: [Profile]){
+//        var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
+//        if !prospects.isEmpty{
+//            snapshot.appendSections([.one])
+//            snapshot.appendItems(prospects, toSection: .one)
+//        }
+//
+//        snapshot.appendSections([.three])
+//        snapshot.appendItems([dummyProfile], toSection: .three)
+//        dataSource?.apply(snapshot, animatingDifferences: true)
         var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
-        if !prospects.isEmpty{
-            snapshot.appendSections([.one])
-            snapshot.appendItems(prospects, toSection: .one)
+        
+        
+        for section in Section.allCases{
+            
+            
+            let hidden = vm.data[section]!.isHidden
+            let profiles = section != .three ? vm.data[section]!.profiles : [dummyProfile]
+           
+            if !hidden && !profiles.isEmpty{
+                snapshot.appendSections([section])
+                snapshot.appendItems(profiles, toSection: section)
+            }else if hidden && !profiles.isEmpty{
+                snapshot.appendSections([section])
+            }
         }
         
-        snapshot.appendSections([.three])
-        snapshot.appendItems([User.shared.profile], toSection: .three)
         dataSource?.apply(snapshot, animatingDifferences: true)
     }
     
@@ -125,12 +154,12 @@ class EventSuiteDetail: UIViewController{
         let eventTitleLabel = components.eventTitleLabel
         eventTitleLabel.text = event.title
         view.addSubview(eventTitleLabel)
-        eventTitleLabel.centerX(inView: view, topAnchor: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(55))
+        eventTitleLabel.centerX(inView: view, topAnchor: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(50))
         
         let ttlLabel = components.timeTillLiveLabel
         ttlLabel.text = vm.ttlLabelText()
         view.addSubview(ttlLabel)
-        ttlLabel.centerX(inView: view, topAnchor: eventTitleLabel.bottomAnchor, paddingTop: .wProportioned(15))
+        ttlLabel.centerX(inView: view, topAnchor: eventTitleLabel.bottomAnchor, paddingTop: .wProportioned(5))
         
         Timer.publish(every: 1, on: .main, in: .default).autoconnect().sink { [weak self] _ in
             UIView.transition(with: ttlLabel, duration: 0.25, options: .transitionCrossDissolve) { [weak self] in
@@ -168,7 +197,93 @@ extension EventSuiteDetail: UITableViewDelegate{
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return .wProportioned(40)
+    }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let section = dataSource?.sectionIdentifier(for: section) else {return nil}
+        let sectionButton = SuiteHeaderButton()
+        sectionButton.setup(section, vm)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideSection))
+        sectionButton.addGestureRecognizer(tapGesture)
+        return sectionButton
+    }
+        
+    
+    @objc private func hideSection(_ sender: UITapGestureRecognizer) {
+       
+        guard let view = sender.view as? SuiteHeaderButton, let selectedSection = view.section, var lastSnap = dataSource?.snapshot() else {return}
+        
+        var items: (profiles: [Profile], isHidden: Bool) {
+            return vm.data[selectedSection]!
+        }
+        
+        vm.data[selectedSection]! = (items.profiles, !items.isHidden)
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
+        
+        
+        for section in Section.allCases{
+            
+            
+            let hidden = vm.data[section]!.isHidden
+            let profiles = section != .three ? vm.data[section]!.profiles : [dummyProfile]
+           
+            if !hidden && !profiles.isEmpty{
+                snapshot.appendSections([section])
+                snapshot.appendItems(profiles, toSection: section)
+            }else if hidden && !profiles.isEmpty{
+                snapshot.appendSections([section])
+            }
+        }
+        
+        dataSource?.apply(snapshot, animatingDifferences: true)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//        if hiddenSections.contains(items){ //Show Section
+//            
+//            
+//            
+//            lastSnap.appendItems(items, toSection: section)
+//            hiddenSections.remove(items)
+//            dataSource?.apply(lastSnap, animatingDifferences: true)
+//            view.state.toggle()
+//        }else{
+//           
+//           
+//            hiddenSections.update(with: items)
+//            snapshot.appendSections(lastSnap.sectionIdentifiers)
+//            for sec in lastSnap.sectionIdentifiers{
+//                if sec != section{
+//                    switch sec{
+//                    case .one:
+//                        guard !hiddenSections.contains(vm.prospects) else {continue}
+//                        snapshot.appendItems(vm.prospects, toSection: sec)
+//                    case .two:
+//                        continue
+//                    case .three:
+//                        guard !hiddenSections.contains([User.shared.profile]) else {continue}
+//                        snapshot.appendItems([User.shared.profile], toSection: sec)
+//                    }
+//                }
+//            }
+//           
+//            dataSource?.apply(snapshot, animatingDifferences: true)
+//            view.state.toggle()
+//        }
+    }
 }
 
 extension EventSuiteDetail: SuiteCellDelegate{

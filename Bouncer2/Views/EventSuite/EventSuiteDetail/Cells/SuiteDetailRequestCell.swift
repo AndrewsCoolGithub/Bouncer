@@ -1,13 +1,13 @@
 //
-//  SuiteDetailTableViewCell.swift
+//  SuiteDetailRequestCell.swift
 //  Bouncer2
 //
-//  Created by Andrew Kestler on 11/12/22.
+//  Created by Andrew Kestler on 11/14/22.
 //
 
 import UIKit
 
-class SuiteDetailRSVPCell: UITableViewCell, SkeletonLoadable {
+class SuiteDetailRequestCell: UITableViewCell, SkeletonLoadable {
     static let id = "SuiteDetailRSVPCell"
     
     private let profileImage: UIImageView = {
@@ -42,10 +42,18 @@ class SuiteDetailRSVPCell: UITableViewCell, SkeletonLoadable {
         return gradient
     }()
     
-    func setup(_ profile: Profile){
+    private let actionButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .buttonFill()
+        
+        
+        return button
+    }()
+    
+    func setup(_ profile: Profile, cellDelegate: SuiteCellDelegate){
         contentView.backgroundColor = .greyColor()
         contentView.addSubview(profileImage)
-        profileImage.gradientColors = profile.colors?.uiImageColors()
+        profileImage.gradientColors = (profile.colors?.uiImageColors() ?? User.defaultColors, false)
         profileImage.layer.addSublayer(skeletonGradient)
         profileImage.sd_setImage(with: URL(string: profile.image_url)) { [weak self] I, E, C, U in
             self?.skeletonGradient.removeFromSuperlayer()

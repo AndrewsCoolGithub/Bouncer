@@ -14,22 +14,26 @@ enum Direction {
 }
 
 extension UIView {
+    /** should animate gradient changes, default is true*/
     
-    var gradientColors: UIImageColors? {
+    var gradientColors: (colors: UIImageColors?, shouldAnimate: Bool)? {
         get{
             if let gradientColors = (self.layer.sublayers?.first(where: {$0 is CAGradientLayer}) as? CAGradientLayer)?.colors{
-                return UIImageColors(background: .white, primary: UIColor(cgColor: gradientColors[0] as! CGColor), secondary:  UIColor(cgColor: gradientColors[0] as! CGColor), detail:  UIColor(cgColor: gradientColors[0] as! CGColor))
+                return (colors: UIImageColors(background: .white, primary: UIColor(cgColor: gradientColors[0] as! CGColor), secondary:  UIColor(cgColor: gradientColors[0] as! CGColor), detail:  UIColor(cgColor: gradientColors[0] as! CGColor)), shouldAnimate: true)
             }else{
                 return nil
             }
         }
         set{
             if let gradient = self.layer.sublayers?.first(where: {$0 is CAGradientLayer}) as? CAGradientLayer, let colors = newValue{
-                UIView.transition(with: self, duration: 1, options: [.transitionCrossDissolve, .allowUserInteraction]) {
-                    
-                        gradient.colors = [colors.primary.cgColor, colors.secondary.cgColor, colors.detail.cgColor]
-                    
+                if colors.shouldAnimate{
+                    UIView.transition(with: self, duration: 1, options: [.transitionCrossDissolve, .allowUserInteraction]) {
+                        gradient.colors = [colors.colors?.primary.cgColor, colors.colors?.secondary.cgColor, colors.colors?.detail.cgColor].compactMap({$0})
+                    }
+                }else{
+                    gradient.colors = [colors.colors?.primary.cgColor, colors.colors?.secondary.cgColor, colors.colors?.detail.cgColor].compactMap({$0})
                 }
+               
             }else if let gradient = self.layer.sublayers?.first(where: {$0 is CAGradientLayer}) as? CAGradientLayer{
                 
                 gradient.colors = nil

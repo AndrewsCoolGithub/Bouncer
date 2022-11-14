@@ -28,7 +28,8 @@ class SuggestedCollectionView: UITableViewCell{
     var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
     
     
-    func setup(_ viewModel: EventSuiteDetailVM){
+    func setup(_ viewModel: EventSuiteDetailVM?){
+        guard let viewModel = viewModel else {return}
         contentView.addSubview(suggestedCV)
         suggestedCV.delegate = self
         dataSource = UICollectionViewDiffableDataSource(collectionView: suggestedCV, cellProvider: { collectionView, indexPath, itemIdentifier in
@@ -37,10 +38,8 @@ class SuggestedCollectionView: UITableViewCell{
             return cell
         })
         
-        viewModel.$suggested.sink { profiles in
-            if let profiles = profiles{
-                self.updateSnapshot(profiles)
-            }
+        viewModel.$suggested.receive(on: DispatchQueue.main).sink { profiles in
+            self.updateSnapshot(profiles)
         }.store(in: &viewModel.cancellable)
     }
     

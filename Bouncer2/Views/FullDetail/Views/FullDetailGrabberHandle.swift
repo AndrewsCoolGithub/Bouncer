@@ -150,7 +150,7 @@ class FullDetailGrabberHandle: UIView {
     }
     
     fileprivate func setupColors(colors: [ColorModel], vm: FullDetailVM){
-        typeIcon.gradientColors = UIImageColors(background: .clear, primary: colors[0].uiColor(), secondary: colors[1].uiColor(), detail: colors[2].uiColor())
+        typeIcon.gradientColors = (UIImageColors(background: .clear, primary: colors[0].uiColor(), secondary: colors[1].uiColor(), detail: colors[2].uiColor()), true)
         
         addSubview(bottomSeperator)
         let gradient = bottomSeperator.layer.sublayers![0] as! CAGradientLayer
@@ -161,7 +161,7 @@ class FullDetailGrabberHandle: UIView {
             UIView.transition(with: self, duration: 1, options: [.transitionCrossDissolve, .allowUserInteraction]) {
                 gradient.colors = [newColors[0].cgColor(), newColors[1].cgColor(), newColors[2].cgColor()]
             }
-            self.typeIcon.gradientColors = UIImageColors(background: .clear, primary: newColors[0].uiColor(), secondary: newColors[1].uiColor(), detail: newColors[2].uiColor()) // gradient property already animates changes
+            self.typeIcon.gradientColors = (UIImageColors(background: .clear, primary: newColors[0].uiColor(), secondary: newColors[1].uiColor(), detail: newColors[2].uiColor()), true) // gradient property already animates changes
             self.distanceLabelGradient(colors.cgColors())
         }.store(in: &vm.cancellable)
     }

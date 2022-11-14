@@ -85,10 +85,10 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         
         addSubview(deleteButton)
         deleteButton.addTarget(self, action: #selector(deletePressed), for: .touchUpInside)
-        deleteButton.gradientColors = colors
+        deleteButton.gradientColors = (colors, false)
         
         contentView.addSubview(imageView)
-        imageView.gradientColors = colors
+        imageView.gradientColors = (colors, false)
         imageView.layer.addSublayer(skeletonGradient)
         imageView.sd_setImage(with: URL(string: profile.image_url)) { [weak self] I, E, C, U in
             self?.skeletonGradient.removeFromSuperlayer()
@@ -97,7 +97,7 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         
         contentView.addSubview(actionButton)
         actionButton.addTarget(self, action: #selector(actionPressed), for: .touchUpInside)
-        actionButton.gradientColors = colors
+        actionButton.gradientColors = (colors, false)
         
         contentView.addSubview(nameLabel)
         nameLabel.centerX(inView: contentView, topAnchor: imageView.bottomAnchor, paddingTop: .wProportioned(5))

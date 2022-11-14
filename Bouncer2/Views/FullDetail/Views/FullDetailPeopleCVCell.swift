@@ -15,7 +15,7 @@ class FullDetailPeopleCVCell: UICollectionViewCell, SkeletonLoadable {
     
     public func setup(with profile: Profile){
         contentView.addSubview(imageView)
-        imageView.gradientColors = UIImageColors(background: .clear, primary: profile.colors?[0].uiColor() ?? UIColor.white, secondary: profile.colors?[1].uiColor() ?? UIColor.white, detail: profile.colors?[2].uiColor() ?? UIColor.white)
+        imageView.gradientColors = (profile.colors?.uiImageColors() ?? User.defaultColors, false)
         skeletonGradient.frame = imageView.bounds
         imageView.layer.addSublayer(skeletonGradient)
         

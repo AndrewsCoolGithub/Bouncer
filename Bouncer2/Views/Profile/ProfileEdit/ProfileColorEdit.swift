@@ -226,7 +226,7 @@ private struct ProfileColorEditViewComponents{
         gradient.startPoint = CGPoint(x: 0, y: 1)
         gradient.endPoint = CGPoint(x: 1, y: 1)
         gradient.colors = nil
-        view.gradientColors = UIImageColors.clear
+        view.gradientColors = (UIImageColors.clear, true)
         view.layer.addSublayer(gradient)
         return view
     }()

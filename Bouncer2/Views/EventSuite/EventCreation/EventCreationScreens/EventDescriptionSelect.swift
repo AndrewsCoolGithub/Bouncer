@@ -54,7 +54,7 @@ class EventDescriptionSelect: UIViewController{
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("viewWillAppear")
-        textView.gradientColors = EventCreationVC.shared.viewModel.colors
+        textView.gradientColors = (EventCreationVC.shared.viewModel.colors, true)
         textView.tintColor = EventCreationVC.shared.viewModel.colors?.detail
     }
     

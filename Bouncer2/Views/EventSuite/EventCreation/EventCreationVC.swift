@@ -420,7 +420,7 @@ extension EventCreationVC: UIViewControllerTransitioningDelegate {
     }
 }
 
-class CurrentVC: Hashable{ //Linked List with values being UIViewController
+class CurrentVC: Hashable { //Linked List with values being UIViewController
     static func == (lhs: CurrentVC, rhs: CurrentVC) -> Bool {
         lhs.type == rhs.type
     }

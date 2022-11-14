@@ -54,12 +54,12 @@ class ProfileViewController: UIViewController{
     //MARK: - viewDidLayoutSubviews
     override func viewDidLayoutSubviews() {
         if isCurrentUser{
-            components.actionButton.gradientColors = User.shared.colors.uiImageColors()
+            components.actionButton.gradientColors = (User.shared.colors.uiImageColors(), false)
             components.actionButton.center = CGPoint(x: .makeWidth(87 + 120), y: components.bioLabel.frame.maxY + .makeWidth(103.5))
             components.actionButton.setTitle("Edit", for: .normal)
             components.actionButton.addTarget(self, action: #selector(setupEditFunctionality), for: .touchUpInside)
         }else{
-            components.actionButton.gradientColors = viewModel.colors?.uiImageColors() ?? User.defaultColors
+            components.actionButton.gradientColors = (viewModel.colors?.uiImageColors() ?? User.defaultColors, false)
             components.actionButton.center = CGPoint(x: .makeWidth(50 + 120), y: components.bioLabel.frame.maxY + .makeWidth(103.5))
             components.actionButton.addTarget(self, action: #selector(follow), for: .touchUpInside)
 //            if User.shared.following.contains(viewModel.id!){
@@ -127,7 +127,7 @@ class ProfileViewController: UIViewController{
         }
         
         let profileImageView = components.profilePictureImageView
-        profileImageView.gradientColors = profile?.colors?.uiImageColors() ?? User.defaultColors
+        profileImageView.gradientColors = (profile?.colors?.uiImageColors() ?? User.defaultColors, false)
         
         let profileSkeleton = components.profileSkeletonGradient
         let profileImageURL = profile != nil ? profile!.image_url : User.shared.imageURL
@@ -281,8 +281,8 @@ class ProfileViewController: UIViewController{
         let profileImageView = components.profilePictureImageView
         viewModel.$colors.sink {  colors in
             guard let colors = colors else {return}
-            actionButton.gradientColors = colors.uiImageColors() //Update Action Button Gradient
-            profileImageView.gradientColors = colors.uiImageColors() //Update Profile Picture Gradient
+            actionButton.gradientColors = (colors.uiImageColors(), true) //Update Action Button Gradient
+            profileImageView.gradientColors = (colors.uiImageColors(), true) //Update Profile Picture Gradient
         }.store(in: &cancellable)
     }
     

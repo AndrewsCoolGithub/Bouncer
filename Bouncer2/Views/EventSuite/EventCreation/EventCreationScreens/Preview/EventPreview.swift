@@ -68,7 +68,7 @@ class EventPreview: UIViewController, UIPageViewControllerDelegate{
         super.viewWillAppear(animated)
         
         //slider
-        previewHeader.slider.gradientColors = EventCreationVC.shared.viewModel.colors!
+        previewHeader.slider.gradientColors = (EventCreationVC.shared.viewModel.colors!, true)
         //for list:
         let listCell = self.views[0] as? EventCellPreview
         listCell?.updateView()

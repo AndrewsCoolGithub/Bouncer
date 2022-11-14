@@ -189,7 +189,7 @@ class EventFull: UIViewController{
     func updateView(){
         self.imageView.image = EventCreationVC.initImage!
         if let typeIcon = self.imageView.subviews.first(where: {$0 is UIImageView}) as? UIImageView{
-            typeIcon.gradientColors = EventCreationVC.shared.viewModel.colors!
+            typeIcon.gradientColors = (EventCreationVC.shared.viewModel.colors!, true)
             typeIcon.image = EventCreationVC.shared.viewModel.eventType == .exclusive ? UIImage(named: "SmallExclusiveIcon") : UIImage(systemName: "mappin.and.ellipse")
         }
         self.decriptionLabel.text = EventCreationVC.shared.viewModel.descrip

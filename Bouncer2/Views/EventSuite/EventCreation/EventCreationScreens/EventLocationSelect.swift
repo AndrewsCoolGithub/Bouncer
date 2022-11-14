@@ -41,7 +41,7 @@ class EventLocationSelect: UIViewController{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        addressTextField.gradientColors = EventCreationVC.shared.viewModel.colors
+        addressTextField.gradientColors = (EventCreationVC.shared.viewModel.colors, true)
         addressTextField.tintColor = EventCreationVC.shared.viewModel.colors?.detail
         
         if let annotation = self.mapView.annotations?.first(where: {$0 is EventPointAnnot}){
