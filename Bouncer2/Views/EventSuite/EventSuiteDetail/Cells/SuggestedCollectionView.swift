@@ -23,20 +23,18 @@ class SuggestedCollectionView: UITableViewCell{
         return cv
     }()
     
-    enum Section{ case suggested}
+    fileprivate enum Section{ case suggested}
     
-    var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
+    fileprivate var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
     
+    
+   
     
     func setup(_ viewModel: EventSuiteDetailVM?){
         guard let viewModel = viewModel else {return}
         contentView.addSubview(suggestedCV)
         suggestedCV.delegate = self
-        dataSource = UICollectionViewDiffableDataSource(collectionView: suggestedCV, cellProvider: { collectionView, indexPath, itemIdentifier in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SuggestedCard.id, for: indexPath) as! SuggestedCard
-            cell.setup(itemIdentifier)
-            return cell
-        })
+        dataSource = setupDatasource()
         
         viewModel.$suggested.receive(on: DispatchQueue.main).sink { profiles in
             self.updateSnapshot(profiles)
@@ -45,11 +43,40 @@ class SuggestedCollectionView: UITableViewCell{
     
     func updateSnapshot(_ profiles: [Profile]){
         var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
-        snapshot.appendSections([.suggested])
-        snapshot.appendItems(profiles, toSection: .suggested)
-        dataSource?.apply(snapshot, animatingDifferences: true)
+        if profiles.isEmpty{
+            let dummyProfile = Profile(image_url: " ", display_name: "", user_name: "", latitude: 90, longitude: 90, backdrop_url: nil, bio: nil, followers: nil, following: nil, blocked: nil, blockedBy: nil, colors: nil, number: nil, email: nil, emojis: nil, recentEmojis: nil)
+            let dummyProfile2 = Profile(image_url: " ", display_name: "", user_name: "", latitude: 90, longitude: 90, backdrop_url: nil, bio: nil, followers: nil, following: nil, blocked: nil, blockedBy: nil, colors: nil, number: nil, email: nil, emojis: nil, recentEmojis: nil)
+            let dummyProfile3 = Profile(image_url: " ", display_name: "", user_name: "", latitude: 90, longitude: 90, backdrop_url: nil, bio: nil, followers: nil, following: nil, blocked: nil, blockedBy: nil, colors: nil, number: nil, email: nil, emojis: nil, recentEmojis: nil)
+        
+            snapshot.appendSections([.suggested])
+            snapshot.appendItems([dummyProfile, dummyProfile2, dummyProfile3], toSection: .suggested)
+            dataSource?.apply(snapshot, animatingDifferences: true)
+        }else{
+            snapshot.appendSections([.suggested])
+            snapshot.appendItems(profiles, toSection: .suggested)
+            dataSource?.apply(snapshot, animatingDifferences: true)
+        }
+        
+       
+       
+    }
+    
+    fileprivate func setupDatasource() -> UICollectionViewDiffableDataSource<Section, Profile> {
+        return UICollectionViewDiffableDataSource(collectionView: suggestedCV, cellProvider: { collectionView, indexPath, itemIdentifier in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SuggestedCard.id, for: indexPath) as! SuggestedCard
+            
+            if itemIdentifier.image_url == " "{
+                cell.skeleton()
+            }else{
+                cell.setup(itemIdentifier)
+            }
+            
+            return cell
+        })
     }
 }
+
+
 
 
 extension SuggestedCollectionView: UICollectionViewDelegateFlowLayout{

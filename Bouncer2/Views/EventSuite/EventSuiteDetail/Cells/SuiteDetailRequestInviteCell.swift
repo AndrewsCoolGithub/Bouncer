@@ -8,7 +8,7 @@
 import UIKit
 
 class SuiteDetailRequestCell: UITableViewCell, SkeletonLoadable {
-    static let id = "SuiteDetailRSVPCell"
+    static let id = "SuiteDetailRequestCell"
     
     private let profileImage: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: .makeWidth(15), y: .wProportioned(10), width: .makeWidth(75), height: .makeWidth(75)), cornerRadius: .makeWidth(37.5), lineWidth: 1.5, direction: .horizontal)
@@ -42,15 +42,23 @@ class SuiteDetailRequestCell: UITableViewCell, SkeletonLoadable {
         return gradient
     }()
     
-    private let actionButton: UIButton = {
-        let button = UIButton()
+    fileprivate let actionButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: .makeWidth(319), y: .wProportioned(28.75), width: .makeWidth(75), height: .wProportioned(37.5)))
         button.backgroundColor = .buttonFill()
-        
-        
+        button.layer.cornerRadius = .wProportioned(12)
+        button.tintColor = .white
+        button.titleLabel?.font = .poppinsMedium(size: .makeWidth(16))
         return button
     }()
     
-    func setup(_ profile: Profile, cellDelegate: SuiteCellDelegate){
+    weak var delegate: SuiteCellDelegate!
+    var _profile: Profile!
+    var _section: EventSuiteDetail.Section!
+    
+    func setup(_ profile: Profile, cellDelegate: SuiteCellDelegate?, section: EventSuiteDetail.Section){
+        delegate = cellDelegate
+        _profile = profile
+        _section = section
         contentView.backgroundColor = .greyColor()
         contentView.addSubview(profileImage)
         profileImage.gradientColors = (profile.colors?.uiImageColors() ?? User.defaultColors, false)
@@ -68,5 +76,27 @@ class SuiteDetailRequestCell: UITableViewCell, SkeletonLoadable {
         nameLabel.anchor(top: userNameLabel.bottomAnchor, paddingTop: .wProportioned(4))
         nameLabel.anchor(left: profileImage.rightAnchor, paddingLeft: .makeWidth(15))
         
+        contentView.addSubview(actionButton)
+        actionButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
+        if section == .one{
+            actionButton.setTitle("Invite", for: .normal)
+        }else{
+            actionButton.setTitle("Cancel", for: .normal)
+        }
+//        centerYright(inView: contentView, rightAnchor: contentView.rightAnchor, paddingRight: .makeWidth(20))
+        
+    }
+    
+    @objc func action(_ sender: UIButton){
+        guard let id = _profile.id else {return}
+        if _section == .one{
+            delegate?.inviteUser(id)
+        }else{
+            delegate?.cancelInvite(id)
+        }
+    }
+    
+    deinit{
+        delegate = nil
     }
 }

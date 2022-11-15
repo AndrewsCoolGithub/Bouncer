@@ -13,7 +13,6 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
     
     private let imageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: .makeWidth(30), y: .wProportioned(20), width: .makeWidth(75), height: .makeWidth(75)), cornerRadius: .makeWidth(37.5), lineWidth: 1.5, direction: .horizontal)
-//        imageView.layer.cornerRadius = .makeWidth(20)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.layer.defaultShadow(.makeWidth(20))
@@ -74,9 +73,13 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         return button
     }()
 
+    func skeleton(){
+        contentView.addSubview(skeletonView)
+        print("Added Skeleton")
+    }
     
     func setup(_ profile: Profile){
-        
+        skeletonView.removeFromSuperview()
         let colors = profile.colors?.uiImageColors() ?? User.defaultColors
         contentView.backgroundColor = .greyColor()
         contentView.layer.cornerRadius = .makeWidth(20)
@@ -116,4 +119,77 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
     @objc func actionPressed(){
         print("Invite user to event")
     }
+    
+    private lazy var skeletonView: UIView = {
+        let view = UIView(frame: CGRect(origin: .zero, size: CGSize(width: .makeWidth(135), height: .wProportioned(210))))
+        view.backgroundColor = .greyColor()
+        view.layer.cornerRadius = .makeWidth(20)
+        view.layer.defaultShadow(.makeWidth(20))
+        view.clipsToBounds = false
+        
+        let gradient = CAGradientLayer()
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint = CGPoint(x: 1, y: 0.5)
+        let animation = makeAnimationGroup()
+        animation.beginTime = 0.0
+        gradient.add(animation, forKey: "backgroundColor")
+        
+        let skeletonImage = UIView(frame: CGRect(x: .makeWidth(30), y: .wProportioned(20), width: .makeWidth(75), height: .makeWidth(75)))
+        skeletonImage.layer.cornerRadius = .makeWidth(37.5)
+        skeletonImage.layer.masksToBounds = true
+        skeletonImage.layer.defaultShadow(.makeWidth(20))
+        view.addSubview(skeletonImage)
+        gradient.frame = skeletonImage.bounds
+        skeletonImage.layer.addSublayer(gradient)
+        skeletonImage.clipsToBounds = true
+        
+        
+
+        let gradient2 = CAGradientLayer()
+        gradient2.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient2.endPoint = CGPoint(x: 1, y: 0.5)
+        let animation2 = makeAnimationGroup()
+        animation2.beginTime = 0.0
+        gradient2.add(animation2, forKey: "backgroundColor")
+        
+        let skeletonButton = UIView(frame: CGRect(x: .makeWidth(25), y: .wProportioned(149), width: .makeWidth(85), height: .wProportioned(40)))
+        skeletonButton.layer.cornerRadius = .wProportioned(20)
+        skeletonButton.layer.masksToBounds = true
+        skeletonButton.layer.defaultShadow(.wProportioned(20))
+        view.addSubview(skeletonButton)
+        gradient2.frame = skeletonButton.bounds
+        skeletonButton.layer.addSublayer(gradient2)
+        skeletonButton.clipsToBounds = true
+        
+        
+        let gradient3 = CAGradientLayer()
+        gradient3.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient3.endPoint = CGPoint(x: 1, y: 0.5)
+        let animation3 = makeAnimationGroup()
+        animation3.beginTime = 0.0
+        gradient3.add(animation3, forKey: "backgroundColor")
+        
+        let line1 = UIView(frame: CGRect(x: .makeWidth(27.5), y: .wProportioned(107.5), width: .makeWidth(80), height: .wProportioned(7.5)))
+        view.addSubview(line1)
+        gradient3.frame = line1.bounds
+        line1.layer.addSublayer(gradient3)
+        
+        let gradient4 = CAGradientLayer()
+        gradient4.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient4.endPoint = CGPoint(x: 1, y: 0.5)
+        let animation4 = makeAnimationGroup()
+        animation4.beginTime = 0.0
+        gradient4.add(animation4, forKey: "backgroundColor")
+        
+        let line2 = UIView(frame: CGRect(x: .makeWidth(42.5), y: .wProportioned(123), width: .makeWidth(50), height: .wProportioned(7.5)))
+        view.addSubview(line2)
+        gradient4.frame = line2.bounds
+        line2.layer.addSublayer(gradient4)
+        
+        
+        
+        
+        
+        return view
+    }()
 }

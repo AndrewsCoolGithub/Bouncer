@@ -93,7 +93,7 @@
 		A46438E728E3A00900AAC51E /* CustomEmoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46438E628E3A00900AAC51E /* CustomEmoteCell.swift */; };
 		A46438E928E58B6F00AAC51E /* CLLocationCoord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46438E828E58B6F00AAC51E /* CLLocationCoord.swift */; };
 		A46438EB28E5932D00AAC51E /* Doubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46438EA28E5932D00AAC51E /* Doubles.swift */; };
-		A467B1FD29223BDE000D1B91 /* SuiteDetailRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A467B1FC29223BDE000D1B91 /* SuiteDetailRequestCell.swift */; };
+		A467B1FD29223BDE000D1B91 /* SuiteDetailRequestInviteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A467B1FC29223BDE000D1B91 /* SuiteDetailRequestInviteCell.swift */; };
 		A4721D382871764C00F763AF /* FullDetailVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4721D372871764C00F763AF /* FullDetailVM.swift */; };
 		A4721D3A2871787100F763AF /* FirestoreSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4721D392871787100F763AF /* FirestoreSubscription.swift */; };
 		A4721D3C287178BF00F763AF /* FirestoreCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4721D3B287178BF00F763AF /* FirestoreCollections.swift */; };
@@ -269,7 +269,7 @@
 		A46438E628E3A00900AAC51E /* CustomEmoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEmoteCell.swift; sourceTree = "<group>"; };
 		A46438E828E58B6F00AAC51E /* CLLocationCoord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationCoord.swift; sourceTree = "<group>"; };
 		A46438EA28E5932D00AAC51E /* Doubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Doubles.swift; sourceTree = "<group>"; };
-		A467B1FC29223BDE000D1B91 /* SuiteDetailRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteDetailRequestCell.swift; sourceTree = "<group>"; };
+		A467B1FC29223BDE000D1B91 /* SuiteDetailRequestInviteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuiteDetailRequestInviteCell.swift; sourceTree = "<group>"; };
 		A4721D372871764C00F763AF /* FullDetailVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullDetailVM.swift; sourceTree = "<group>"; };
 		A4721D392871787100F763AF /* FirestoreSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreSubscription.swift; sourceTree = "<group>"; };
 		A4721D3B287178BF00F763AF /* FirestoreCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreCollections.swift; sourceTree = "<group>"; };
@@ -564,7 +564,6 @@
 				A42731E32920BB8100CB6B66 /* SuiteHeaderButton.swift */,
 				A42731D5291E705600CB6B66 /* EventSuiteDetailVM.swift */,
 				A467B1FB29223BA7000D1B91 /* Cells */,
-				A42731D7291F599000CB6B66 /* SuggestedCard.swift */,
 			);
 			path = EventSuiteDetail;
 			sourceTree = "<group>";
@@ -703,8 +702,9 @@
 			isa = PBXGroup;
 			children = (
 				A42731DF291FD18C00CB6B66 /* SuiteDetailRSVPCell.swift */,
-				A467B1FC29223BDE000D1B91 /* SuiteDetailRequestCell.swift */,
+				A467B1FC29223BDE000D1B91 /* SuiteDetailRequestInviteCell.swift */,
 				A42731DD291FC9D200CB6B66 /* SuggestedCollectionView.swift */,
+				A42731D7291F599000CB6B66 /* SuggestedCard.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1056,7 +1056,7 @@
 				A4CFCD46284D87A60060CB44 /* WelcomeScreen.swift in Sources */,
 				A43A47A32897A8FC00A6EDC7 /* SearchCells.swift in Sources */,
 				A45FCFAB28B4CAD1005B833B /* MessageCell.swift in Sources */,
-				A467B1FD29223BDE000D1B91 /* SuiteDetailRequestCell.swift in Sources */,
+				A467B1FD29223BDE000D1B91 /* SuiteDetailRequestInviteCell.swift in Sources */,
 				A4FFF25928D1C313007BED60 /* ChatEmoteView.swift in Sources */,
 				A4577AA0282CC1AA00B1750D /* EventCellView.swift in Sources */,
 				A4AA565628C0A65200DE0474 /* MessageCodable.swift in Sources */,

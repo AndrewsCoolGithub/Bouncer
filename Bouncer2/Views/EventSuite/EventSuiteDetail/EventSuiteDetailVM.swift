@@ -33,6 +33,7 @@ final class EventSuiteDetailVM: ObservableObject{
         
         self.fetchSuggestedUsers()
         self.listenForProspectUpdates(event.id!)
+
     }
     
     deinit{
@@ -43,31 +44,32 @@ final class EventSuiteDetailVM: ObservableObject{
     
     @Published var suggested = [Profile]()
     @Published var prospects = [Profile]()
+    @Published var invited = [Profile]()
     @Published var guest = [Profile]()
     @Published var data = [EventSuiteDetail.Section: (profiles: [Profile], isHidden: Bool)]()
     
-    var prospectDictionary = Set<String>()
     
-    fileprivate func getProspectUsers() async {
-        if prospectIds.isEmpty{ prospects = []; return}
-        var profiles = [Profile]()
-        for id in prospectIds{
-            if let profile = try? await USERS_COLLECTION.document(id).getDocument(as: Profile.self){
-                profiles.append(profile)
-            }
-        }
-        print("profiles check for async: \(profiles)")
-        prospects = profiles
-        let isHidden = data[EventSuiteDetail.Section.one]!.isHidden
-        data[EventSuiteDetail.Section.one] = (prospects, isHidden)
-    }
+    private var _compareP = [String]()
+    private var prospectIds = [String]() {didSet {
+        if _compareP == prospectIds {return}
+        _compareP = prospectIds
+        Task{await getUsers(true)}}}
     
-    var prospectIds = [String]() {didSet { Task{await getProspectUsers()} }}
+    private var _compareI = [String]()
+    private var invitedIds = [String]() {didSet {
+        if _compareI == invitedIds{return}
+        _compareI = invitedIds
+        Task{await getUsers(false)}
+    }}
+    
     
     func fetchSuggestedUsers(){
         Task{
+           
             suggested = await User.shared.following.getUsers()
+            
             suggested.sort(by: {$0.isConnection == true && $1.isConnection == false})
+            
             let isHidden = data[EventSuiteDetail.Section.three]!.isHidden
             data[EventSuiteDetail.Section.three] = (suggested, isHidden)
         }
@@ -76,7 +78,9 @@ final class EventSuiteDetailVM: ObservableObject{
     func listenForProspectUpdates(_ id: String){
         FirestoreSubscription.subscribe(id: id, collection: .Events) .compactMap(FirestoreDecoder.decode(Event.self))
             .receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] event in
-                self?.prospectIds = (event.prospectIds ?? [])
+                self?.prospectIds = event.prospectIds?.filter({!(event.invitedIds ?? []).contains($0)}) ?? []
+                self?.invitedIds = event.invitedIds ?? []
+                
                 
                 if event.startsAt > .now{
                     self?.detailType = event.type == .open ? .open : .exclusive
@@ -88,6 +92,35 @@ final class EventSuiteDetailVM: ObservableObject{
             })
             .store(in: &cancellable)
     }
+    
+    
+    fileprivate func getUsers(_ isProspects: Bool) async {
+        
+        if isProspects{
+            let isHidden = data[EventSuiteDetail.Section.one]!.isHidden
+            if prospectIds.isEmpty{ data[EventSuiteDetail.Section.one] = ([], isHidden); return}
+            var profiles = [Profile]()
+            for id in prospectIds{
+                if let profile = try? await USERS_COLLECTION.document(id).getDocument(as: Profile.self){
+                    profiles.append(profile)
+                }
+            }
+        
+            data[EventSuiteDetail.Section.one] = (profiles, isHidden)
+        }else{
+            let isHidden = data[EventSuiteDetail.Section.two]!.isHidden
+            if invitedIds.isEmpty{ data[EventSuiteDetail.Section.two] = ([], isHidden); return}
+            var profiles = [Profile]()
+            for id in invitedIds{
+                if let profile = try? await USERS_COLLECTION.document(id).getDocument(as: Profile.self){
+                    profiles.append(profile)
+                }
+            }
+            data[EventSuiteDetail.Section.two] = (profiles, isHidden)
+        }
+    }
+    
+    
     
     
     func ttlLabelText() -> String?{
@@ -126,14 +159,14 @@ final class EventSuiteDetailVM: ObservableObject{
     }
     
     public enum ExclusiveSection: String {
-        case Request
+        case Requests
         case Invited
         case Suggested
         
         public init?(_ section: EventSuiteDetail.Section) {
             switch section {
             case .one:
-                self = .Request
+                self = .Requests
             case .two:
                 self = .Invited
             case .three:
@@ -158,7 +191,4 @@ final class EventSuiteDetailVM: ObservableObject{
             }
         }
     }
-    
-    
-    
 }

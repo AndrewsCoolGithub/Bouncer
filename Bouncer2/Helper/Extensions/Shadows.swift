@@ -10,20 +10,20 @@ import UIKit
 extension CALayer {
   func applySketchShadow(
     color: UIColor = .black, alpha: Float = 0.5, x: CGFloat = 0, y: CGFloat = 2, blur: CGFloat = 4, spread: CGFloat = 0, withRounding: CGFloat = 0){
-    masksToBounds = false
-    shadowColor = color.cgColor
-    shadowOpacity = alpha
-    shadowOffset = CGSize(width: x, height: y)
-    shadowRadius = blur / 2.0
-    if spread == 0 {
-      shadowPath = nil
-    } else {
-      let dx = -spread
-      let rect = bounds.insetBy(dx: dx, dy: dx)
-        shadowPath = withRounding == 0 ? UIBezierPath(rect: rect).cgPath : UIBezierPath (roundedRect: rect, cornerRadius: withRounding).cgPath
-    
+        masksToBounds = false
+        shadowColor = color.cgColor
+        shadowOpacity = alpha
+        shadowOffset = CGSize(width: x, height: y)
+        shadowRadius = blur / 2.0
+        if spread == 0 {
+            shadowPath = nil
+        } else {
+            let dx = -spread
+            let rect = bounds.insetBy(dx: dx, dy: dx)
+            shadowPath = withRounding == 0 ? UIBezierPath(rect: rect).cgPath : UIBezierPath (roundedRect: rect, cornerRadius: withRounding).cgPath
+            
+        }
     }
-  }
     func removeShadow(){
         shadowOpacity = 0
         shadowOffset = .zero
@@ -32,7 +32,7 @@ extension CALayer {
     }
     
     func defaultShadow(_ rounding: CGFloat){
-        applySketchShadow(color: .black.withAlphaComponent(0.3), alpha: 1, x: 0, y: 6, blur: 9, spread: 5, withRounding: rounding)
+        applySketchShadow(color: .black.withAlphaComponent(0.3), alpha: 1, x: 0, y: .wProportioned(6), blur: .makeWidth(9), spread: .makeWidth(5), withRounding: rounding)
     }
 }
 public class InnerShadowLayer: CAGradientLayer {
