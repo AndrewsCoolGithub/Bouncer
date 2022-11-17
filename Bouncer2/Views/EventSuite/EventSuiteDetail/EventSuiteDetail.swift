@@ -9,21 +9,19 @@ import UIKit
 
 class EventSuiteDetail: UIViewController{
     
-   
-    var components = EventSuiteDetailViewComponents()
+    fileprivate var components = EventSuiteDetailViewComponents()
+    fileprivate var vm: EventSuiteDetailVM!
 
-    var vm: EventSuiteDetailVM!
-    var hiddenSections = Set<[Profile]>()
-    let dummyProfile = Profile(image_url: "", display_name: "", user_name: "", latitude: 90, longitude: 90, backdrop_url: nil, bio: nil, followers: nil, following: nil, blocked: nil, blockedBy: nil, colors: nil, number: nil, email: nil, emojis: nil, recentEmojis: nil)
+    fileprivate let dummyProfile = Profile(image_url: "", display_name: "", user_name: "", latitude: 90, longitude: 90, backdrop_url: nil, bio: nil, followers: nil, following: nil, blocked: nil, blockedBy: nil, colors: nil, number: nil, email: nil, emojis: nil, recentEmojis: nil)
     
-    var dataSource: UITableViewDiffableDataSource<Section, Profile>?
+    fileprivate var dataSource: UITableViewDiffableDataSource<Section, Profile>?
     
-    private let tableView: UITableView = {
+    fileprivate let tableView: UITableView = {
         let tv = UITableView(frame: CGRect(x: 0, y: .wProportioned(170), width: .makeWidth(414), height: .makeHeight(896) - .wProportioned(170)))
         tv.backgroundColor = .greyColor()
         tv.separatorStyle = .none
-        tv.register(SuiteDetailRSVPCell.self, forCellReuseIdentifier: SuiteDetailRSVPCell.id)
-        tv.register(SuiteDetailRequestCell.self, forCellReuseIdentifier: SuiteDetailRequestCell.id)
+        tv.sectionHeaderTopPadding = 0
+        tv.register(SuiteDetailCell.self, forCellReuseIdentifier: SuiteDetailCell.id)
         tv.register(SuggestedCollectionView.self, forCellReuseIdentifier: SuggestedCollectionView.id)
         return tv
     }()
@@ -40,36 +38,24 @@ class EventSuiteDetail: UIViewController{
         setupDetailHeader(event, image)
         view.addSubview(tableView)
         tableView.delegate = self
+        view.backgroundColor = .greyColor()
+        
         
         //TODO: Change dataSource when Detail Type changes
         dataSource = UITableViewDiffableDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, profile in
             
             guard let section = self?.dataSource?.sectionIdentifier(for: indexPath.section) else {fatalError("Event Suite Detail's UITableViewDiffableDataSource must return a cell.")}
             switch section{
-                
-               
             case .three:
                 let cell = tableView.dequeueReusableCell(withIdentifier: SuggestedCollectionView.id) as! SuggestedCollectionView
-                cell.setup(self?.vm)
+                cell.setup(self?.vm, delegate: self)
                return cell
-            case .one:  
-                if event.type == .open{
-                    let cell = tableView.dequeueReusableCell(withIdentifier: SuiteDetailRSVPCell.id, for: indexPath) as! SuiteDetailRSVPCell
-                    cell.setup(profile)
-                    return cell
-                }else{
-                    let cell = tableView.dequeueReusableCell(withIdentifier: SuiteDetailRequestCell.id, for: indexPath) as! SuiteDetailRequestCell
-                    cell.setup(profile, cellDelegate: self, section: section)
-                    return cell
-                }
-            case .two: 
-                let cell = tableView.dequeueReusableCell(withIdentifier: SuiteDetailRequestCell.id, for: indexPath) as! SuiteDetailRequestCell
-                cell.setup(profile, cellDelegate: self, section: section)
+            default:
+                let cell = tableView.dequeueReusableCell(withIdentifier: SuiteDetailCell.id, for: indexPath) as! SuiteDetailCell
+                cell.setup(profile, section, self?.vm.detailType, delegate: self)
                 return cell
             }
         })
-        
-        
         
         vm.$data.receive(on: DispatchQueue.main).sink { [weak self] _ in
             self?.makeSnapshot()
@@ -86,13 +72,7 @@ class EventSuiteDetail: UIViewController{
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .greyColor()
-        
-    }
-    
-    func makeSnapshot(){
+    fileprivate func makeSnapshot(){
         var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
         
         for section in Section.allCases{
@@ -110,8 +90,7 @@ class EventSuiteDetail: UIViewController{
         dataSource?.apply(snapshot, animatingDifferences: !vm.data[.one]!.isHidden)
     }
     
-    private func setupDetailHeader(_ event: Event, _ image: UIImage?){
-
+    fileprivate func setupDetailHeader(_ event: Event, _ image: UIImage?){
         let iv = components.imageView
         let skeleton = components.skeletonGradient
         view.addSubview(iv)
@@ -146,7 +125,6 @@ class EventSuiteDetail: UIViewController{
         shareButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(15))
         shareButton.anchor(right: editButton.leftAnchor, paddingRight: .makeWidth(20))
         
-        
         let eventTitleLabel = components.eventTitleLabel
         eventTitleLabel.text = event.title
         view.addSubview(eventTitleLabel)
@@ -166,21 +144,24 @@ class EventSuiteDetail: UIViewController{
                 }
             }
         }.store(in: &vm.cancellable)
-        
     }
     
-    @objc func edit(){
+    @objc fileprivate func edit(){
         if let image = components.imageView.image{
             EventCreationVC.setup(image: image, colors: vm.event.uiImageColors(), with: nil, with: vm.event)
             navigationController?.pushViewController(EventCreationVC.shared, animated: true)
         }
     }
     
-    @objc func popVC(){
+    @objc fileprivate func popVC(){
         navigationController?.popViewController(animated: true)
     }
-       
     
+    @objc fileprivate func hideSection(_ sender: UITapGestureRecognizer) {
+        guard let view = sender.view as? SuiteHeaderButton, let selectedSection = view.section else {return}
+        var items: (profiles: [Profile], isHidden: Bool) { return vm.data[selectedSection]!}
+        vm.data[selectedSection] = (items.profiles, !items.isHidden)
+    }
 }
 
 extension EventSuiteDetail: UITableViewDelegate{
@@ -204,35 +185,11 @@ extension EventSuiteDetail: UITableViewDelegate{
         sectionButton.addGestureRecognizer(tapGesture)
         return sectionButton
     }
-        
     
-    @objc private func hideSection(_ sender: UITapGestureRecognizer) {
-       
-        guard let view = sender.view as? SuiteHeaderButton, let selectedSection = view.section else {return}
-        
-        var items: (profiles: [Profile], isHidden: Bool) {
-            return vm.data[selectedSection]!
-        }
-        
-        vm.data[selectedSection] = (items.profiles, !items.isHidden)
-        
-       
-//        var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
-//
-//
-//        for section in Section.allCases{
-//            let hidden = vm.data[section]!.isHidden
-//            let profiles = section != .three ? vm.data[section]!.profiles : [dummyProfile]
-//
-//            if !hidden && !profiles.isEmpty{
-//                snapshot.appendSections([section])
-//                snapshot.appendItems(profiles, toSection: section)
-//            }else if hidden && !profiles.isEmpty{
-//                snapshot.appendSections([section])
-//            }
-//        }
-        
-//        dataSource?.apply(snapshot, animatingDifferences: true)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let section = dataSource?.sectionIdentifier(for: indexPath.section), section != .three else {return}
+        guard let profile = dataSource?.itemIdentifier(for: indexPath) else {return}
+        openProfile(profile)
     }
 }
 

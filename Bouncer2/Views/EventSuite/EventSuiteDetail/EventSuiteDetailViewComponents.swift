@@ -81,6 +81,4 @@ public struct EventSuiteDetailViewComponents: SkeletonLoadable{
         gradient.frame = imageView.bounds
         return gradient
     }()
-    
-   
 }

@@ -48,10 +48,6 @@ import Combine
                  self?.label.text = EventSuiteDetailVM.OpenSection(section)!.rawValue
              case .exclusive:
                  self?.label.text = EventSuiteDetailVM.ExclusiveSection(section)!.rawValue
-             case .live:
-                 self?.label.text = EventSuiteDetailVM.LiveSection(section)!.rawValue
-             case .history:
-                 self?.label.text = "Make me"
              }
          }.store(in: &cancellable)
          

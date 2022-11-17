@@ -11,7 +11,7 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
     
     static let id = "suggested-card"
     
-    private let imageView: UIImageView = {
+    fileprivate let imageView: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: .makeWidth(30), y: .wProportioned(20), width: .makeWidth(75), height: .makeWidth(75)), cornerRadius: .makeWidth(37.5), lineWidth: 1.5, direction: .horizontal)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
@@ -20,7 +20,7 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         return imageView
     }()
     
-    private let nameLabel: UILabel = {
+    fileprivate let nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = .poppinsMedium(size: .makeWidth(15))
         nameLabel.setWidth(.makeWidth(110))
@@ -30,7 +30,7 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         return nameLabel
     }()
     
-    private let userNameLabel: UILabel = {
+    fileprivate let userNameLabel: UILabel = {
         let userNameLabel = UILabel()
         userNameLabel.font = .poppinsRegular(size: .makeWidth(12.5))
         userNameLabel.setWidth(.makeWidth(110))
@@ -41,7 +41,7 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         return userNameLabel
     }()
     
-    private let actionButton: UIButton = {
+    fileprivate let actionButton: UIButton = {
         let button = UIButton(frame: CGRect(x: .makeWidth(25), y: .wProportioned(149), width: .makeWidth(85), height: .wProportioned(40)), cornerRadius: .wProportioned(20), lineWidth: 1.5, direction: .horizontal)
         let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(17))
         let image = UIImage(systemName: "paperplane.fill", withConfiguration: config)
@@ -52,7 +52,7 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         return button
     }()
     
-    lazy var skeletonGradient: CAGradientLayer = {
+    fileprivate lazy var skeletonGradient: CAGradientLayer = {
         let gradient = CAGradientLayer()
         gradient.startPoint = CGPoint(x: 0, y: 0.5)
         gradient.endPoint = CGPoint(x: 1, y: 0.5)
@@ -63,22 +63,25 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         return gradient
     }()
     
-    private let deleteButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: .makeWidth(110), y: -.makeWidth(10), width: .makeWidth(35), height: .makeWidth(35)), cornerRadius: .makeWidth(17.5), lineWidth: 1.5, direction: .horizontal)
-        button.backgroundColor = .black
-        button.tintColor = .white
-        let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(16))
-        let image = UIImage(systemName: "xmark", withConfiguration: config)
-        button.setImage(image, for: .normal)
-        return button
-    }()
+//    private let deleteButton: UIButton = {
+//        let button = UIButton(frame: CGRect(x: .makeWidth(110), y: -.makeWidth(10), width: .makeWidth(35), height: .makeWidth(35)), cornerRadius: .makeWidth(17.5), lineWidth: 1.5, direction: .horizontal)
+//        button.backgroundColor = .black
+//        button.tintColor = .white
+//        let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(16))
+//        let image = UIImage(systemName: "xmark", withConfiguration: config)
+//        button.setImage(image, for: .normal)
+//        return button
+//    }()
 
-    func skeleton(){
+    public func skeleton(){
         contentView.addSubview(skeletonView)
-        print("Added Skeleton")
     }
     
-    func setup(_ profile: Profile){
+    fileprivate var delegate: SuiteCellDelegate?
+    fileprivate var profile: Profile!
+    public func setup(_ profile: Profile, delegate: SuiteCellDelegate?){
+        self.delegate = delegate
+        self.profile = profile
         skeletonView.removeFromSuperview()
         let colors = profile.colors?.uiImageColors() ?? User.defaultColors
         contentView.backgroundColor = .greyColor()
@@ -86,9 +89,9 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         contentView.layer.defaultShadow(.makeWidth(20))
         contentView.clipsToBounds = false
         
-        addSubview(deleteButton)
-        deleteButton.addTarget(self, action: #selector(deletePressed), for: .touchUpInside)
-        deleteButton.gradientColors = (colors, false)
+//        addSubview(deleteButton)
+//        deleteButton.addTarget(self, action: #selector(deletePressed), for: .touchUpInside)
+//        deleteButton.gradientColors = (colors, false)
         
         contentView.addSubview(imageView)
         imageView.gradientColors = (colors, false)
@@ -112,15 +115,17 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         
     }
     
-    @objc func deletePressed(){
+    @objc fileprivate func deletePressed(){
         print("Remove suggested user")
     }
     
-    @objc func actionPressed(){
+    @objc fileprivate func actionPressed(){
         print("Invite user to event")
+        guard let id = self.profile.id else {return}
+        delegate?.inviteUser(id)
     }
     
-    private lazy var skeletonView: UIView = {
+    fileprivate lazy var skeletonView: UIView = {
         let view = UIView(frame: CGRect(origin: .zero, size: CGSize(width: .makeWidth(135), height: .wProportioned(210))))
         view.backgroundColor = .greyColor()
         view.layer.cornerRadius = .makeWidth(20)
@@ -185,10 +190,6 @@ final class SuggestedCard: UICollectionViewCell, SkeletonLoadable{
         view.addSubview(line2)
         gradient4.frame = line2.bounds
         line2.layer.addSublayer(gradient4)
-        
-        
-        
-        
         
         return view
     }()

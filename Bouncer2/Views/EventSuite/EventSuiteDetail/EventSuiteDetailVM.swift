@@ -6,11 +6,9 @@
 //
 
 import Combine
-import Foundation
 import UIKit
 
 final class EventSuiteDetailVM: ObservableObject{
-    
     
     var cancellable = Set<AnyCancellable>()
     var event: Event!
@@ -32,8 +30,7 @@ final class EventSuiteDetailVM: ObservableObject{
         
         
         self.fetchSuggestedUsers()
-        self.listenForProspectUpdates(event.id!)
-
+        self.listenForUpdates(event.id!)
     }
     
     deinit{
@@ -49,48 +46,37 @@ final class EventSuiteDetailVM: ObservableObject{
     @Published var data = [EventSuiteDetail.Section: (profiles: [Profile], isHidden: Bool)]()
     
     
-    private var _compareP = [String]()
-    private var prospectIds = [String]() {didSet {
+    fileprivate var _compareP = [String]()
+    fileprivate var prospectIds = [String]() { didSet {
         if _compareP == prospectIds {return}
         _compareP = prospectIds
-        Task{await getUsers(true)}}}
+        Task{await getUsers(true)}
+    }}
     
-    private var _compareI = [String]()
-    private var invitedIds = [String]() {didSet {
+    fileprivate var _compareI = [String]()
+    fileprivate var invitedIds = [String]() { didSet {
         if _compareI == invitedIds{return}
         _compareI = invitedIds
         Task{await getUsers(false)}
     }}
     
     
-    func fetchSuggestedUsers(){
+    fileprivate func fetchSuggestedUsers(){
         Task{
-           
             suggested = await User.shared.following.getUsers()
-            
             suggested.sort(by: {$0.isConnection == true && $1.isConnection == false})
-            
             let isHidden = data[EventSuiteDetail.Section.three]!.isHidden
             data[EventSuiteDetail.Section.three] = (suggested, isHidden)
         }
     }
     
-    func listenForProspectUpdates(_ id: String){
+    fileprivate func listenForUpdates(_ id: String){
         FirestoreSubscription.subscribe(id: id, collection: .Events) .compactMap(FirestoreDecoder.decode(Event.self))
             .receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] event in
-                self?.prospectIds = event.prospectIds?.filter({!(event.invitedIds ?? []).contains($0)}) ?? []
-                self?.invitedIds = event.invitedIds ?? []
-                
-                
-                if event.startsAt > .now{
-                    self?.detailType = event.type == .open ? .open : .exclusive
-                }else if event.startsAt < .now && event.endsAt > .now{
-                    self?.detailType = .live
-                }else{
-                    self?.detailType = .history
-                }
-            })
-            .store(in: &cancellable)
+            self?.prospectIds = event.prospectIds?.filter({!(event.invitedIds ?? []).contains($0)}) ?? []
+            self?.invitedIds = event.invitedIds ?? []
+            self?.detailType = event.type == .open ? .open : .exclusive
+        }).store(in: &cancellable)
     }
     
     
@@ -105,7 +91,6 @@ final class EventSuiteDetailVM: ObservableObject{
                     profiles.append(profile)
                 }
             }
-        
             data[EventSuiteDetail.Section.one] = (profiles, isHidden)
         }else{
             let isHidden = data[EventSuiteDetail.Section.two]!.isHidden
@@ -120,10 +105,7 @@ final class EventSuiteDetailVM: ObservableObject{
         }
     }
     
-    
-    
-    
-    func ttlLabelText() -> String?{
+    public func ttlLabelText() -> String?{
         if event.startsAt > .now {
             return event.startsAt.timeIntervalSince(.now).countDownWithUnits
         }else if event.endsAt > .now{
@@ -131,14 +113,11 @@ final class EventSuiteDetailVM: ObservableObject{
         }else{
             return nil
         }
-       
     }
     
     enum DetailType {
         case open
         case exclusive
-        case live
-        case history
     }
     
     public enum OpenSection: String {

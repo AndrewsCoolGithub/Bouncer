@@ -46,7 +46,6 @@ class AllEventListVM: ObservableObject{
         EventManager.shared.$modified.sink { subscompletion_never in
             print(subscompletion_never)
         } receiveValue: { [weak self] _modified in
-            print("Modified")
             self?.modified = _modified
             //self?.updateMyCounts(for: _modified)
         }.store(in: &cancellable)

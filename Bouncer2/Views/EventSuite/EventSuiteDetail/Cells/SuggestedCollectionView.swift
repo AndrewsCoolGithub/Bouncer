@@ -12,7 +12,7 @@ class SuggestedCollectionView: UITableViewCell{
     
     static let id = "SuggestedCollectionView"
     
-    let suggestedCV: UICollectionView = {
+    fileprivate let suggestedCV: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         let cv = UICollectionView(frame: CGRect(origin: .zero, size: CGSize(width: .makeWidth(414), height: .wProportioned(250))), collectionViewLayout: layout)
@@ -24,24 +24,24 @@ class SuggestedCollectionView: UITableViewCell{
     }()
     
     fileprivate enum Section{ case suggested}
-    
     fileprivate var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
     
-    
+    weak var delegate: SuiteCellDelegate?
    
     
-    func setup(_ viewModel: EventSuiteDetailVM?){
+    func setup(_ viewModel: EventSuiteDetailVM?, delegate: SuiteCellDelegate?){
         guard let viewModel = viewModel else {return}
         contentView.addSubview(suggestedCV)
         suggestedCV.delegate = self
-        dataSource = setupDatasource()
+        self.delegate = delegate
+        dataSource = setupDatasource(delegate)
         
         viewModel.$suggested.receive(on: DispatchQueue.main).sink { profiles in
             self.updateSnapshot(profiles)
         }.store(in: &viewModel.cancellable)
     }
     
-    func updateSnapshot(_ profiles: [Profile]){
+    fileprivate func updateSnapshot(_ profiles: [Profile]){
         var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
         if profiles.isEmpty{
             let dummyProfile = Profile(image_url: " ", display_name: "", user_name: "", latitude: 90, longitude: 90, backdrop_url: nil, bio: nil, followers: nil, following: nil, blocked: nil, blockedBy: nil, colors: nil, number: nil, email: nil, emojis: nil, recentEmojis: nil)
@@ -56,28 +56,22 @@ class SuggestedCollectionView: UITableViewCell{
             snapshot.appendItems(profiles, toSection: .suggested)
             dataSource?.apply(snapshot, animatingDifferences: true)
         }
-        
-       
-       
     }
     
-    fileprivate func setupDatasource() -> UICollectionViewDiffableDataSource<Section, Profile> {
+    fileprivate func setupDatasource(_ delegate: SuiteCellDelegate?) -> UICollectionViewDiffableDataSource<Section, Profile> {
         return UICollectionViewDiffableDataSource(collectionView: suggestedCV, cellProvider: { collectionView, indexPath, itemIdentifier in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SuggestedCard.id, for: indexPath) as! SuggestedCard
             
             if itemIdentifier.image_url == " "{
                 cell.skeleton()
             }else{
-                cell.setup(itemIdentifier)
+                cell.setup(itemIdentifier, delegate: delegate)
             }
             
             return cell
         })
     }
 }
-
-
-
 
 extension SuggestedCollectionView: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -90,5 +84,10 @@ extension SuggestedCollectionView: UICollectionViewDelegateFlowLayout{
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: .wProportioned(15), left: .makeWidth(25), bottom: .wProportioned(15), right: .makeWidth(25))
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let profile = dataSource?.itemIdentifier(for: indexPath) else {return}
+        delegate?.openProfile(profile)
     }
 }

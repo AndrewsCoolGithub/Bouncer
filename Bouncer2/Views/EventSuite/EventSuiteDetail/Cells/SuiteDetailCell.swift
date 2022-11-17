@@ -1,29 +1,29 @@
 //
-//  SuiteDetailRequestCell.swift
+//  SuiteDetailCell.swift
 //  Bouncer2
 //
-//  Created by Andrew Kestler on 11/14/22.
+//  Created by Andrew Kestler on 11/16/22.
 //
 
 import UIKit
 
-class SuiteDetailRequestCell: UITableViewCell, SkeletonLoadable {
-    static let id = "SuiteDetailRequestCell"
+final class SuiteDetailCell: UITableViewCell, SkeletonLoadable {
+    static let id = "SuiteDetailCell"
     
-    private let profileImage: UIImageView = {
+    fileprivate let profileImage: UIImageView = {
         let imageView = UIImageView(frame: CGRect(x: .makeWidth(15), y: .wProportioned(10), width: .makeWidth(75), height: .makeWidth(75)), cornerRadius: .makeWidth(37.5), lineWidth: 1.5, direction: .horizontal)
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
-    private let userNameLabel: UILabel = {
+    fileprivate let userNameLabel: UILabel = {
         let label = UILabel()
         label.font = .poppinsMedium(size: .makeWidth(15))
         label.textAlignment = .left
         return label
     }()
     
-    private let nameLabel: UILabel = {
+    fileprivate let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .poppinsRegular(size: .makeWidth(15))
         label.textColor = .nearlyWhite()
@@ -31,7 +31,7 @@ class SuiteDetailRequestCell: UITableViewCell, SkeletonLoadable {
         return label
     }()
     
-    private lazy var skeletonGradient: CAGradientLayer = {
+    fileprivate lazy var skeletonGradient: CAGradientLayer = {
         let gradient = CAGradientLayer()
         gradient.startPoint = CGPoint(x: 0, y: 0.5)
         gradient.endPoint = CGPoint(x: 1, y: 0.5)
@@ -51,14 +51,16 @@ class SuiteDetailRequestCell: UITableViewCell, SkeletonLoadable {
         return button
     }()
     
-    weak var delegate: SuiteCellDelegate!
-    var _profile: Profile!
-    var _section: EventSuiteDetail.Section!
+    fileprivate weak var delegate: SuiteCellDelegate!
+    fileprivate var _profile: Profile!
+    fileprivate var _section: EventSuiteDetail.Section!
     
-    func setup(_ profile: Profile, cellDelegate: SuiteCellDelegate?, section: EventSuiteDetail.Section){
-        delegate = cellDelegate
-        _profile = profile
-        _section = section
+    public func setup(_ profile: Profile, _ section: EventSuiteDetail.Section, _ type: EventSuiteDetailVM.DetailType?, delegate: SuiteCellDelegate?){
+        guard let type = type, let delegate = delegate else {return}
+        self.delegate = delegate
+        self._profile = profile
+        self._section = section
+        
         contentView.backgroundColor = .greyColor()
         contentView.addSubview(profileImage)
         profileImage.gradientColors = (profile.colors?.uiImageColors() ?? User.defaultColors, false)
@@ -76,18 +78,21 @@ class SuiteDetailRequestCell: UITableViewCell, SkeletonLoadable {
         nameLabel.anchor(top: userNameLabel.bottomAnchor, paddingTop: .wProportioned(4))
         nameLabel.anchor(left: profileImage.rightAnchor, paddingLeft: .makeWidth(15))
         
+    
+        guard section != .one && type != .open else {return}
+        
         contentView.addSubview(actionButton)
         actionButton.addTarget(self, action: #selector(action(_:)), for: .touchUpInside)
-        if section == .one{
+        
+        
+        if section == .one && type == .exclusive{
             actionButton.setTitle("Invite", for: .normal)
         }else{
             actionButton.setTitle("Cancel", for: .normal)
         }
-//        centerYright(inView: contentView, rightAnchor: contentView.rightAnchor, paddingRight: .makeWidth(20))
-        
     }
     
-    @objc func action(_ sender: UIButton){
+    @objc fileprivate func action(_ sender: UIButton){
         guard let id = _profile.id else {return}
         if _section == .one{
             delegate?.inviteUser(id)
