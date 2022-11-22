@@ -56,7 +56,7 @@ class MapViewController: UIViewController{
         viewModel.$centerOnEvent.sink { [weak self] event in
             guard let event = event else {return}
             let coordinate = CLLocationCoordinate2D(latitude: event.location.latitude, longitude: event.location.longitude)
-            self?.mapView.setCenter(coordinate, zoomLevel: 17, animated: true)
+            self?.mapView.setCenter(coordinate, zoomLevel: 15, animated: true)
         }.store(in: &cancellable)
         
         detail.dismissButton.addTarget(self, action: #selector(returnToLastCamera), for: .touchUpInside)

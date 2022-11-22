@@ -12,6 +12,7 @@ struct EventFields{
     static let title = "title"
     static let description = "description"
     static let location = "location"
+    static let geoHash = "geoHash"
     static let startsAt = "startsAt"
     static let endsAt = "endsAt"
     static let type = "type"

@@ -70,7 +70,8 @@ final class EventCreationVM: ObservableObject{
         do {
             guard EventCreationValidator.firstMissingProp == .eventOverview else {throw EventCreationValidator.firstMissingProp}
             let locationName = try await fetchLocationName()
-            let id = try await EventManager.shared.create(Event(title: eventTitle!, description: descrip!, location: GeoPoint(latitude: location!.latitude, longitude: location!.longitude), locationName: locationName, startsAt: startDate!, endsAt: startDate!.addingTimeInterval(duration!), type: eventType!, colors: colors!.colors.map({$0.getColorModel()}), hostId: User.shared.id!, hostProfile: User.shared.profile), image: image!)
+            let geoHash = try Geohash.encode(latitude: location!.latitude, longitude:  location!.longitude, precision: .custom(value: 4))
+            let id = try await EventManager.shared.create(Event(title: eventTitle!, description: descrip!, location: GeoPoint(latitude: location!.latitude, longitude: location!.longitude), geoHash: geoHash, locationName: locationName, startsAt: startDate!, endsAt: startDate!.addingTimeInterval(duration!), type: eventType!, colors: colors!.colors.map({$0.getColorModel()}), hostId: User.shared.id!, hostProfile: User.shared.profile), image: image!)
             print("Successfully created event w/ id: \(id)")
         }
     }
@@ -84,8 +85,9 @@ final class EventCreationVM: ObservableObject{
         let image = self.image
         let initImage = await EventCreationVC.initImage
         
+        let geoHash = try Geohash.encode(latitude: location!.latitude, longitude:  location!.longitude, precision: .custom(value: 4))
        
-        let newEvent = Event(id: id, imageURL: nil, title: eventTitle!, description: descrip!, location: GeoPoint(latitude: location!.latitude, longitude: location!.longitude), locationName: locationName, startsAt: startDate!, endsAt: startDate!.addingTimeInterval(duration!), type: eventType!, colors: colors!.colors.map({$0.getColorModel()}), hostId: User.shared.id!, hostProfile: User.shared.profile)
+        let newEvent = Event(id: id, imageURL: nil, title: eventTitle!, description: descrip!, location: GeoPoint(latitude: location!.latitude, longitude: location!.longitude), geoHash: geoHash, locationName: locationName, startsAt: startDate!, endsAt: startDate!.addingTimeInterval(duration!), type: eventType!, colors: colors!.colors.map({$0.getColorModel()}), hostId: User.shared.id!, hostProfile: User.shared.profile)
         try await EventManager.shared.update(newEvent, image: image)
         
         print("Successfully updated event w/ id: \(id)")

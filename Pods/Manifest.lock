@@ -613,6 +613,9 @@ PODS:
   - Firebase/DynamicLinks (9.1.0):
     - Firebase/CoreOnly
     - FirebaseDynamicLinks (~> 9.1.0)
+  - Firebase/Functions (9.1.0):
+    - Firebase/CoreOnly
+    - FirebaseFunctions (~> 9.1.0)
   - Firebase/Messaging (9.1.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 9.1.0)
@@ -664,6 +667,14 @@ PODS:
     - nanopb (< 2.30910.0, >= 2.30908.0)
   - FirebaseFirestoreSwift (9.1.0):
     - FirebaseFirestore (~> 9.0)
+  - FirebaseFunctions (9.1.0):
+    - FirebaseAppCheckInterop (~> 9.0)
+    - FirebaseAuthInterop (~> 9.0)
+    - FirebaseCore (~> 9.0)
+    - FirebaseCoreExtension (~> 9.0)
+    - FirebaseMessagingInterop (~> 9.0)
+    - FirebaseSharedSwift (~> 9.0)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.7)
   - FirebaseInstallations (9.1.0):
     - FirebaseCore (~> 9.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -678,6 +689,8 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseMessagingInterop (9.6.0)
+  - FirebaseSharedSwift (9.6.0)
   - FirebaseStorage (9.1.0):
     - FirebaseAppCheckInterop (~> 9.0)
     - FirebaseAuthInterop (~> 9.0)
@@ -800,6 +813,7 @@ DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Database
   - Firebase/DynamicLinks
+  - Firebase/Functions
   - Firebase/Messaging
   - Firebase/Storage
   - FirebaseAppCheck
@@ -830,8 +844,11 @@ SPEC REPOS:
     - FirebaseDynamicLinks
     - FirebaseFirestore
     - FirebaseFirestoreSwift
+    - FirebaseFunctions
     - FirebaseInstallations
     - FirebaseMessaging
+    - FirebaseMessagingInterop
+    - FirebaseSharedSwift
     - FirebaseStorage
     - FirebaseStorageInternal
     - FloatingPanel
@@ -872,8 +889,11 @@ SPEC CHECKSUMS:
   FirebaseDynamicLinks: d2cc5fe0378fd2a191becfaadd112c07227b32e4
   FirebaseFirestore: 20b1df7d65058b038745ecebb60f741a10e40a6f
   FirebaseFirestoreSwift: 5d57539cec470bf3c9a752db009ff7e9d1a77d09
+  FirebaseFunctions: 709f13ce67c1df045831b85d38fbe18357003e04
   FirebaseInstallations: a91c74276b544524ce144c8315d8cdbce2dbe30b
   FirebaseMessaging: 0bf5caa621182ccc66ba3be3b15e68d800d98e9f
+  FirebaseMessagingInterop: 348785028509e1a5a9af277123e7fc08b2d17306
+  FirebaseSharedSwift: 2269c2ddc7a5efb7fb5f3f3177e790613b52dfda
   FirebaseStorage: 1706d112a8a9d39f3b5465d00a0cb75725f16f63
   FirebaseStorageInternal: d0e5482946dd483dbb2f6a76ef5750b9b5907049
   FloatingPanel: 935712d7a8076630135fbbd47f717700913efef9
@@ -898,6 +918,6 @@ SPEC CHECKSUMS:
   UIImageColors: d2ef3b0877d203cbb06489eeb78ea8b7788caabe
   YPImagePicker: f36043210c10b0783034eb1947d6e06e31c461e4
 
-PODFILE CHECKSUM: 5f9e915fb4ecd80820bedd4d70d9e5d7d796b794
+PODFILE CHECKSUM: 4b3cb4277e09340f89ccb33f15cce8aaaf91b519
 
 COCOAPODS: 1.11.3

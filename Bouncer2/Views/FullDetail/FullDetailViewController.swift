@@ -108,7 +108,7 @@ class FullDetailViewController: UIViewController{
         var position: FloatingPanelPosition = .bottom
         var initialState: FloatingPanelState = .full
         var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
-            return [.full: FloatingPanelLayoutAnchor(absoluteInset: .makeWidth(414) * 213/414, edge: .top, referenceGuide: .superview)]
+            return [.full: FloatingPanelLayoutAnchor(absoluteInset: .wProportioned(213), edge: .top, referenceGuide: .superview)]
         }
         func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
             switch state{
@@ -123,14 +123,19 @@ extension FullDetailViewController: FloatingPanelControllerDelegate{
     
     func floatingPanelDidMove(_ vc: FloatingPanelController) {
         
+        
         let loc = vc.surfaceLocation
         let minY = vc.surfaceLocation(for: .full).y
         let maxY = vc.surfaceLocation(for: .tip).y
         vc.surfaceLocation = CGPoint(x: loc.x, y: min(max(loc.y, minY), maxY))
-        components.eventImageView.frame.size.height = min(max(loc.y, minY), maxY).rounded() + .makeHeight(35)
+        components.eventImageView.frame.size.height = min(max(loc.y, minY), maxY).rounded() + .wProportioned(20)
         
-        let top = loc.y - .makeWidth(414) * 243/414
-        components.backButton.alpha = 1 - (top / 80)
+        let top = loc.y - .wProportioned(213)
+        if top != 0{
+            components.backButton.alpha = 1 - (top / 80)
+        }else{
+            components.backButton.alpha = 1
+        }
     }
 }
 

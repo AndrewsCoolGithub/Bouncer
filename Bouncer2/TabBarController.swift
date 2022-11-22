@@ -18,6 +18,8 @@ class TabBarController: UITabBarController{
     fileprivate var components = TabBarViewComponents()
     var cancellable = Set<AnyCancellable>()
     
+    
+    
     init(){
         super.init(nibName: nil, bundle: nil)
         title = ""
@@ -31,17 +33,7 @@ class TabBarController: UITabBarController{
         tabBar.barTintColor = .clear
         view.backgroundColor = .clear
         
-        User.shared.$imageURL.sink { [weak self] imageURL in
-            guard let imageURL = imageURL, let self = self else {
-                return}
-            let skeletonGradient = self.components.profileSkeletonGradient
-            let profileButton = self.components.profileButton
-            profileButton.layer.addSublayer(skeletonGradient)
-            profileButton.imageView?.sd_setImage(with: URL(string: imageURL), completed: { i, e, c, u in
-                profileButton.setImage(i, for: .normal)
-                skeletonGradient.removeFromSuperlayer()
-            })
-        }.store(in: &cancellable)
+        listenForProfileImage()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,6 +66,20 @@ class TabBarController: UITabBarController{
         messageButton.setDimensions(height: .makeWidth(40), width: .makeWidth(40))
         messageButton.centerYright(inView: profileButton, rightAnchor: view.rightAnchor, paddingRight: .makeWidth(15))
         messageButton.addTarget(self, action: #selector(openMessages), for: .touchUpInside)
+    }
+    
+    fileprivate func listenForProfileImage() {
+        User.shared.$imageURL.sink { [weak self] imageURL in
+            guard let imageURL = imageURL, let self = self else {
+                return}
+            let skeletonGradient = self.components.profileSkeletonGradient
+            let profileButton = self.components.profileButton
+            profileButton.layer.addSublayer(skeletonGradient)
+            profileButton.imageView?.sd_setImage(with: URL(string: imageURL), completed: { i, e, c, u in
+                profileButton.setImage(i, for: .normal)
+                skeletonGradient.removeFromSuperlayer()
+            })
+        }.store(in: &cancellable)
     }
     
     @objc func openProfile(){

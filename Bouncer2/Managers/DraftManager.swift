@@ -51,7 +51,7 @@ class DraftManager: ObservableObject{
              print("Unable to Encode Event (\(error.localizedDescription))")
              throw error
          }
-     }
+    }
     
     public func removeEventDraft(id: String) throws -> Bool{
         do{

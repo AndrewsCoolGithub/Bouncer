@@ -40,7 +40,7 @@ class Location: NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let mostRecentLocation = locations.last else {
+        guard let mostRecentLocation = locations.last, mostRecentLocation.horizontalAccuracy < 500 else {
             return
         }
        
@@ -72,6 +72,7 @@ class Location: NSObject, CLLocationManagerDelegate {
         locationManager.stopUpdatingLocation()
     }
     let noAlwaysVC = LocationRequiredVC()
+   
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         if manager.authorizationStatus == .authorizedAlways{
@@ -105,7 +106,7 @@ class Location: NSObject, CLLocationManagerDelegate {
         var newRegions = [String : CLCircularRegion]()
         events.forEach { event in
             newRegions[event.id!] = CLCircularRegion(center: event.getLocation().coordinate,
-                                                     radius: 69,
+                                                     radius: 100,
                                                      identifier: event.id!)
         }
         
@@ -120,6 +121,14 @@ class Location: NSObject, CLLocationManagerDelegate {
         }
         
         print("Monitering \(locationManager.monitoredRegions.count) regions: \(locationManager.monitoredRegions)")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("Entered region with id: \(region.identifier)")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        print("Exited region with id: \(region.identifier)")
     }
 }
 

@@ -46,7 +46,8 @@ final class EventManager: ObservableObject{
             let eventRef = EVENTS_COLLECTION.document()
             if let image = image{
                 let url = try await MediaManager.uploadImage(image, path: Storage.storage().reference().child("Event").child(eventRef.documentID))
-                try eventRef.setData(from: Event(imageURL: url, title: event.title, description: event.description, location: event.location, locationName: event.locationName, startsAt: event.startsAt, endsAt: event.endsAt, type: event.type, colors: event.colors, hostId: event.hostId, hostProfile: User.shared.profile))
+                let geoHash = try Geohash.encode(latitude: event.location.latitude, longitude: event.location.longitude, precision: .custom(value: 4))
+                try eventRef.setData(from: Event(imageURL: url, title: event.title, description: event.description, location: event.location, geoHash: geoHash, locationName: event.locationName, startsAt: event.startsAt, endsAt: event.endsAt, type: event.type, colors: event.colors, hostId: event.hostId, hostProfile: User.shared.profile))
             }else{
                 try eventRef.setData(from: event)
             }
@@ -62,7 +63,8 @@ final class EventManager: ObservableObject{
         guard let id = event.id else {return}
         if let image = image{
             let url = try await MediaManager.uploadImage(image, path: Storage.storage().reference().child("Event").child(id))
-            var event = Event(id: id, imageURL: url, title: event.title, description: event.description, location: event.location, locationName: event.locationName, startsAt: event.startsAt, endsAt: event.endsAt, type: event.type, colors: event.colors, hostId: event.hostId, hostProfile: event.hostProfile, prospectIds: event.prospectIds, invitedIds: event.invitedIds, guestIds: event.guestIds)
+            let geoHash = try Geohash.encode(latitude: event.location.latitude, longitude: event.location.longitude, precision: .custom(value: 4))
+            var event = Event(id: id, imageURL: url, title: event.title, description: event.description, location: event.location, geoHash: geoHash, locationName: event.locationName, startsAt: event.startsAt, endsAt: event.endsAt, type: event.type, colors: event.colors, hostId: event.hostId, hostProfile: event.hostProfile, prospectIds: event.prospectIds, invitedIds: event.invitedIds, guestIds: event.guestIds)
             try EVENTS_COLLECTION.document(id).setData(from: event, merge: true)
         }else{
             try EVENTS_COLLECTION.document(id).setData(from: event, merge: true)
@@ -157,11 +159,11 @@ final class EventManager: ObservableObject{
         }
     }
     
-    /** Get 20 closest events to user, for region monitoring */
+    /** Get 15 closest events to user within 30 miles*/
     func getEventsForRegionMonitoring(_ currentLocation: CLLocation) -> [Event]{
-        var events = events.filter({$0.type == .open && $0.startsAt < .now && $0.endsAt > .now && $0.getLocation().distance(from: currentLocation) < 50000})
-        events.sort(by: {$0.getLocation().distance(from: currentLocation) > $1.getLocation().distance(from: currentLocation)})
-        return events.suffix(20)
+        var eventsWithin30mi = events.filter({$0.type == .open && $0.startsAt < .now && $0.endsAt > .now && $0.getLocation().distance(from: currentLocation) < 50000})
+        eventsWithin30mi.sort(by: {$0.getLocation().distance(from: currentLocation) > $1.getLocation().distance(from: currentLocation)})
+        return events.suffix(15)
     }
     
    

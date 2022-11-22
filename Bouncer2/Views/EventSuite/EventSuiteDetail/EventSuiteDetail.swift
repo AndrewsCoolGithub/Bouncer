@@ -111,24 +111,24 @@ class EventSuiteDetail: UIViewController{
         let backButton = components.backButton
         backButton.addTarget(self, action: #selector(popVC), for: .touchUpInside)
         view.addSubview(backButton)
-        backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(15))
+        backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(7.5))
         backButton.anchor(left: view.leftAnchor, paddingLeft: .makeWidth(20))
         
         let editButton = components.editButton
         editButton.addTarget(self, action: #selector(edit), for: .touchUpInside)
         view.addSubview(editButton)
-        editButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(16))
+        editButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(8.5))
         editButton.anchor(right: view.rightAnchor, paddingRight: .makeWidth(20))
         
         let shareButton = components.shareButton
         view.addSubview(shareButton)
-        shareButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(15))
+        shareButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(7.5))
         shareButton.anchor(right: editButton.leftAnchor, paddingRight: .makeWidth(20))
         
         let eventTitleLabel = components.eventTitleLabel
         eventTitleLabel.text = event.title
         view.addSubview(eventTitleLabel)
-        eventTitleLabel.centerX(inView: view, topAnchor: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(50))
+        eventTitleLabel.centerX(inView: view, topAnchor: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(42.5))
         
         let ttlLabel = components.timeTillLiveLabel
         ttlLabel.text = vm.ttlLabelText()

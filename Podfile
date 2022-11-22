@@ -10,6 +10,7 @@ target 'Bouncer2' do
   pod 'Firebase/Database'
   pod 'Firebase/Auth'
   pod 'Firebase/Storage'
+  pod 'Firebase/Functions'
   pod 'Firebase/DynamicLinks'
   pod 'Firebase/Messaging'
   pod 'FirebaseFirestoreSwift'

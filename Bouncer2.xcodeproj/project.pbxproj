@@ -27,6 +27,7 @@
 		A4124CCF2851CC3600979D26 /* UIViewExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CCE2851CC3600979D26 /* UIViewExt.swift */; };
 		A4124CD22851E63900979D26 /* AccountSignUpEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CD12851E63900979D26 /* AccountSignUpEntry.swift */; };
 		A4124CD42851FC1800979D26 /* PastelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CD32851FC1800979D26 /* PastelButton.swift */; };
+		A413AF59292699E0000DB45A /* BackgroundTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A413AF58292699E0000DB45A /* BackgroundTaskManager.swift */; };
 		A42731D0291E4FB200CB6B66 /* EventSuiteDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731CF291E4FB200CB6B66 /* EventSuiteDetail.swift */; };
 		A42731D3291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731D2291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift */; };
 		A42731D6291E705600CB6B66 /* EventSuiteDetailVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42731D5291E705600CB6B66 /* EventSuiteDetailVM.swift */; };
@@ -146,6 +147,10 @@
 		A4B9AD6628F3EE9000FAE6F1 /* ChatReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */; };
 		A4C4E6F22815377B000F7366 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A4C4E6F12815377B000F7366 /* GoogleService-Info.plist */; };
 		A4C4E6F42815961E000F7366 /* Shadows.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C4E6F32815961E000F7366 /* Shadows.swift */; };
+		A4C6164E292A031D00A882F7 /* GeohashError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C6164A292A031A00A882F7 /* GeohashError.swift */; };
+		A4C6164F292A031D00A882F7 /* Geohash.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C6164B292A031B00A882F7 /* Geohash.swift */; };
+		A4C61650292A031D00A882F7 /* Precision.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C6164C292A031C00A882F7 /* Precision.swift */; };
+		A4C61651292A031D00A882F7 /* CompassPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C6164D292A031D00A882F7 /* CompassPoint.swift */; };
 		A4CA8ECA285F20A900745B73 /* AllEventListHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CA8EC9285F20A900745B73 /* AllEventListHeaderCell.swift */; };
 		A4CA8ECC285F306D00745B73 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CA8ECB285F306D00745B73 /* TabBarController.swift */; };
 		A4CAD694287F46FA00332178 /* ProfileEditPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CAD693287F46FA00332178 /* ProfileEditPanel.swift */; };
@@ -202,6 +207,7 @@
 		A4124CCE2851CC3600979D26 /* UIViewExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExt.swift; sourceTree = "<group>"; };
 		A4124CD12851E63900979D26 /* AccountSignUpEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSignUpEntry.swift; sourceTree = "<group>"; };
 		A4124CD32851FC1800979D26 /* PastelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastelButton.swift; sourceTree = "<group>"; };
+		A413AF58292699E0000DB45A /* BackgroundTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTaskManager.swift; sourceTree = "<group>"; };
 		A42731CF291E4FB200CB6B66 /* EventSuiteDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteDetail.swift; sourceTree = "<group>"; };
 		A42731D2291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteDetailViewComponents.swift; sourceTree = "<group>"; };
 		A42731D5291E705600CB6B66 /* EventSuiteDetailVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteDetailVM.swift; sourceTree = "<group>"; };
@@ -323,6 +329,10 @@
 		A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReplyView.swift; sourceTree = "<group>"; };
 		A4C4E6F12815377B000F7366 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A4C4E6F32815961E000F7366 /* Shadows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shadows.swift; sourceTree = "<group>"; };
+		A4C6164A292A031A00A882F7 /* GeohashError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeohashError.swift; sourceTree = "<group>"; };
+		A4C6164B292A031B00A882F7 /* Geohash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geohash.swift; sourceTree = "<group>"; };
+		A4C6164C292A031C00A882F7 /* Precision.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Precision.swift; sourceTree = "<group>"; };
+		A4C6164D292A031D00A882F7 /* CompassPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompassPoint.swift; sourceTree = "<group>"; };
 		A4CA8EC8285F1FA100745B73 /* Bouncer2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Bouncer2.entitlements; sourceTree = "<group>"; };
 		A4CA8EC9285F20A900745B73 /* AllEventListHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllEventListHeaderCell.swift; sourceTree = "<group>"; };
 		A4CA8ECB285F306D00745B73 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -404,14 +414,15 @@
 				A409411C281BCD6200094A64 /* Firestore */,
 				A4A996642813C55B009DED0B /* Fonts */,
 				A425DAB3286DB51F00EF8D48 /* Pastel */,
+				A49AA90428780D1800265F13 /* HelperViews */,
 				A4094128281D51FC00094A64 /* GradientView.swift */,
 				A4A996772813C64E009DED0B /* Layout.swift */,
 				A4A55ACE2855C43C005EBD78 /* SkeletonLoadable.swift */,
 				A49AA8F82877457100265F13 /* DefaultsKeys.swift */,
 				A4F6C12D2881422E00115972 /* NotificationKeys.swift */,
-				A49AA90428780D1800265F13 /* HelperViews */,
 				A4FFF25A28D1D978007BED60 /* ImageLoader.swift */,
 				A451A9F228DCC26800C0EAA1 /* EmojiArray.swift */,
+				A4C61649292A030400A882F7 /* Geohash */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -728,6 +739,7 @@
 				A44267E12813E2B5003ED294 /* EventManager.swift */,
 				A4763E9D285DA775001B5929 /* NotificationManager.swift */,
 				A45FCFA228B481DF005B833B /* MessageManager.swift */,
+				A413AF58292699E0000DB45A /* BackgroundTaskManager.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -830,6 +842,17 @@
 				A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */,
 			);
 			path = "Message Supplemental Views";
+			sourceTree = "<group>";
+		};
+		A4C61649292A030400A882F7 /* Geohash */ = {
+			isa = PBXGroup;
+			children = (
+				A4C6164D292A031D00A882F7 /* CompassPoint.swift */,
+				A4C6164B292A031B00A882F7 /* Geohash.swift */,
+				A4C6164A292A031A00A882F7 /* GeohashError.swift */,
+				A4C6164C292A031C00A882F7 /* Precision.swift */,
+			);
+			path = Geohash;
 			sourceTree = "<group>";
 		};
 		A4CD8BC928895338005B8E78 /* ProfileVC */ = {
@@ -1109,11 +1132,13 @@
 				A4CAD694287F46FA00332178 /* ProfileEditPanel.swift in Sources */,
 				A4A9962F2813C46B009DED0B /* EventList.swift in Sources */,
 				A490ABF6283E3AE5006405C4 /* EventCreationValidator.swift in Sources */,
+				A413AF59292699E0000DB45A /* BackgroundTaskManager.swift in Sources */,
 				A4721D3C287178BF00F763AF /* FirestoreCollections.swift in Sources */,
 				A44267E92813E950003ED294 /* FirestoreFields.swift in Sources */,
 				A4577A9E282C9FD800B1750D /* EventCellPreview.swift in Sources */,
 				A451A9F328DCC26800C0EAA1 /* EmojiArray.swift in Sources */,
 				A49AA8FD28774EFA00265F13 /* AccountUserName.swift in Sources */,
+				A4C61650292A031D00A882F7 /* Precision.swift in Sources */,
 				A4577AB3282E31BF00B1750D /* User.swift in Sources */,
 				A4094131281DAB3900094A64 /* EventCreationNavigator.swift in Sources */,
 				A42731E42920BB8100CB6B66 /* EventSuiteHeaderButton.swift in Sources */,
@@ -1137,6 +1162,7 @@
 				A4F7DDDC286DBA780029BEB9 /* FullDetailViewComponents.swift in Sources */,
 				A4577AAD282E033700B1750D /* EventPreviewHeader.swift in Sources */,
 				A474AA0A285C844800DE93C9 /* AccountInfo.swift in Sources */,
+				A4C61651292A031D00A882F7 /* CompassPoint.swift in Sources */,
 				A4FEBCBE28771A5200918FA8 /* Contact.swift in Sources */,
 				A4CA8ECC285F306D00745B73 /* TabBarController.swift in Sources */,
 				A4FEBCC32877244200918FA8 /* ContactsCell.swift in Sources */,
@@ -1160,6 +1186,7 @@
 				A42731D3291E5D6900CB6B66 /* EventSuiteDetailViewComponents.swift in Sources */,
 				A4094154282238E400094A64 /* EventAnnotation.swift in Sources */,
 				A4FFF25728D19671007BED60 /* EmojiStringToImage.swift in Sources */,
+				A4C6164E292A031D00A882F7 /* GeohashError.swift in Sources */,
 				A4F6C1352881513700115972 /* ProfileTextEdit.swift in Sources */,
 				A45FCFA328B481DF005B833B /* MessageManager.swift in Sources */,
 				A40AD6F32861B0AE006E674B /* MapAnnotationDetail.swift in Sources */,
@@ -1201,6 +1228,7 @@
 				A4F7DDDE286DC0030029BEB9 /* PageViewController.swift in Sources */,
 				A42C8A8628533CE30080C1BB /* MapViewController.swift in Sources */,
 				A4581D042860A305008FF2BC /* MapEventAnnotView.swift in Sources */,
+				A4C6164F292A031D00A882F7 /* Geohash.swift in Sources */,
 				A4094125281BEA3000094A64 /* EventCreationVC.swift in Sources */,
 				A45F8D5B28C9B4D700DDD90F /* ChatPopupView.swift in Sources */,
 				A49AA8F92877457100265F13 /* DefaultsKeys.swift in Sources */,

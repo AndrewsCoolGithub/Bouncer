@@ -37,7 +37,7 @@ class FullDetailContentVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func animate(newImage: UIImage, button: UIButton){
+     func animate(newImage: UIImage, button: UIButton){
         if shouldAnimateButton{
             shouldAnimateButton = false
             UIView.animate(withDuration: 0.1, animations: {
@@ -103,7 +103,7 @@ class FullDetailContentVC: UIViewController {
         let timeLabel = components.timeLabel
         contentView.addSubview(timeLabel)
         timeLabel.centerX(inView: contentView, topAnchor: actionButton.bottomAnchor, paddingTop: .makeWidth(414) * 20/414)
-        components.peopleCV.delegate = self
+        
 
         let hostLabel = components.hostLabel
         contentView.addSubview(hostLabel)
@@ -115,7 +115,7 @@ class FullDetailContentVC: UIViewController {
         }else{
             hostLabel.anchor(top: components.timeLabel.bottomAnchor, paddingTop: .makeWidth(414) * 40/414)
         }
-        
+        updatePeopleCount(components.peopleCountLabel, vm: vm)
         contentView.addSubview(hostView)
         hostView.centerX(inView: contentView, topAnchor: hostLabel.bottomAnchor, paddingTop: .makeWidth(414) * 15/414)
         hostView.anchor(bottom: contentView.bottomAnchor, paddingBottom: .makeWidth(414) * 20/414)
@@ -134,11 +134,11 @@ class FullDetailContentVC: UIViewController {
         setupDataSource(peopleCV)
         self.contentView.addSubview(peopleCountLabel)
         peopleCountLabel.anchor(top: timeLabel.bottomAnchor, left: self.view.leftAnchor, paddingTop: .makeWidth(414) * 40/414, paddingLeft: .makeWidth(15))
-        
-        let rsvps = self.vm.rsvps
-        peopleCountLabel.text =  rsvps.count > 1 ? "\(rsvps.count) People Going" : "\(rsvps.count) Person Going"
+        peopleCV.delegate = self
+//        let rsvps = self.vm.rsvps
+//        peopleCountLabel.text =  rsvps.count > 1 ? "\(rsvps.count) People Going" : "\(rsvps.count) Person Going"
 
-        peopleCV.setDimensions(height: .makeWidth(414) * 65/414, width: .makeWidth(414))
+        peopleCV.setDimensions(height: .wProportioned(65), width: .makeWidth(414))
         self.contentView.addSubview(peopleCV)
         peopleCV.centerX(inView: self.contentView , topAnchor: peopleCountLabel.bottomAnchor, paddingTop: .makeWidth(414) * 15/414)
     }
@@ -147,32 +147,53 @@ class FullDetailContentVC: UIViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
         
         if !profiles.isEmpty{
-            snapshot.appendSections([.people])
-            snapshot.appendItems(profiles, toSection: .people)
+            
             self.view.layoutIfNeeded()
-            UIView.animate(withDuration: 0.1) {
-                self.components.hostLabel.topConstraint?.constant = .makeWidth(414) * 164/414
-                self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 0.1) { [weak self] in
+                self?.components.hostLabel.topConstraint?.constant = .makeWidth(414) * 164/414
+                self?.view.layoutIfNeeded()
+                
+            }completion: { [weak self] _ in
+                snapshot.appendSections([.people])
+                snapshot.appendItems(profiles, toSection: .people)
+                self?.dataSource?.apply(snapshot, animatingDifferences: true)
             }
         }else{
             self.components.peopleCV.removeFromSuperview()
             self.components.peopleCountLabel.removeFromSuperview()
+            dataSource = nil
             self.view.layoutIfNeeded()
-            UIView.animate(withDuration: 0.1) {
-                self.components.hostLabel.topConstraint?.constant = .makeWidth(414) * 40/414
-                self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 0.1) { [weak self] in
+                self?.components.hostLabel.topConstraint?.constant = .makeWidth(414) * 40/414
+                self?.view.layoutIfNeeded()
             }
         }
         
-        self.dataSource?.apply(snapshot, animatingDifferences: true)
+        
     }
     
     //MARK: - Listeners
     
     fileprivate func listenForCVUpdates(_ components: FullDetailViewComponents, vm: FullDetailVM) {
         vm.$rsvps.receive(on: DispatchQueue.main).sink { [weak self] profiles in
-            self?.addCV(components.peopleCountLabel, components.peopleCV, components.timeLabel)
+            if self?.dataSource == nil && !profiles.isEmpty{
+                self?.addCV(components.peopleCountLabel, components.peopleCV, components.timeLabel)
+            }
+            
+            
             self?.updateDatasource(profiles)
+        }.store(in: &vm.cancellable)
+    }
+    
+    fileprivate func updatePeopleCount(_ component: UILabel, vm: FullDetailVM) {
+        var lastCount = 0
+        vm.$rsvps.receive(on: DispatchQueue.main).sink { profiles in
+            if lastCount != profiles.count && profiles.count != 0{
+                lastCount = profiles.count
+                UIView.transition(with: component, duration: 0.1, options: .transitionCrossDissolve) {
+                    component.text = profiles.count > 1 ? "\(profiles.count) People Going" : "\(profiles.count) Person Going"
+                }
+            }
         }.store(in: &vm.cancellable)
     }
     
@@ -345,7 +366,7 @@ class FullDetailContentVC: UIViewController {
 }
 
 
-extension FullDetailContentVC: UICollectionViewDelegate{
+extension FullDetailContentVC: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let profile = dataSource?.itemIdentifier(for: indexPath){
             let controller = profile.id != User.shared.id ? ProfileViewController(profile: profile) : ProfileViewController()
@@ -360,4 +381,6 @@ extension FullDetailContentVC: UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: .makeWidth(15), bottom: 0, right: .makeWidth(15))
     }
+    
+    
 }

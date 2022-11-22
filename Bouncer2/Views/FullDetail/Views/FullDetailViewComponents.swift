@@ -11,7 +11,7 @@ import UIKit
 struct FullDetailViewComponents: SkeletonLoadable{
     
     let eventImageView: UIImageView = {
-        let imageView = UIImageView(frame: .layoutRect(width: 414, height: 233, rectCenter: .centerX, padding: Padding(anchor: .top, padding: 0), keepAspect: true))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: .makeWidth(414), height: .wProportioned(233)))
         imageView.image = UIImage(named: "anImage")
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill

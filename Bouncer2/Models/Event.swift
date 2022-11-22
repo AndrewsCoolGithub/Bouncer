@@ -25,6 +25,7 @@ struct Event: Hashable, Codable, Equatable, Identifiable{
     let title: String
     let description: String
     let location: GeoPoint
+    let geoHash: String
     let locationName: String
     let startsAt: Date
     let endsAt: Date
@@ -38,7 +39,7 @@ struct Event: Hashable, Codable, Equatable, Identifiable{
     let guestIds: [String]?
     
     
-    init(id: String? = nil, imageURL: String? = nil, title: String, description: String, location: GeoPoint, locationName: String, startsAt: Date, endsAt: Date, type: EventType, colors: [ColorModel], hostId: String, hostProfile: Profile, prospectIds: [String]? = nil, invitedIds: [String]? = nil, guestIds: [String]? = nil) {
+    init(id: String? = nil, imageURL: String? = nil, title: String, description: String, location: GeoPoint, geoHash: String, locationName: String, startsAt: Date, endsAt: Date, type: EventType, colors: [ColorModel], hostId: String, hostProfile: Profile, prospectIds: [String]? = nil, invitedIds: [String]? = nil, guestIds: [String]? = nil) {
         if let id = id{
             self.id = id
         }
@@ -46,6 +47,7 @@ struct Event: Hashable, Codable, Equatable, Identifiable{
         self.title = title
         self.description = description
         self.location = location
+        self.geoHash = geoHash
         self.locationName = locationName
         self.startsAt = startsAt
         self.endsAt = endsAt

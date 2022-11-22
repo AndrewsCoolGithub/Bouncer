@@ -87,7 +87,6 @@ class ProfileViewController: UIViewController{
     @objc func openSettings(){
         let tempSignOut = UIMenu(children: [
             UIAction(title: "Sign Out", image: UIImage(systemName: "arrowshape.turn.up.forward")) { [weak self] _ in
-
                 do{
                     try self?.viewModel.signOut()
                     let scenes = UIApplication.shared.connectedScenes
@@ -96,7 +95,9 @@ class ProfileViewController: UIViewController{
                     let navCont = UINavigationController(rootViewController: AccountSignUpEntry())
                     navCont.interactivePopGestureRecognizer?.isEnabled = false
                     navCont.navigationBar.isHidden = true
-                    guard (window.rootViewController as? UInt32) != nil else {fatalError("Just send to homescreen for now")}
+                    guard (window.rootViewController as? UInt32) != nil else {
+                        fatalError("Just send to homescreen for now")
+                    }
                 }catch{
                     self?.showMessage(withTitle: "Oops", message: "Can't sign out, here's why: \(error.localizedDescription)")
                 }

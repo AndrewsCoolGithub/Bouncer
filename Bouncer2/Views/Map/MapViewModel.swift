@@ -39,7 +39,7 @@ final class MapViewModel: ObservableObject{
         var startLocation = CLLocation(latitude: start.location.latitude, longitude: start.location.longitude)
         result.append(start)
         for _ in 0...events.count {
-            guard let event = getShortestDistance(for: startLocation, given: events) else {
+            guard let event = getShortestDistance(for: startLocation, events) else {
                 return result
             }
             result.append(event)
@@ -50,7 +50,7 @@ final class MapViewModel: ObservableObject{
         return result
     }
     
-    func getShortestDistance(for location: CLLocation,  given events: [Event]) -> Event?{
+    func getShortestDistance(for location: CLLocation, _ events: [Event]) -> Event?{
         return events.map{
             EventDistance(event: $0,
                           distance: location.distance(from: CLLocation(latitude: $0.location.latitude,

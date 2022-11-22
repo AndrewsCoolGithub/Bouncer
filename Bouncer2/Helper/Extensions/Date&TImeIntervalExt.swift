@@ -160,12 +160,12 @@ extension TimeInterval{
         if time / day <= 1{
             return "Today"
         }else if time / day > 1 && time < month {
-            return "\(time/day.rounded(.towardZero)) days"
+            return "\(Int(time/day.rounded(.towardZero))) days"
         }else if time / month >= 1 && time < year {
-            let val = time / month.rounded(.towardZero)
+            let val = Int(time / month.rounded(.towardZero))
             return val > 1 ? "\(val) months" : "\(val) month"
         }else{
-            let val = time / year.rounded(.towardZero)
+            let val = Int(time / year.rounded(.towardZero))
             return val == 1 ? "\(val) year" : "\(val) years"
         }
     }
