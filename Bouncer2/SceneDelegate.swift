@@ -31,14 +31,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             NSAttributedString.Key.font : UIFont.poppinsMedium(size: .makeWidth(16.5))
         ]
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
-//        Task{
-//           try await AuthManager.shared.uploadUserData(User.defaultColors, field: .colors)
-//            print("Succeeded")
-//        }
-        
-//        let navCont = UINavigationController(rootViewController: EventSuite())
-//        navCont.navigationBar.isHidden = true
-//        self.window?.rootViewController = navCont
         
         if Auth.auth().currentUser != nil{
             User.setup()
@@ -47,10 +39,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window?.rootViewController = navCont
             Location.shared.start { info in
                 User.shared.locationInfo = info
-//                BackgroundLocationManager.shared.test()
             }
-            
-            
         }else{
             let navCont = UINavigationController(rootViewController: AccountSignUpEntry())
             navCont.interactivePopGestureRecognizer?.isEnabled = false

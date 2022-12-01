@@ -349,7 +349,7 @@ extension CGFloat{
     }
     
     static func wProportioned(_ points: CGFloat) -> CGFloat {
-        return .makeWidth(414) * points/414
+        return (.makeWidth(414) * points/414).rounded(.towardZero)
     }
     
     static func hProportioned(_ points: CGFloat) -> CGFloat {

@@ -12,8 +12,8 @@ import Combine
 class MessageSuite: UIViewController{
     
     let components = MessageSuiteViewComponents()
-    let searchController = UISearchController(searchResultsController: MessageSuiteSearchResults())
     var cancellable = Set<AnyCancellable>()
+    var cancel: AnyCancellable?
     let viewModel = MessageSuiteViewModel()
     enum Section{ case section}
     var dataSource: UICollectionViewDiffableDataSource<Section, MessageDetail>?
@@ -39,9 +39,15 @@ class MessageSuite: UIViewController{
         
         view.addSubview(components.backButton)
         components.backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: .makeWidth(10), paddingLeft: .makeWidth(20))
+        components.backButton.addTarget(self, action: #selector(popVC), for: .touchUpInside)
         
         view.addSubview(components.titleHeader)
         components.titleHeader.centerX(inView: view, topAnchor: components.backButton.topAnchor, paddingTop: .makeWidth(5))
+        
+        view.addSubview(components.newMessageButton)
+        components.newMessageButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: .makeWidth(10), paddingRight: .makeWidth(20))
+        
+        components.newMessageButton.addTarget(self, action: #selector(newMessage(_:)), for: .touchUpInside)
     }
     
     fileprivate func setupCV(){
@@ -65,20 +71,26 @@ class MessageSuite: UIViewController{
         dataSource?.apply(snapshot, animatingDifferences: true)
     }
     
-//    fileprivate func setupNavBar(){
-//        navigationItem.searchController = searchController
-//        navigationController?.navigationBar.isTranslucent = false
-//        navigationController?.navigationBar.isHidden = false
-//        navigationController?.navigationBar.backgroundColor = .greyColor()
-//        let backConfig = UIImage.SymbolConfiguration(pointSize: .makeWidth(25))
-//        let yourBackImage = UIImage(systemName: "chevron.left", withConfiguration: backConfig)?.withInsets(UIEdgeInsets(top: 0, left: .makeWidth(12.5), bottom: 0, right: 0))
-//        navigationController?.navigationBar.backIndicatorImage = yourBackImage
-//        navigationController?.navigationBar.backIndicatorTransitionMaskImage = yourBackImage
-//        navigationController?.navigationBar.tintColor = .white
-//        navigationController?.navigationBar.showsLargeContentViewer = true
-//        title = "Messages"
-//        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.poppinsMedium(size: .makeWidth(19))]
-//    }
+    @objc func newMessage(_ sender: UIButton){
+        
+        let isLoading = viewModel.isLoading
+        cancel = viewModel.$suggestedUsers.receive(on: DispatchQueue.main).sink(receiveValue: { [weak self] suggested in
+            let indicator = self?.components.indicator
+            if suggested.isEmpty && isLoading{
+                self?.view.addSubview(indicator ?? UIView())
+                indicator?.startAnimating()
+            }else{
+                indicator?.stopAnimating()
+                indicator?.removeFromSuperview()
+                let controller = NewMessageViewController(NewMessageViewModel(self?.viewModel.messageDetails, suggested))
+                self?.navigationController?.pushViewController(controller, animated: true)
+            }
+        })
+    }
+    
+    @objc func popVC(_ sender: UIButton){
+        navigationController?.popViewController(animated: true)
+    }
 }
 
 extension MessageSuite: UICollectionViewDelegateFlowLayout{

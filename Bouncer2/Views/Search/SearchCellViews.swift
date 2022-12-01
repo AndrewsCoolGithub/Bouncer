@@ -11,8 +11,8 @@ import UIKit
 struct SearchCellViews: SkeletonLoadable{
     
     let profileImage: UIImageView = {
-        let imageView = UIImageView(frame: .zero)
-        imageView.setDimensions(height: .makeWidth(75), width: .makeWidth(75))
+        let imageView = UIImageView(frame: CGRect(x: .makeWidth(15), y: .wProportioned(10), width: .makeWidth(75), height: .makeWidth(75)))
+//        imageView.setDimensions(height: .makeWidth(75), width: .makeWidth(75))
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = .makeWidth(37.5)
         imageView.contentMode = .scaleAspectFill
@@ -25,6 +25,7 @@ struct SearchCellViews: SkeletonLoadable{
         gradient.endPoint = CGPoint(x: 1, y: 0.5)
         let animation = makeAnimationGroup()
         animation.beginTime = 0.0
+        gradient.frame = profileImage.bounds
         gradient.add(animation, forKey: "backgroundColor")
        
         return gradient

@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Firebase
+import FirebaseFirestoreSwift
 
 extension Array where Element == String {
     
@@ -18,3 +20,13 @@ extension Array where Element == String {
         return profiles
     }
 }
+
+extension Array where Element == QueryDocumentSnapshot{
+    
+    func data<T: Decodable>(as: T.Type) throws -> [T]{
+        return self.compactMap { doc -> T? in
+            return try? doc.data(as: T.self)
+        }
+    }
+}
+

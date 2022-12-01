@@ -13,6 +13,11 @@ class MessageSuiteViewModel: ObservableObject{
     
     @Published var messageDetails: [MessageDetail]?
     
+    @Published var suggestedUsers = [Profile]()
+    var isLoading: Bool {
+        !User.shared.following.isEmpty
+    }
+    
     var cancellable = Set<AnyCancellable>()
     
     init(){
@@ -21,6 +26,14 @@ class MessageSuiteViewModel: ObservableObject{
                 return try? doc.data(as: MessageDetail.self)
             }
         }.store(in: &cancellable)
+        
+        getDefaultUsers()
+    }
+    
+    func getDefaultUsers(){
+        Task{
+            suggestedUsers = await User.shared.following.getUsers()
+        }
     }
     
     

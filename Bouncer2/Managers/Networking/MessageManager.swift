@@ -33,6 +33,13 @@ final class MessageManager{
         try await CHAT_COLLECTION.document(id).collection("Messages").document(message.messageID).delete()
     }
     
+    public func fetchChats() async throws -> [MessageDetail]{
+        let chats = try await CHAT_COLLECTION.getDocuments().documents
+        return chats.compactMap { doc -> MessageDetail? in
+            return try? doc.data(as: MessageDetail.self)
+        }
+    }
+    
     
     
     

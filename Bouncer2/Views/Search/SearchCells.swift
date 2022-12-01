@@ -18,92 +18,91 @@ class ProfileSearchCell: UICollectionViewCell{
     
     func setupCell(with profile: Profile, followCache: FollowedByCache? = nil){
         contentView.backgroundColor = .greyColor()
-        let imageView = components.profileImage
-        setupImage(imageView, profile)
-        setupLabels(profile, imageView, followCache)
+        setupImage(profile)
+        setupLabels(profile, followCache)
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        components.profileImage.removeFromSuperview()
-        components.usernameLabel.removeFromSuperview()
-        components.nameLabel.removeFromSuperview()
-        components.detailLabel.removeFromSuperview()
+//        components.profileImage.removeFromSuperview()
+//        components.usernameLabel.removeFromSuperview()
+//        components.nameLabel.removeFromSuperview()
+//        components.detailLabel.removeFromSuperview()
     }
     
-    fileprivate func setupImage(_ imageView: UIImageView, _ profile: Profile) {
-        let skeleton = components.skeletonGradient
-        skeleton.frame = CGRect(origin: imageView.frame.origin, size: CGSize(width: .makeWidth(75), height: .makeWidth(75)))
-        contentView.addSubview(imageView)
-        imageView.centerY(inView: contentView, leftAnchor: contentView.leftAnchor, paddingLeft: .makeWidth(15))
-        imageView.layer.addSublayer(skeleton)
-        imageView.sd_setImage(with: URL(string: profile.image_url)) { i, e, c, u in
-            skeleton.removeFromSuperlayer()
+    fileprivate func setupImage(_ profile: Profile) {
+        
+        
+        contentView.addSubview(components.profileImage)
+//        imageView.centerY(inView: contentView, leftAnchor: contentView.leftAnchor, paddingLeft: .makeWidth(15))
+        components.profileImage.layer.addSublayer(components.skeletonGradient)
+        components.profileImage.sd_setImage(with: URL(string: profile.image_url)) { [weak self] i, e, c, u in
+            self?.components.skeletonGradient.removeFromSuperlayer()
         }
     }
     
-    fileprivate func setupLabels(_ profile: Profile, _ imageView: UIImageView, _ followingCache: FollowedByCache?) {
+    fileprivate func setupLabels(_ profile: Profile, _ followingCache: FollowedByCache?) {
         let userNameLabel = components.usernameLabel
         userNameLabel.text = profile.user_name.lowercased()
         let displayNameLabel = components.nameLabel
         displayNameLabel.text = profile.display_name.capitalized
-        let detailLabel = components.detailLabel
+        
         if let followingCache = followingCache{
-            restoreLabelFromCache(userNameLabel, displayNameLabel, detailLabel, imageView, followingCache)
+            restoreLabelFromCache(followingCache)
         }else{
-            getLabelDetails(profile, detailLabel, userNameLabel, displayNameLabel, imageView)
+            getLabelDetails(profile)
         }
     }
     
-    fileprivate func restoreLabelFromCache(_ userNameLabel: UILabel, _ displayNameLabel: UILabel, _ detailLabel: UILabel, _ imageView: UIImageView, _ followingCache: ProfileSearchCell.FollowedByCache) {
-        contentView.addSubview(userNameLabel)
-        contentView.addSubview(displayNameLabel)
-        contentView.addSubview(detailLabel)
+    fileprivate func restoreLabelFromCache(_ followingCache: ProfileSearchCell.FollowedByCache) {
+        contentView.addSubview(components.usernameLabel)
+        contentView.addSubview(components.nameLabel)
+        contentView.addSubview(components.detailLabel)
         
-        userNameLabel.anchor(top: imageView.topAnchor, left: imageView.rightAnchor, paddingTop: .makeWidth(7), paddingLeft: .makeWidth(15))
-        displayNameLabel.anchor(top: userNameLabel.bottomAnchor, left: userNameLabel.leftAnchor)
-        detailLabel.anchor(top: displayNameLabel.bottomAnchor, left: displayNameLabel.leftAnchor)
+        components.usernameLabel.anchor(top: components.profileImage.topAnchor, left: components.profileImage.rightAnchor, paddingTop: .makeWidth(7), paddingLeft: .makeWidth(15))
+        components.nameLabel.anchor(top: components.usernameLabel.bottomAnchor, left: components.usernameLabel.leftAnchor)
+        components.detailLabel.anchor(top: components.nameLabel.bottomAnchor, left: components.nameLabel.leftAnchor)
         
         if followingCache.plusCount > 0{
-            detailLabel.text = "Followed by \(followingCache.userName.lowercased()) + \(followingCache.plusCount) more"
+            components.detailLabel.text = "Followed by \(followingCache.userName.lowercased()) + \(followingCache.plusCount) more"
         }else{
-            detailLabel.text = "Followed by \(followingCache.userName.lowercased())"
+            components.detailLabel.text = "Followed by \(followingCache.userName.lowercased())"
         }
     }
     
-    fileprivate func getLabelDetails(_ profile: Profile, _ detailLabel: UILabel, _ userNameLabel: UILabel, _ displayNameLabel: UILabel, _ imageView: UIImageView) {
+    fileprivate func getLabelDetails(_ profile: Profile) {
         let detailResults = getDetail(profile)
         switch detailResults.option{
         case .following:
-            detailLabel.text = "Following"
+            components.detailLabel.text = "Following"
         case .followedBy:
             if let userID = detailResults.userID{
-                getUserName(for: userID) { userName in
+                getUserName(for: userID) { [weak self] userName in
                     if detailResults.moreCount! > 0{
-                        detailLabel.text = "Followed by \(userName.lowercased()) + \(detailResults.moreCount!) more"
+                        self?.components.detailLabel.text = "Followed by \(userName.lowercased()) + \(detailResults.moreCount!) more"
                     }else{
-                        detailLabel.text = "Followed by \(userName.lowercased())"
+                        self?.components.detailLabel.text = "Followed by \(userName.lowercased())"
                     }
                 }
             }
         case .none:
-            detailLabel.text = ""
+            components.detailLabel.text = ""
         case .contact:
-            detailLabel.text = "From Contacts"
+            components.detailLabel.text = "From Contacts"
         }
         
         if detailResults.option == .none{
-            contentView.addSubview(userNameLabel)
-            contentView.addSubview(displayNameLabel)
-            userNameLabel.anchor(top: imageView.topAnchor, left: imageView.rightAnchor, paddingTop: .makeWidth(16.5), paddingLeft: .makeWidth(15))
-            displayNameLabel.anchor(top: userNameLabel.bottomAnchor, left: userNameLabel.leftAnchor)
+            contentView.addSubview(components.usernameLabel)
+            contentView.addSubview(components.nameLabel)
+            components.usernameLabel.anchor(top: components.profileImage.topAnchor, left: components.profileImage.rightAnchor, paddingTop: .makeWidth(16.5), paddingLeft: .makeWidth(15))
+            components.nameLabel.anchor(top: components.usernameLabel.bottomAnchor, left: components.usernameLabel.leftAnchor)
         }else{
-            contentView.addSubview(userNameLabel)
-            contentView.addSubview(displayNameLabel)
-            contentView.addSubview(detailLabel)
-            userNameLabel.anchor(top: imageView.topAnchor, left: imageView.rightAnchor, paddingTop: .makeWidth(7), paddingLeft: .makeWidth(15))
-            displayNameLabel.anchor(top: userNameLabel.bottomAnchor, left: userNameLabel.leftAnchor)
-            detailLabel.anchor(top: displayNameLabel.bottomAnchor, left: displayNameLabel.leftAnchor)
+            contentView.addSubview(components.usernameLabel)
+            contentView.addSubview(components.nameLabel)
+            contentView.addSubview(components.detailLabel)
+            components.usernameLabel.anchor(top: components.profileImage.topAnchor, left: components.profileImage.rightAnchor, paddingTop: .makeWidth(7), paddingLeft: .makeWidth(15))
+            components.nameLabel.anchor(top: components.usernameLabel.bottomAnchor, left: components.usernameLabel.leftAnchor)
+            components.detailLabel.anchor(top: components.nameLabel.bottomAnchor, left: components.nameLabel.leftAnchor)
         }
     }
     
