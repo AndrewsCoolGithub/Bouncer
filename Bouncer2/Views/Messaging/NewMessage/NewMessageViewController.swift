@@ -10,42 +10,39 @@ import UIKit
 final class NewMessageViewController: UIViewController{
     
     let components = NewMessageComponents()
-    
     var viewModel: NewMessageViewModel!
     
-    private enum Section{
-        case one
-    }
+    internal enum Section{case one}
+    internal var dataSourceSearch: UICollectionViewDiffableDataSource<Section, Profile>?
     
-    private enum Section2{
-        case one
-    }
+    internal enum Section2{case one}
+    internal var dataSourceSelected: UICollectionViewDiffableDataSource<Section2, ProfileBool>?
     
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
-    private var dataSource2: UICollectionViewDiffableDataSource<Section2, ProfileBool>?
-    private var bubbleDelegate: NMSelectedUserDelegate!
+    var lastText: String = ""
+    internal let textField: NMTextField = {
+        let textField = NMTextField()
+        return textField
+    }()
+
+    //MARK: - Init
     init(_ viewModel: NewMessageViewModel){
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
     }
     
-    var lastText: String = ""
-    private let textField: TextField = {
-        let textField = TextField()
-        textField.addPadding(.both(10))
-        textField.setDimensions(height: .wProportioned(50), width: .makeWidth(207))
-        return textField
-    }()
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.bubbleDelegate = NMSelectedUserDelegate()
         view.backgroundColor = .greyColor()
-        
+        setupViews()
+        publishers()
+    }
+    
+    fileprivate func setupViews() {
         view.addSubview(components.backButton)
         components.backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingTop: .makeWidth(10), paddingLeft: .makeWidth(20))
         components.backButton.addTarget(self, action: #selector(popVC), for: .touchUpInside)
@@ -57,29 +54,41 @@ final class NewMessageViewController: UIViewController{
         components.doneButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: .makeWidth(10), paddingRight: .makeWidth(20))
         components.doneButton.addTarget(self, action: #selector(finish), for: .touchUpInside)
         
+        let tapped = UITapGestureRecognizer(target: self, action: #selector(beginEditing))
+        tapped.delegate = self
+        components.bubbleCV.addGestureRecognizer(tapped)
+        view.addSubview(components.bubbleCV)
+        components.bubbleCV.anchor(top: components.titleHeader.bottomAnchor, paddingTop: .wProportioned(50))
+        components.bubbleCV.delegate = self
+        dataSourceSelected = selectedDatasource()
+        updateSelected()
+        
         view.addSubview(components.toLabel)
-        components.toLabel.anchor(top: components.backButton.bottomAnchor, paddingTop: .wProportioned(25))
+        components.toLabel.anchor(bottom: components.bubbleCV.topAnchor, paddingBottom: .wProportioned(10))
         components.toLabel.anchor(left: components.backButton.leftAnchor)
         
         view.addSubview(components.usersCV)
+        components.usersCV.anchor(top: components.bubbleCV.bottomAnchor, bottom: view.bottomAnchor, paddingTop: .wProportioned(5))
+        
         components.usersCV.delegate = self
-        dataSource = makeDatasource()
-        updateSnapshot(nil)
-        
-        view.addSubview(components.bubbleCV)
-        components.bubbleCV.delegate = bubbleDelegate
-        dataSource2 = makeDatasource2()
-        updateSnapshot2()
-        
+        dataSourceSearch = searchDatasource()
+        updateSearch(nil)
+    }
+    
+    fileprivate func publishers() {
         viewModel.$text.sink { [weak self] text in
             self?.textField.text = text
         }.store(in: &viewModel.cancellable)
         textField.delegate = self
         textField.customDelegate = self
-    
+        
+        viewModel.$selectedUsers.sink { [weak self] users in
+            self?.textField.placeholder = users.isEmpty ? "Search" : nil
+        }.store(in: &viewModel.cancellable)
     }
     
-    private func makeDatasource() -> UICollectionViewDiffableDataSource<Section, Profile>{
+    //MARK: - Datasources
+    private func searchDatasource() -> UICollectionViewDiffableDataSource<Section, Profile>{
         return UICollectionViewDiffableDataSource(collectionView: components.usersCV) { collectionView, indexPath, itemIdentifier in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewMessageUserCell.id, for: indexPath) as! NewMessageUserCell
             cell.setup(itemIdentifier)
@@ -87,20 +96,26 @@ final class NewMessageViewController: UIViewController{
         }
     }
     
-    private func makeDatasource2() -> UICollectionViewDiffableDataSource<Section2, ProfileBool>{
+    private func selectedDatasource() -> UICollectionViewDiffableDataSource<Section2, ProfileBool>{
         return UICollectionViewDiffableDataSource(collectionView: components.bubbleCV) { [weak self] collectionView, indexPath, itemIdentifier in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NMSelectedUserCell.id, for: indexPath) as! NMSelectedUserCell
-            if itemIdentifier == ProfileBool(Profile.dummy){
+            if itemIdentifier.isRed{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NMSelectedUserCell.id, for: indexPath) as! NMSelectedUserCell
+                cell.setup(itemIdentifier.profile)
+                return cell
+            }else if itemIdentifier == ProfileBool(Profile.dummy){
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NMTextFieldCell.id, for: indexPath) as! NMTextFieldCell
                 cell.makeTextField(self?.textField)
+                return cell
             }else{
-                cell.setup(itemIdentifier.profile, itemIdentifier.isRed)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NMDefaultUserCell.id, for: indexPath) as! NMDefaultUserCell
+                cell.setup(itemIdentifier.profile)
+                return cell
             }
-            
-            return cell
         }
     }
     
-    func updateSnapshot(_ users: [Profile]?){
+    //MARK: - Snapshot Updaters
+    func updateSearch(_ users: [Profile]?){
         var snapshot = NSDiffableDataSourceSnapshot<Section, Profile>()
         if let users = users{
             snapshot.appendSections([.one])
@@ -110,23 +125,22 @@ final class NewMessageViewController: UIViewController{
             snapshot.appendItems(viewModel.suggestUsers, toSection: .one)
         }
         
-        dataSource?.apply(snapshot, animatingDifferences: true)
+        dataSourceSearch?.apply(snapshot, animatingDifferences: true)
     }
     
-    func updateSnapshot2(){
+    func updateSelected(){
         var snapshot = NSDiffableDataSourceSnapshot<Section2, ProfileBool>()
         
         snapshot.appendSections([.one])
         snapshot.appendItems(viewModel.selectedUsers + [ProfileBool(Profile.dummy)], toSection: .one)
         
-        
-        dataSource2?.apply(snapshot, animatingDifferences: true)
+        dataSourceSelected?.apply(snapshot, animatingDifferences: true, completion: { [weak self] in
+            guard let indexToScroll = self?.dataSourceSelected?.indexPath(for: ProfileBool(Profile.dummy)) else {return}
+            self?.components.bubbleCV.scrollToItem(at: indexToScroll, at: .right, animated: true)
+        })
     }
     
-    deinit{
-        bubbleDelegate = nil
-    }
-    
+    //MARK: - Actions
     @objc func popVC(){
         navigationController?.popViewController(animated: true)
     }
@@ -135,77 +149,10 @@ final class NewMessageViewController: UIViewController{
         
     }
     
-    fileprivate class NMSelectedUserDelegate: NSObject, UICollectionViewDelegateFlowLayout{
-        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            return
-        }
-        
-        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-            return UIEdgeInsets(top: 0, left: .makeWidth(20), bottom: 0, right: .makeWidth(20))
+    @objc func beginEditing(){
+        if viewModel.selectedUsers.count == 0 {
+            textField.becomeFirstResponder()
         }
     }
 }
 
-extension NewMessageViewController: UICollectionViewDelegateFlowLayout{
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: .makeWidth(414), height: .wProportioned(95))
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        textField.resignFirstResponder()
-    }
-}
-
-extension NewMessageViewController: UITextFieldDelegate{
-   
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        let searchText = textField.text!
-        lastText = viewModel.text
-        viewModel.text = searchText
-        
-        Task{
-            if !searchText.isEmpty{
-                let users = try await viewModel.searchUsers(searchText)
-                updateSnapshot(users)
-            }else{
-                updateSnapshot(nil)
-            }
-        }
-    }
-}
-
-extension  NewMessageViewController: CustomTextFieldDelegate{
-    func textFieldDidDelete() {
-        if lastText == ""{
-            print("Turn next cell red")
-            let count = viewModel.selectedUsers.count
-            if count > 0 {
-                viewModel.selectedUsers[count-1].isRed = true
-                viewModel.redProfileIndex = count
-            }
-            updateSnapshot2()
-        }
-        lastText = viewModel.text
-    }
-}
-
-protocol CustomTextFieldDelegate: AnyObject {
-    func textFieldDidDelete()
-}
-
-private class TextField: UITextField {
-    weak var customDelegate: CustomTextFieldDelegate?
-    override func deleteBackward() {
-        super.deleteBackward()
-        customDelegate?.textFieldDidDelete()
-    }
-}

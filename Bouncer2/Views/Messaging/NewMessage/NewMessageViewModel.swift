@@ -7,24 +7,20 @@
 
 import Combine
 
-class NewMessageViewModel: ObservableObject{
+final class NewMessageViewModel: ObservableObject{
     
     let suggestUsers: [Profile]
     let existingChats: [MessageDetail]
-    var selectedUsers: [ProfileBool]
+    @Published var selectedUsers: [ProfileBool]
     @Published var text: String = ""
     
-    var redProfileIndex: Int = -1
     var cancellable = Set<AnyCancellable>()
     
     init(_ existingChats: [MessageDetail]?, _ suggestedUsers: [Profile]){
         self.existingChats = existingChats ?? []
         self.suggestUsers = suggestedUsers
-        self.selectedUsers = [ProfileBool(User.shared.profile)]
+        self.selectedUsers = []
     }
-    
-    
-    
     
     func searchUsers(_ input: String) async throws -> [Profile]{
         var followingFirst = suggestUsers.filter { data in
@@ -50,7 +46,6 @@ class NewMessageViewModel: ObservableObject{
             }
         }
         
-        
         let byUserName = try await USERS_COLLECTION
             .whereField(ProfileFields.username.rawValue, isGreaterThanOrEqualTo: input.lowercased())
             .whereField(ProfileFields.username.rawValue, isLessThanOrEqualTo: input.lowercased() + "\u{f8ff}")
@@ -69,7 +64,6 @@ class NewMessageViewModel: ObservableObject{
         }
         
         return followingFirst
-        
     }
 }
 

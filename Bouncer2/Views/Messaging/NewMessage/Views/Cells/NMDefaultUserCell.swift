@@ -7,14 +7,13 @@
 
 import UIKit
 
-final class NMSelectedUserCell: UICollectionViewCell{
+final class NMDefaultUserCell: UICollectionViewCell{
     
-    static let id = "NMSelectedUserCell"
+    static let id = "NMDefaultUserCell"
     
     private let mainView: UIView = {
         let view = UIView(frame: .zero, cornerRadius: .wProportioned(25), colors: nil, lineWidth: 1.5, direction: .horizontal)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.setHeight(.wProportioned(50))
         return view
     }()
     
@@ -26,75 +25,28 @@ final class NMSelectedUserCell: UICollectionViewCell{
         label.font = .poppinsMedium(size: .makeWidth(16.5))
         label.layer.cornerRadius = .wProportioned(25)
         label.setHeight(.wProportioned(50))
-        label.insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        label.insets = UIEdgeInsets(top: 0, left: .makeWidth(12.5), bottom: 0, right: .makeWidth(12.5))
         return label
     }()
     
-    private let xSymbol: UIImageView = {
-        let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(20))
-        let image = UIImage(systemName: "xmark", withConfiguration: config)
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .center
-        imageView.backgroundColor = .clear
-        imageView.tintColor = .white
-        imageView.setHeight(.wProportioned(50))
-        return imageView
-    }()
-    
-    
-    
-    public func makeTextField(_ textField: UITextField?){
-        guard let textField = textField else {return}
-        mainView.addSubview(textField)
-        textField.leftAnchor.constraint(equalTo: mainView.leftAnchor).isActive = true
-        textField.rightAnchor.constraint(equalTo: mainView.rightAnchor).isActive = true
-        contentView.addSubview(mainView)
-        mainView.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
-        mainView.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
-        mainView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        mainView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        
-    }
-    
-    let compositeView = UIView()
-    
-    public func setup(_ profile: Profile, _ isRed: Bool){
-     
-      
+    public func setup(_ profile: Profile){
         contentView.layer.cornerRadius = .wProportioned(25)
         contentView.layer.masksToBounds = true
         
         nameBubble.text = profile.display_name
-        
-        if isRed{
-            compositeView.setHeight(.wProportioned(50))
-            compositeView.backgroundColor = UIColor(red: 1, green: 0, blue: 85/255, alpha: 1)
-            nameBubble.backgroundColor = UIColor(red: 1, green: 0, blue: 85/255, alpha: 1)
-            compositeView.addSubview(nameBubble)
-            compositeView.addSubview(xSymbol)
-            nameBubble.leftAnchor.constraint(equalTo: compositeView.leftAnchor).isActive = true
-            xSymbol.centerYright(inView: compositeView, rightAnchor: compositeView.rightAnchor, paddingRight: .makeWidth(15))
-            nameBubble.rightAnchor.constraint(equalTo: xSymbol.leftAnchor).isActive = true
-            mainView.addSubview(compositeView)
-            compositeView.leftAnchor.constraint(equalTo: mainView.leftAnchor).isActive = true
-            compositeView.rightAnchor.constraint(equalTo: mainView.rightAnchor).isActive = true
-        }else{
-            mainView.addSubview(nameBubble)
-            nameBubble.leftAnchor.constraint(equalTo: mainView.leftAnchor).isActive = true
-            nameBubble.rightAnchor.constraint(equalTo: mainView.rightAnchor).isActive = true
-        }
+
+        mainView.addSubview(nameBubble)
+        nameBubble.leftAnchor.constraint(equalTo: mainView.leftAnchor).isActive = true
+        nameBubble.rightAnchor.constraint(equalTo: mainView.rightAnchor).isActive = true
         
         contentView.addSubview(mainView)
         mainView.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
         mainView.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
         mainView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         mainView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        
-        if !isRed{
-            addLabelGradient(profile.colors?.cgColors() ?? User.defaultColors.colors.map({$0.cgColor}))
-        }
+      
+        addLabelGradient(profile.colors?.cgColors() ?? User.defaultColors.colors.map({$0.cgColor}))
     }
-    
     
     weak var gradient: CAGradientLayer?
     fileprivate func addLabelGradient(_ colors: [CGColor]) {
@@ -122,9 +74,6 @@ final class NMSelectedUserCell: UICollectionViewCell{
         
         self.gradient = gradient
     }
-    
-    
-    
 }
 
 fileprivate final class SelectedUserTextBubble: UILabel {

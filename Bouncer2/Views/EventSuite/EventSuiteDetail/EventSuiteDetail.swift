@@ -87,7 +87,7 @@ class EventSuiteDetail: UIViewController{
             }
         }
         
-        dataSource?.apply(snapshot, animatingDifferences: !vm.data[.one]!.isHidden)
+        dataSource?.apply(snapshot, animatingDifferences: true)
     }
     
     fileprivate func setupDetailHeader(_ event: Event, _ image: UIImage?){

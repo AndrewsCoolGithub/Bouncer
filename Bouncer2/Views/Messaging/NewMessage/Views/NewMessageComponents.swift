@@ -34,29 +34,37 @@ struct NewMessageComponents{
     let toLabel: UILabel = {
         let label = UILabel()
         label.text = "To"
-        label.textColor = .nearlyWhite()
+        label.textColor = .white
         label.font = .poppinsRegular(size: .makeWidth(18))
         return label
     }()
     
     let bubbleCV: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.estimatedItemSize = CGSize(width: 100, height: .wProportioned(50))
+        layout.itemSize = UICollectionViewFlowLayout.automaticSize
         layout.scrollDirection = .horizontal
-        let cv = UICollectionView(frame: CGRect(x: 0, y: .wProportioned(110), width: .makeWidth(414), height: .wProportioned(60)), collectionViewLayout: layout)
+        
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.setDimensions(height: .wProportioned(60), width: .makeWidth(414))
         cv.register(NMSelectedUserCell.self, forCellWithReuseIdentifier: NMSelectedUserCell.id)
+        cv.register(NMDefaultUserCell.self, forCellWithReuseIdentifier: NMDefaultUserCell.id)
+        cv.register(NMTextFieldCell.self, forCellWithReuseIdentifier: NMTextFieldCell.id)
         cv.alwaysBounceHorizontal = true
         cv.backgroundColor = .greyColor()
+        cv.tag = 1
         return cv
     }()
     
     let usersCV: UICollectionView = {
-        let cv = UICollectionView(frame: CGRect(x: 0, y: .wProportioned(180), width: .makeWidth(414), height: .makeHeight(896) - .wProportioned(180)), collectionViewLayout: UICollectionViewFlowLayout())
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: .makeWidth(414), height: .wProportioned(95))
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.setWidth(.makeWidth(414))
         cv.register(NewMessageUserCell.self, forCellWithReuseIdentifier: NewMessageUserCell.id)
         cv.backgroundColor = .purple
         cv.alwaysBounceVertical = true
+        cv.tag = 2
         return cv
     }()
-    
-    
 }

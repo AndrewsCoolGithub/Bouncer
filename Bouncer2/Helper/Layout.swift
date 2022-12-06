@@ -345,7 +345,7 @@ extension CGFloat{
     }
     
     static func makeWidth(_ points: CGFloat) -> CGFloat{
-        return UIScreen.main.bounds.width * (CGFloat(points)/CGFloat(414))
+        return (UIScreen.main.bounds.width * (CGFloat(points)/CGFloat(414))).rounded(.towardZero)
     }
     
     static func wProportioned(_ points: CGFloat) -> CGFloat {

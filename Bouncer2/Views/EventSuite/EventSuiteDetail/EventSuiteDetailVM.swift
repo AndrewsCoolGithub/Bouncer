@@ -11,7 +11,7 @@ import UIKit
 final class EventSuiteDetailVM: ObservableObject{
     
     var cancellable = Set<AnyCancellable>()
-    var event: Event!
+    var event: Event
     
     @Published var detailType: DetailType
     init(_ event: Event){
@@ -35,7 +35,6 @@ final class EventSuiteDetailVM: ObservableObject{
     
     deinit{
         FirestoreSubscription.cancel(id: event.id!)
-        event = nil
         cancellable.forEach({$0.cancel()})
     }
     

@@ -9,7 +9,6 @@ import UIKit
 
 final class NewMessageUserCell: UICollectionViewCell, SkeletonLoadable{
     
-    
     static let id = "NewMessageUserCell"
     
     fileprivate let profileImage: UIImageView = {
@@ -43,10 +42,6 @@ final class NewMessageUserCell: UICollectionViewCell, SkeletonLoadable{
         gradient.frame = profileImage.bounds
         return gradient
     }()
-    
-
-    
-   
     
     public func setup(_ profile: Profile){
         
