@@ -320,8 +320,7 @@ final class EventCreationVC: UIViewController, ObservableObject{
     
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboard = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
-
+    
             panel.layout = TypingLayout()
             panel.invalidateLayout()
             panel.move(to: .full, animated: true)

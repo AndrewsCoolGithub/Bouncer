@@ -54,7 +54,7 @@ public class InnerShadowLayer: CAGradientLayer {
             case .Top:
                 startPoint = CGPoint(x: 0.5, y: 0.0)
                 endPoint = CGPoint(x: 0.5, y: 1.0)
-                self.frame = CGRect(x: 0.0, y: 0.0, width: viewFrame.width, height: shadowRadius)
+                self.frame = CGRect(x: 0.0, y: 0.0, width: viewFrame.width != 0 ? viewFrame.width : .makeWidth(414), height: shadowRadius)
             case .Bottom:
                 startPoint = CGPoint(x: 0.5, y: 1.0)
                 endPoint = CGPoint(x: 0.5, y: 0.0)

@@ -8,7 +8,7 @@
 import Foundation
 import Firebase
 
-let CHAT_COLLECTION = USERS_COLLECTION.document(User.shared.id!).collection("Chats")
+let CHAT_COLLECTION = Firestore.firestore().collection("Chats")
 final class MessageManager{
     
     static let shared = MessageManager()
@@ -16,7 +16,7 @@ final class MessageManager{
     
     public func send(_ detail: MessageDetail, message: MessageCodable) throws{
         guard let id = detail.id else { return }
-        let newDetail = MessageDetail(id: detail.id, users: detail.users, chatName: detail.chatName, imageURLs: detail.imageURLs, lastMessage: message, lastActive: .now)
+        let newDetail = MessageDetail(id: detail.id, users: detail.users, chatName: detail.chatName, lastMessage: message, lastActive: .now)
         try CHAT_COLLECTION.document(id).setData(from: newDetail)
         try CHAT_COLLECTION.document(id).collection("Messages").document(message.messageID).setData(from: message)
     }
@@ -38,6 +38,24 @@ final class MessageManager{
         return chats.compactMap { doc -> MessageDetail? in
             return try? doc.data(as: MessageDetail.self)
         }
+    }
+    
+    public func createNewChat(_ users: [Profile]) throws -> MessageDetail{
+
+        var users = users
+        if users.count > 1{
+            users.append(User.shared.profile)
+        }
+        
+        var names = users.map { $0.display_name }.joined(separator: ", ")
+        if users.count == 1{
+            users.append(User.shared.profile)
+        }
+        
+        let ref = Firestore.firestore().collection("Chats").document()
+        let messageDetail = MessageDetail(id: ref.documentID, users: users.map({$0.id!}), chatName: names, lastMessage: nil, lastActive: .now)
+        try ref.setData(from: messageDetail, merge: false)
+        return messageDetail
     }
     
     

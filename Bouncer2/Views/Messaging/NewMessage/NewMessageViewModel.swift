@@ -65,6 +65,10 @@ final class NewMessageViewModel: ObservableObject{
         
         return followingFirst
     }
+    
+    func createNewChat(_ users: [Profile]) throws -> MessageDetail{
+        try MessageManager.shared.createNewChat(users)
+    }
 }
 
 

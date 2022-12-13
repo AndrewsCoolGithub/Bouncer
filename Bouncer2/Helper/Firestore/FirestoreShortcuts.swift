@@ -9,13 +9,20 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 
+fileprivate let profileCache = Cache<String, Profile>()
 extension Array where Element == String {
     
     func getUsers() async -> [Profile] {
         var profiles = [Profile]()
+        
         for id in self{
-            guard let profile = try? await USERS_COLLECTION.document(id).getDocument(as: Profile.self) else {continue}
-            profiles.append(profile)
+            if let profile = profileCache[id]{
+                profiles.append(profile)
+            }else{
+                guard let profile = try? await USERS_COLLECTION.document(id).getDocument(as: Profile.self) else {continue}
+                profileCache[id] = profile
+                profiles.append(profile)
+            }
         }
         return profiles
     }
@@ -27,6 +34,12 @@ extension Array where Element == QueryDocumentSnapshot{
         return self.compactMap { doc -> T? in
             return try? doc.data(as: T.self)
         }
+    }
+}
+
+extension String {
+    func getUser() async -> Profile?{
+        try? await USERS_COLLECTION.document(self).getDocument(as: Profile.self)
     }
 }
 

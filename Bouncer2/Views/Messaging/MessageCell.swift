@@ -13,19 +13,21 @@ class MessageCell: UICollectionViewCell{
     var views = MessageCellViews()
    
     var cancellable: AnyCancellable?
+    var imageCancellable: AnyCancellable?
     override func prepareForReuse() {
         super.prepareForReuse()
         cancellable?.cancel()
+        imageCancellable?.cancel()
     }
     
-    func setup(_ messageDetail: MessageDetail){
+    func setup(_ messageDetail: MessageCellViewModel){
         
         arrangeViews()
         setProfileImage(messageDetail)
-        if let lastActivity = messageDetail.lastMessage?.toMessage(){
+        if let lastActivity = messageDetail.messageDetail.lastMessage?.toMessage(){
             detailLabelText(lastActivity)
         }
-        nameLabelText(messageDetail)
+        nameLabelText(messageDetail.messageDetail)
     }
     
     fileprivate func arrangeViews(){
@@ -51,13 +53,15 @@ class MessageCell: UICollectionViewCell{
         views.nameLabel.text = name
     }
     
-    fileprivate func setProfileImage(_ messageDetail: MessageDetail){
-        let imageUrl = messageDetail.imageURLs[0]
-        let profilePhoto = views.profileImage
-        views.skeletonGradient.frame = profilePhoto.bounds
-        profilePhoto.layer.addSublayer(views.skeletonGradient)
-        profilePhoto.sd_setImage(with: URL(string: imageUrl)) { [weak self] i, e, c, u in
-            self?.views.skeletonGradient.removeFromSuperlayer()
+    fileprivate func setProfileImage(_ messageCellViewModel: MessageCellViewModel){
+        imageCancellable = messageCellViewModel.$userData.receive(on: DispatchQueue.main).sink{ [weak self] profiles in
+            guard let imageUrl = profiles.values.first(where: {$0.id != User.shared.id})?.image_url else {return}
+            let profilePhoto = self?.views.profileImage
+            self?.views.skeletonGradient.frame = profilePhoto?.bounds ?? .zero
+            profilePhoto?.layer.addSublayer(self?.views.skeletonGradient ?? CALayer())
+            profilePhoto?.sd_setImage(with: URL(string: imageUrl)) { [weak self] i, e, c, u in
+                self?.views.skeletonGradient.removeFromSuperlayer()
+            }
         }
     }
     

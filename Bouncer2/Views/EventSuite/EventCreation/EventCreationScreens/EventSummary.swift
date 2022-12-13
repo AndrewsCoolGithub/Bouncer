@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import UIImageColors
 
-class EventOverview: UIViewController{
+class EventSummary: UIViewController{
   
     let props: [OverviewProperties] = [.image, .title, .description, .location, .schedule, .type]
     let config = UIImage.SymbolConfiguration(pointSize: .makeWidth(50))
@@ -27,6 +27,7 @@ class EventOverview: UIViewController{
         view.backgroundColor = .greyColor()
         createTabs()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.layer.cornerRadius = .makeWidth(25)
@@ -41,6 +42,7 @@ class EventOverview: UIViewController{
     @objc func tapGesture(sender: UITapGestureRecognizer){
         print("Tapped me")
     }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -250,14 +252,14 @@ class Interactor: UIPercentDrivenInteractiveTransition {
     }
    //  completionCurve: UIView.AnimationCurve = .easeInOut
 }
-private extension EventOverview {
+private extension EventSummary {
     func configure() {
         modalPresentationStyle = .custom
         modalTransitionStyle = .coverVertical
         transitioningDelegate = self
     }
 }
-extension EventOverview: UIViewControllerTransitioningDelegate {
+extension EventSummary: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return PresentationController(presentedViewController: presented, presenting: presenting)
     }

@@ -34,7 +34,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if Auth.auth().currentUser != nil{
             User.setup()
-            let navCont = UINavigationController(rootViewController: TabBarController())
+            let eventOverview = EventOverview()
+            let viewModel = EventOverviewViewModel(event: Event.dummy)
+            eventOverview.viewModel = viewModel
+            eventOverview.headerView = EventOverviewHeader(viewModel: viewModel)
+            eventOverview.contentView = EventOverviewContent(viewModel: viewModel)
+            let navCont = UINavigationController(rootViewController: eventOverview)
             navCont.navigationBar.isHidden = true
             self.window?.rootViewController = navCont
             Location.shared.start { info in

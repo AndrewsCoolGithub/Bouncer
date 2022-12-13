@@ -20,7 +20,6 @@ struct MessageDetail: Hashable, Codable, Identifiable {
     @DocumentID var id: String? = UUID().uuidString
     let users: [String]
     let chatName: String
-    let imageURLs: [String]
     var lastMessage: MessageCodable?
     let lastActive: Date
 }

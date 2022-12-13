@@ -67,6 +67,14 @@ struct Event: Hashable, Codable, Equatable, Identifiable{
     func getLocation() -> CLLocation {
         return CLLocation(latitude: self.location.latitude, longitude: self.location.longitude)
     }
+    
+    
+    
+    
+   
+    
+
+    static let dummy = Event(id: "", imageURL: "", title: "EVENT TITLE", description: "THIS IS A DESCRIPTION", location: GeoPoint(latitude: 90, longitude: 90), geoHash: "GHE2", locationName: "NO WHERE", startsAt: .now, endsAt: .distantFuture, type: .open, colors: [ColorModel(r: 0.5, g: 0.5, b: 1), ColorModel(r: 0.5, g: 0.5, b: 1), ColorModel(r: 0.5, g: 0.5, b: 1)], hostId: "idHost", hostProfile: Profile.dummy, prospectIds: [""], invitedIds: [""], guestIds: ["5Xz4HmjQaKhgIAjwVU3MWMey67s1", "I1SxWEC11gYp51MCzwLaWITmgL73", "KNpZVdYEd3OYJFNjnkaqyLwe6uJ3", "jxAu2um0fgUBtxzKbwCrNGfykGw1", "9ab2sSVBfuUM9BAKkroygrpEocw2", "ywSeDAtCqqf5xy33MFJESV23ah32", "EeKWuRqFoHX1UZm2XLuDUVt7UoI3",  "OAvcj1nYapWwJazcj7uUMSR3btX2", "grmLsRIbDOZGkQUjeSEOcVw0zN33", "FlVtnLVDekR9BBaL6mtZTHUVvNG3", "S4idI8WTqcO6TxWaw3Yd2i85OmG2", "MjeHgFEqCufhN1gBx3an8qHjZti2", "uD2qiznkOSNClKTO4IiTQYwxQBi1", "sKTY3HR9g9QW9bhOw3fEaE90Yrx1", "4hkxQdGpkmNKbQIBD14RNm4CTx02", "Rlhm9W1IYLVCfcBvuk2hfdjUSWg2", "8rk6NtuNa4bnVR6St6nOs51mDK63", "BKl2ZAMEJZQYInids9VsrNRr3lf2", "FNQGbEaQS7YnZzowJCTUbp1i7uN2"])
 }
 
 

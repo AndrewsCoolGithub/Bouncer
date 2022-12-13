@@ -32,11 +32,11 @@ struct FirestoreSubscription {
         switch collection {
         case .Messages:
             guard let id = id else {fatalError("Messages collection requires a Chat ID (Message Detail)")}
-            refrence = Firestore.firestore().collection("Users").document(User.shared.id ?? "").collection("Chats").document(id).collection("Messages").order(by: MessageFields.sentDate.rawValue)
+            refrence = Firestore.firestore().collection("Chats").document(id).collection("Messages").order(by: MessageFields.sentDate.rawValue)
            
         case .Chats:
             
-            refrence = Firestore.firestore().collection("Users").document(User.shared.id ?? "").collection("Chats")
+            refrence = Firestore.firestore().collection("Chats").whereField("users", arrayContains: User.shared.id!)
         default:
             break
         }

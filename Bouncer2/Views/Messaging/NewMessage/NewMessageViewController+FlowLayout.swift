@@ -92,7 +92,7 @@ extension NewMessageViewController: UICollectionViewDelegateFlowLayout{
     }
     
     fileprivate func handleTapOnTable(_ indexPath: IndexPath){
-        guard let item = dataSourceSearch?.itemIdentifier(for: indexPath) else {return}
+        guard let item = dataSourceSearch?.itemIdentifier(for: indexPath), item != User.shared.profile else {return}
 
         ///Toggle bubbleCell
         if let index = viewModel.selectedUsers.firstIndex(of: ProfileBool(item, false)){

@@ -21,7 +21,6 @@ final class User: ObservableObject{
     }
     
     private init(){
-        print("DID INIT")
         
     }
     let randInt = Int.random(in: 0...10)

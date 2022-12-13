@@ -12,6 +12,7 @@ import Firebase
 
 enum FirestoreCollections: String{
     case Events = "Events"
+    case Guests = "Guests"
     case Users = "Users"
     case Messages = "Messages"
     case Chats = "Chats"

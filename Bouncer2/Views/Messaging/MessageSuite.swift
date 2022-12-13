@@ -53,7 +53,7 @@ class MessageSuite: UIViewController{
     fileprivate func setupCV(){
         dataSource = UICollectionViewDiffableDataSource<Section, MessageDetail>(collectionView: components.messagesCollectionView, cellProvider: { collectionView, indexPath, messageDetail in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MessageCell.id, for: indexPath) as! MessageCell
-            cell.setup(messageDetail)
+            cell.setup(MessageCellViewModel(messageDetail))
             return cell
         })
         

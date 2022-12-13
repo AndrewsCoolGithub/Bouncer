@@ -35,7 +35,4 @@ class MessageSuiteViewModel: ObservableObject{
             suggestedUsers = await User.shared.following.getUsers()
         }
     }
-    
-    
-    
 }
