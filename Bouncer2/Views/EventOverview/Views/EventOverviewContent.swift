@@ -25,15 +25,13 @@ class EventOverviewContent: UIView{
     
     func setupView(){
         let view = self
-        
         view.isUserInteractionEnabled = true
         view.backgroundColor = .greyColor()
         let guestsCV = components.guestsCV
         view.addSubview(guestsCV)
-        guestsCV.contentInset = UIEdgeInsets(top: .wProportioned(65), left: 0, bottom: 0, right: 0)
+     
         guestsCV.centerX(inView: view, topAnchor: view.topAnchor)
-        guestsCV.backgroundColor = .red
-        guestsCV.alwaysBounceVertical = true
+       
         let innerShadow = InnerShadowLayer(forView: view, edge: .Top, shadowRadius: .wProportioned(90), toColor: .clear, fromColor: .nearlyBlack().withAlphaComponent(0.2))
         view.layer.addSublayer(innerShadow)
         dataSource = makeDataSource()
@@ -43,9 +41,16 @@ class EventOverviewContent: UIView{
     
    fileprivate func makeDataSource() -> UICollectionViewDiffableDataSource<Section, Profile> {
         return UICollectionViewDiffableDataSource(collectionView: components.guestsCV) { collectionView, indexPath, itemIdentifier in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventOverviewGuestCell.id, for: indexPath) as! EventOverviewGuestCell
-            cell.setup(itemIdentifier)
-            return cell
+            guard let section = self.dataSource?.sectionIdentifier(for: indexPath.section) else {return UICollectionViewCell()}
+            if section == .Host{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventOverviewHostCell.id, for: indexPath) as! EventOverviewHostCell
+                cell.setup(itemIdentifier)
+                return cell
+            }else{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventOverviewGuestCell.id, for: indexPath) as! EventOverviewGuestCell
+                cell.setup(itemIdentifier)
+                return cell
+            }
         }
     }
     
@@ -84,20 +89,6 @@ class EventOverviewContent: UIView{
             }
             self?.dataSource?.apply(snapshot, animatingDifferences: true)
         }.store(in: &viewModel.cancellable)
-//        ///People You Know
-//        viewModel.$peopleYouKnow.receive(on: DispatchQueue.main).sink { [weak self] peopleYouKnow in
-//            self?.update()
-//        }.store(in: &viewModel.cancellable)
-//
-//        ///Guests
-//        viewModel.$guests.receive(on: DispatchQueue.main).sink { [weak self] guests in
-//            self?.update()
-//        }.store(in: &viewModel.cancellable)
-//
-//        ///Host
-//        viewModel.$host.receive(on: DispatchQueue.main).sink { [weak self] host in
-//            self?.update()
-//        }.store(in: &viewModel.cancellable)
     }
     
     fileprivate func update(){
@@ -108,13 +99,18 @@ class EventOverviewContent: UIView{
         fatalError("init(coder:) has not been implemented")
     }
 }
+
 struct EventOverviewContentComponents{
     
     let guestsCV: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.alwaysBounceVertical = true
+        cv.backgroundColor = .greyColor()
+        cv.contentInset = UIEdgeInsets(top: .wProportioned(65), left: 0, bottom: .wProportioned(15), right: 0)
         cv.register(EventOverviewGuestCell.self, forCellWithReuseIdentifier: EventOverviewGuestCell.id)
+        cv.register(EventOverviewHostCell.self, forCellWithReuseIdentifier: EventOverviewHostCell.id)
         cv.register(EventOverviewSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EventOverviewSectionHeader.id)
         return cv
     }()

@@ -13,15 +13,12 @@ final class EventOverviewHostCell: UICollectionViewCell{
     
     var components = EventOverviewHostCellComponents()
     
-    init(_ profile: Profile){
-        super.init(frame: .zero)
-        
-        setDimensions(height: .makeWidth(103), width: .makeWidth(414))
+    func setup(_ profile: Profile){
         
         let imageView = components.imageView
         contentView.addSubview(imageView)
-        imageView.anchor(top: topAnchor, paddingTop: .makeWidth(1.5))
-        imageView.anchor(left: leftAnchor, paddingLeft: .makeWidth(15))
+        imageView.anchor(top: contentView.topAnchor, paddingTop: .makeWidth(1.5))
+        imageView.anchor(left: contentView.leftAnchor, paddingLeft: .makeWidth(15))
         
         let border = components.border
         border.colors = profile.colors?.cgColors() ?? User.defaultColors.colors.map({$0.cgColor})
@@ -50,11 +47,6 @@ final class EventOverviewHostCell: UICollectionViewCell{
         contentView.addSubview(joinedLabel)
         joinedLabel.anchor(top: userNameLabel.bottomAnchor, paddingTop: .makeWidth(3.5))
         joinedLabel.anchor(left: imageView.rightAnchor, paddingLeft: .makeWidth(10))
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

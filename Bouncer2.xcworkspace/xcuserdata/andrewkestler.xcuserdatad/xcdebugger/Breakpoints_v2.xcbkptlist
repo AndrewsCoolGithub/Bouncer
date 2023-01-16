@@ -48,5 +48,19 @@
             continueAfterRunningActions = "No">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         <BreakpointContent
+            uuid = "1AFD431F-E52E-46F6-90C8-6A3CFA98068F"
+            shouldBeEnabled = "Yes"
+            nameForDebugger = "FIRInvalidArgumentException"
+            condition = "FIRInvalidArgumentException"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            breakpointStackSelectionBehavior = "1"
+            scope = "1"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

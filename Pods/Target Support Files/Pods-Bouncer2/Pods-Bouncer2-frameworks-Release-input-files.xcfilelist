@@ -1,4 +1,5 @@
 ${PODS_ROOT}/Target Support Files/Pods-Bouncer2/Pods-Bouncer2-frameworks.sh
+${BUILT_PRODUCTS_DIR}/ABVideoRangeSlider/ABVideoRangeSlider.framework
 ${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework
 ${BUILT_PRODUCTS_DIR}/FirebaseAppCheck/FirebaseAppCheck.framework
 ${BUILT_PRODUCTS_DIR}/FirebaseAppCheckInterop/FirebaseAppCheckInterop.framework

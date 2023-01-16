@@ -69,3 +69,12 @@ enum ReadReceiptFields: String{
     case uid = "uid"
     case timeRead = "timeRead"
 }
+
+enum StoryFields: String{
+    case eventId = "eventId"
+    case userId = "userId"
+    case date = "date"
+    case type = "type"
+    case shouldMirror = "shouldMirror"
+    case url = "url"
+}

@@ -34,16 +34,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if Auth.auth().currentUser != nil{
             User.setup()
-            let eventOverview = EventOverview()
-            let viewModel = EventOverviewViewModel(event: Event.dummy)
-            eventOverview.viewModel = viewModel
-            eventOverview.headerView = EventOverviewHeader(viewModel: viewModel)
-            eventOverview.contentView = EventOverviewContent(viewModel: viewModel)
-            let navCont = UINavigationController(rootViewController: eventOverview)
-            navCont.navigationBar.isHidden = true
-            self.window?.rootViewController = navCont
-            Location.shared.start { info in
-                User.shared.locationInfo = info
+            Task{
+                
+                let event = try await EVENTS_COLLECTION.document("MR4kdMeeeQbnEyHcLEIW").getDocument(as: Event.self)
+                let eventOverview = EventOverview()
+                let viewModel = EventOverviewViewModel(event: event)
+                let storyModel = EventOverviewStoryModel(event: event)
+                eventOverview.viewModel = viewModel
+                eventOverview.storyModel = storyModel
+                eventOverview.headerView = EventOverviewHeader(viewModel: viewModel, storyModel: storyModel)
+                eventOverview.contentView = EventOverviewContent(viewModel: viewModel)
+                let navCont = UINavigationController(rootViewController: eventOverview)
+                navCont.navigationBar.isHidden = true
+                self.window?.rootViewController = navCont
+                
+                Location.shared.start { info in
+                    User.shared.locationInfo = info
+                }
+                
             }
         }else{
             let navCont = UINavigationController(rootViewController: AccountSignUpEntry())

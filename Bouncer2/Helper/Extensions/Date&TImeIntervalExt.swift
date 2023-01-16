@@ -138,13 +138,13 @@ extension TimeInterval{
             //let result = Int(timeDif.rounded(.towardZero))
             return "Just now"
         }else if timeDif >= minute && timeDif < hour{ //Minutes
-            let result = Int(timeDif/minute.rounded(.towardZero))
+            let result = abs(Int(timeDif/minute.rounded(.towardZero)))
             return "\(result)m"
         }else if timeDif >= hour && timeDif < day{ //Hours
-            let result = Int(timeDif/hour.rounded(.towardZero))
+            let result = abs(Int(timeDif/hour.rounded(.towardZero)))
             return "\(result)h"
         }else{ //Days
-            let result = Int(timeDif/day.rounded(.towardZero))
+            let result = abs(Int(timeDif/day.rounded(.towardZero)))
             return "\(result)d"
         }
     }

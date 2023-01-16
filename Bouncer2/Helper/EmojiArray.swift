@@ -16,8 +16,7 @@ struct Emoji: Hashable, Codable{
     let emote: String
 }
 
-
-final class EmojiGallery{
+struct EmojiGallery{
     
 var people = """
 😀 Grinning Face

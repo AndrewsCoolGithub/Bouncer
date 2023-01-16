@@ -28,15 +28,17 @@ struct FirestoreSubscription {
     
     static func subscribeToCollection(id: String? = nil, collection: FirestoreCollections, fromServer: Bool = false) -> AnyPublisher<QuerySnapshot, Never> {
         let subject = PassthroughSubject<QuerySnapshot, Never>()
+        
         var refrence: Query!
         switch collection {
         case .Messages:
             guard let id = id else {fatalError("Messages collection requires a Chat ID (Message Detail)")}
-            refrence = Firestore.firestore().collection("Chats").document(id).collection("Messages").order(by: MessageFields.sentDate.rawValue)
-           
+            refrence = CHAT_COLLECTION.document(id).collection("Messages").order(by: MessageFields.sentDate.rawValue)
         case .Chats:
-            
-            refrence = Firestore.firestore().collection("Chats").whereField("users", arrayContains: User.shared.id!)
+            refrence = CHAT_COLLECTION.whereField("users", arrayContains: User.shared.id!)
+        case .Stories:
+            guard let id = id else {fatalError("Stories collection requires an event ID ")}
+            refrence = STORY_REF.whereField(StoryFields.eventId.rawValue, isEqualTo: id).order(by: StoryFields.date.rawValue)
         default:
             break
         }
@@ -53,12 +55,30 @@ struct FirestoreSubscription {
         collectionListeners[collection.rawValue] = CollectionListener(listener: listener, subject: subject)
         return subject.eraseToAnyPublisher()
     }
+    
+    static func subscribeToCollection(with query: Query, id: String) -> AnyPublisher<QuerySnapshot, Never>{
+        let subject = PassthroughSubject<QuerySnapshot, Never>()
+        let listener = query.addSnapshotListener { snapshot, _ in
+            if let snapshot = snapshot{
+                subject.send(snapshot)
+            }
+        }
+        queries[id] = QueryListener(listener: listener, subject: subject)
+        return subject.eraseToAnyPublisher()
+    }
   
     static func cancel(id: String) {
-        let listener = listeners[id]
-        listener?.listener.remove()
-        listener?.subject.send(completion: .finished)
-        listeners[id] = nil
+        if let listener = listeners[id] {
+            listener.listener.remove()
+            listener.subject.send(completion: .finished)
+            listeners[id] = nil
+        }else if let listener = queries[id]{
+            listener.listener.remove()
+            listener.subject.send(completion: .finished)
+            queries[id] = nil
+        }
+       
+       
         print("Removed document listener w/ path: \(id)")
     }
     
@@ -72,6 +92,12 @@ struct FirestoreSubscription {
 }
 
 private var listeners: [String: Listener] = [:]
+private var queries: [String: QueryListener] = [:]
+
+private struct QueryListener {
+    let listener: ListenerRegistration
+    let subject: PassthroughSubject<QuerySnapshot, Never>
+}
 private struct Listener {
     let listener: ListenerRegistration
     let subject: PassthroughSubject<DocumentSnapshot, Never>

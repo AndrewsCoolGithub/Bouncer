@@ -23,6 +23,8 @@ target 'Bouncer2' do
   pod 'Pastel'
   pod 'NVActivityIndicatorView'
   pod 'MessageKit'
+  pod "ABVideoRangeSlider"
+#  pod 'HKVideoRangeSlider'
 #  pod 'MapboxNavigation', '~> 1.0'
 #  pod 'MapboxCoreNavigation', '~> 1.0'
   

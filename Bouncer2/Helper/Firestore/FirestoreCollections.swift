@@ -16,4 +16,7 @@ enum FirestoreCollections: String{
     case Users = "Users"
     case Messages = "Messages"
     case Chats = "Chats"
+    case Stories = "Stories"
 }
+
+

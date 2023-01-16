@@ -6,17 +6,20 @@
 //
 
 import UIKit
+import Foundation
 
 class EventOverviewHeader: UIView{
     
     var viewModel: EventOverviewViewModel!
+    var storyModel: EventOverviewStoryModel!
     var components = EventOverviewHeaderComponents()
     
-    init(viewModel: EventOverviewViewModel) {
+    init(viewModel: EventOverviewViewModel, storyModel: EventOverviewStoryModel) {
         let height = components.eventImageView.frame.height + .wProportioned(52.5)
         let frame = CGRect(origin: .zero, size: CGSize(width: .makeWidth(414), height: height))
         super.init(frame: frame)
         self.viewModel = viewModel
+        self.storyModel = storyModel
         setupViews()
         setupListeners()
     }
@@ -56,14 +59,22 @@ class EventOverviewHeader: UIView{
         cameraButton.anchor(right: storyView.rightAnchor, paddingRight: -.wProportioned(7.5))
     }
     
+    
     fileprivate func setupListeners(){
         let eventImageView = components.eventImageView
         let skeletonGradient = components.skeletonGradient
+        
+        var lastURL: String?
         viewModel.$imageURL.sink { imageURL in
+            guard lastURL != imageURL else {
+                lastURL = imageURL
+                return
+            }
             eventImageView.layer.addSublayer(skeletonGradient)
             eventImageView.sd_setImage(with: URL(string: imageURL)){ i, e, c, u in
                skeletonGradient.removeFromSuperlayer()
             }
+            lastURL = imageURL
         }.store(in: &viewModel.cancellable)
 
         let eventTitle = components.eventTitle
@@ -75,6 +86,18 @@ class EventOverviewHeader: UIView{
         viewModel.$colors.sink { colors in
             border.colors = colors.cgColors()
         }.store(in: &viewModel.cancellable)
+        
+        let storyView = components.storyView
+        let skeletonGradientStoryView = components.skeletonGradientStoryView
+        storyModel.$thumbnail.receive(on: DispatchQueue.main).sink { image in
+            if image == nil{
+                skeletonGradientStoryView.frame = CGRect(x: 0, y: 0, width: .wProportioned(105), height: .wProportioned(105))
+                storyView.layer.addSublayer(skeletonGradientStoryView)
+            }else if let image = image{
+                storyView.image = image
+                skeletonGradientStoryView.removeFromSuperlayer()
+            }
+        }.store(in: &storyModel.cancellable)
     }
 }
 
@@ -109,7 +132,6 @@ struct EventOverviewHeaderComponents: SkeletonLoadable{
         bannerImageView.layer.masksToBounds = true
         bannerImageView.clipsToBounds = true
         bannerImageView.contentMode = .scaleAspectFill
-        bannerImageView.backgroundColor = .systemPink
         return bannerImageView
     }()
     
@@ -170,4 +192,16 @@ struct EventOverviewHeaderComponents: SkeletonLoadable{
         
         return gradient
     }()
+    
+    lazy var skeletonGradientStoryView: CAGradientLayer = {
+        let gradient = CAGradientLayer()
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint = CGPoint(x: 1, y: 0.5)
+        let animation = makeAnimationGroup()
+        animation.beginTime = 0.0
+        gradient.add(animation, forKey: "backgroundColor")
+        
+        return gradient
+    }()
+    
 }

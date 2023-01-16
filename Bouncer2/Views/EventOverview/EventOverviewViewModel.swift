@@ -12,7 +12,7 @@ class EventOverviewViewModel: ObservableObject{
     
     var cancellable = Set<AnyCancellable>()
     
-    private var event: Event {
+     var event: Event {
         didSet{
            updateData(event)
         }

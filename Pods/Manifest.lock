@@ -596,6 +596,7 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
+  - ABVideoRangeSlider (0.1.5)
   - BoringSSL-GRPC (0.0.24):
     - BoringSSL-GRPC/Implementation (= 0.0.24)
     - BoringSSL-GRPC/Interface (= 0.0.24)
@@ -810,6 +811,7 @@ PODS:
     - SteviaLayout (= 4.7.3)
 
 DEPENDENCIES:
+  - ABVideoRangeSlider
   - Firebase/Auth
   - Firebase/Database
   - Firebase/DynamicLinks
@@ -830,6 +832,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - abseil
+    - ABVideoRangeSlider
     - BoringSSL-GRPC
     - Firebase
     - FirebaseAppCheck
@@ -875,6 +878,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
+  ABVideoRangeSlider: f2b6d894170bd0951693de4c1ad625f7f9f8b6a5
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   Firebase: 91c243d75573ac6e7c9735ec859b72bffb61347d
   FirebaseAppCheck: 0c4f09cb36765fab3f7eb85e4a4503eb68444927
@@ -918,6 +922,6 @@ SPEC CHECKSUMS:
   UIImageColors: d2ef3b0877d203cbb06489eeb78ea8b7788caabe
   YPImagePicker: f36043210c10b0783034eb1947d6e06e31c461e4
 
-PODFILE CHECKSUM: 4b3cb4277e09340f89ccb33f15cce8aaaf91b519
+PODFILE CHECKSUM: 38d2e6be884718080a8a3060ae08b05aff1a858b
 
 COCOAPODS: 1.11.3
