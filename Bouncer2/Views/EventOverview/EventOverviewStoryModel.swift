@@ -73,6 +73,14 @@ final class EventOverviewStoryModel: ObservableObject{
             imageView.sd_setImage(with: URL(string: last.url)) { [weak self] I, E, C, U in
                 self?.thumbnail = imageView.image
             }
+        }else{
+            //TODO: Make plus symbol same gradient as event image, remove camera button when no storiesa
+            let config = UIImage.SymbolConfiguration(pointSize: .wProportioned(35))
+            let image = UIImage(systemName: "plus", withConfiguration: config)
+            
+            let imageView = UIImageView(image: image)
+            imageView.tintColor = .white
+            self.thumbnail = imageView.image
         }
     }
     

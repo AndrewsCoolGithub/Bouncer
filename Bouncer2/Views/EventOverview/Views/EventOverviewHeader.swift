@@ -88,6 +88,7 @@ class EventOverviewHeader: UIView{
         }.store(in: &viewModel.cancellable)
         
         let storyView = components.storyView
+        let cameraButton = components.cameraButton
         let skeletonGradientStoryView = components.skeletonGradientStoryView
         storyModel.$thumbnail.receive(on: DispatchQueue.main).sink { image in
             if image == nil{
@@ -95,6 +96,15 @@ class EventOverviewHeader: UIView{
                 storyView.layer.addSublayer(skeletonGradientStoryView)
             }else if let image = image{
                 storyView.image = image
+                if let size = storyView.image?.symbolConfiguration?.value(forKey: "pointSize") as? CGFloat, size == .wProportioned(35){
+                    cameraButton.isHidden = true
+                    storyView.contentMode = .center
+                    storyView.tintColor = .white
+                }else{
+                    cameraButton.isHidden = false
+                    storyView.contentMode = .scaleAspectFill
+                    storyView.tintColor = .clear
+                }
                 skeletonGradientStoryView.removeFromSuperlayer()
             }
         }.store(in: &storyModel.cancellable)
@@ -159,7 +169,7 @@ struct EventOverviewHeaderComponents: SkeletonLoadable{
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = .wProportioned(52.5)
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .systemPink
+        imageView.backgroundColor = .greyColor()
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -179,12 +189,12 @@ struct EventOverviewHeaderComponents: SkeletonLoadable{
     let border: CAGradientLayer = {
         let gradient = CAGradientLayer()
         gradient.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: .wProportioned(105), height: .wProportioned(105)))
-        gradient.startPoint = CGPoint(x: 0, y: 1)
-        gradient.endPoint = CGPoint(x: 1, y: 1)
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint = CGPoint(x: 1, y: 0.5)
         
         let shape = CAShapeLayer()
-        shape.lineWidth = 2
-        shape.path = UIBezierPath(roundedRect: CGRect(origin:CGPoint(x: 0, y: 0), size: CGSize(width: .wProportioned(105), height: .wProportioned(105))).insetBy(dx: 0.45, dy: 0.45),
+        shape.lineWidth = 3
+        shape.path = UIBezierPath(roundedRect: CGRect(origin:CGPoint(x: 0, y: 0), size: CGSize(width: .wProportioned(105), height: .wProportioned(105))).insetBy(dx: 1, dy: 1),
                                   cornerRadius: .wProportioned(52.5)).cgPath
         shape.strokeColor = UIColor.black.cgColor
         shape.fillColor = UIColor.clear.cgColor

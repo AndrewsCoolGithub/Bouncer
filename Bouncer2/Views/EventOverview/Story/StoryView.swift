@@ -10,9 +10,11 @@ import UIKit
 import NVActivityIndicatorView
 
 class StoryView: UIViewController, SkeletonLoadable {
+    
     override var prefersStatusBarHidden: Bool {
         return true
     }
+    
     var player: AVPlayer?
     private var playerLayer: AVPlayerLayer!
     var imageView: UIImageView = {

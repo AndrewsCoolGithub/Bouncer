@@ -71,7 +71,7 @@ class EventOverview: UIViewController{
     
    
     @objc func openStory(_ sender: UITapGestureRecognizer){
-        guard !storyModel.stories.isEmpty else {return}
+        guard !storyModel.stories.isEmpty else { addStory(); return}
         storyVC = StoryViewController(storyModel.views, startIndex: storyModel.currentIndex, event: viewModel.event)
         view.addSubview(darkView)
        

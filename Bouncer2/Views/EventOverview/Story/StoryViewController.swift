@@ -72,9 +72,9 @@ final class StoryViewController: UIViewController, UIPageViewControllerDelegate{
         rightView.setDimensions(height: .makeHeight(896), width: .makeWidth(207))
         
         pauseGesture = UILongPressGestureRecognizer(target: self, action:  #selector(pause))
-        pauseGesture.minimumPressDuration = 0.125
+        pauseGesture.minimumPressDuration = 0.2
         pauseGesture2 = UILongPressGestureRecognizer(target: self, action:  #selector(pause))
-        pauseGesture2.minimumPressDuration = 0.125
+        pauseGesture2.minimumPressDuration = 0.2
         
         forwardGesture = UITapGestureRecognizer(target: self, action: #selector(tapForward))
         forwardGesture.require(toFail: pauseGesture)
