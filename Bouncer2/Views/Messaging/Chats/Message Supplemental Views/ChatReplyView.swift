@@ -76,16 +76,10 @@ class ChatReplyView: MessageReusableView{
     func setup(_ content: String?, displayName: String?, senderDisplayName: String?){
         guard let content = content, let displayName = displayName, let senderDisplayName = senderDisplayName else {return}
         label.removeConstraints(label.constraints)
-//        pastel.removeConstraints(pastel.constraints)
+
         let size = content.sizeOfString(usingFont: .systemFont(ofSize: 12, weight: .medium), maxHeight: 100, maxWidth: .makeWidth(300))
         labelSize = size
         label.setDimensions(height: size.height, width: size.width)
-//        pastel.frame.size = size
-        
-        let x = .makeWidth(414) - size.width - 25
-        let y = self.frame.height - size.height - 5
-        pastel.frame = CGRect(x: x, y: CGFloat(y), width: size.width, height: size.height)
-        blur.frame = CGRect(x: x, y: CGFloat(y), width: size.width, height: size.height + 1)
         
         label.text = content
         label.layer.cornerRadius = .makeWidth(15)
@@ -98,21 +92,41 @@ class ChatReplyView: MessageReusableView{
         }else{
             replyingToLabel.text = "\(senderDisplayName) replied to \(displayName)"
         }
+        
         addSubview(pastel)
         addSubview(blur)
         addSubview(label)
-        label.anchor(right: self.rightAnchor, paddingRight: 25)
+        addSubview(replyingToLabel)
+        addSubview(spacerView)
+        
+        let y: CGFloat = self.frame.height - size.height - 5
+        
         label.anchor(bottom: self.bottomAnchor, paddingBottom: 5)
         
-       
-//        pastel.anchor(right: self.rightAnchor, paddingRight: 25)
-//        pastel.anchor(bottom: self.bottomAnchor, paddingBottom: 5)
+        if senderDisplayName == User.shared.displayName {
+            let x = .makeWidth(414) - size.width - 25
+            pastel.frame = CGRect(x: x, y: y, width: size.width, height: size.height)
+            blur.frame = CGRect(x: x, y: y, width: size.width, height: size.height + 1)
+            
+            label.anchor(right: self.rightAnchor, paddingRight: 25)
         
-        addSubview(replyingToLabel)
-        replyingToLabel.anchor(bottom: label.topAnchor, right: self.rightAnchor, paddingBottom: 5, paddingRight: 25)
+            replyingToLabel.anchor(bottom: label.topAnchor, right: self.rightAnchor, paddingBottom: 5, paddingRight: 25)
+            
+            spacerView.anchor(top: label.topAnchor, left: label.rightAnchor, bottom: label.bottomAnchor, right: self.rightAnchor, paddingLeft: 8, paddingRight: 14)
+        }else{
+            let avatarWidth: CGFloat = 30
+            let x: CGFloat = 25 + avatarWidth
+            pastel.frame = CGRect(x: x, y: y, width: size.width, height: size.height)
+            blur.frame = CGRect(x: x, y: y, width: size.width, height: size.height + 1)
+            
+            label.anchor(left: self.leftAnchor, paddingLeft: 25 + avatarWidth)
+            
+            replyingToLabel.anchor(left: self.leftAnchor, bottom: label.topAnchor, paddingLeft: 25 + avatarWidth, paddingBottom: 5)
+            
+            spacerView.anchor(top: label.topAnchor, left: self.leftAnchor, bottom: label.bottomAnchor, right: label.leftAnchor, paddingLeft: 14 + avatarWidth, paddingRight: 8)
+        }
         
-        addSubview(spacerView)
-        spacerView.anchor(top: label.topAnchor, left: label.rightAnchor, bottom: label.bottomAnchor, right: self.rightAnchor, paddingLeft: 8, paddingRight: 14)
+      
         
        
         

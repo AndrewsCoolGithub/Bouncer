@@ -22,12 +22,13 @@ struct Story: Identifiable, Hashable, Equatable, Codable{
     let type: MediaType
     let shouldMirror: Bool
     let date: Date
+    let hostId: String?
     private let _storyViews: [StoryViews]
     
     var storyViews = Set<StoryViews>()
     
     
-     init(id: String? = nil, eventId: String?, userId: String, url: String, type: MediaType, shouldMirror: Bool, date: Date, _storyViews: [StoryViews], storyViews: Set<StoryViews> = Set<StoryViews>()) {
+    init(id: String? = nil, eventId: String?, hostId: String?, userId: String, url: String, type: MediaType, shouldMirror: Bool, date: Date, _storyViews: [StoryViews], storyViews: Set<StoryViews> = Set<StoryViews>()) {
         self.id = id
         self.eventId = eventId
         self.userId = userId
@@ -35,6 +36,7 @@ struct Story: Identifiable, Hashable, Equatable, Codable{
         self.type = type
         self.shouldMirror = shouldMirror
         self.date = date
+        self.hostId = hostId
         self._storyViews = _storyViews
         
         

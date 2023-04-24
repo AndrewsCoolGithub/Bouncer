@@ -54,6 +54,13 @@ extension UIColor{
     }
     
     /**
+            235/ 255
+    */
+    class func offWhite() -> UIColor{
+        return UIColor(red: 235/255, green: 235/255, blue: 235/255, alpha: 1)
+    }
+    
+    /**
             30 / 255
     */
     class func greyColor() -> UIColor{

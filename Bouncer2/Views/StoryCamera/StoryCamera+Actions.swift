@@ -104,7 +104,7 @@ extension StoryCameraVC{
     }
     
     func didGetVideo(_ url: URL) {
-        let videoVC = StoryVideoRecordingVC(url, shouldFlip: position == .front, eventId: eventID)
+        let videoVC = StoryVideoRecordingVC(url, shouldFlip: position == .front, eventId: eventID, hostId: hostID)
         navigationController?.pushViewController(videoVC, animated: false)
     }
     

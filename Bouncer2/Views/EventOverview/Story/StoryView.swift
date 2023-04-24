@@ -15,59 +15,6 @@ class StoryView: UIViewController, SkeletonLoadable {
         return true
     }
     
-    var player: AVPlayer?
-    private var playerLayer: AVPlayerLayer!
-    var imageView: UIImageView = {
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: .makeWidth(414), height: .makeHeight(896)))
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
-    
-    private let indicator: NVActivityIndicatorView = {
-        let view = NVActivityIndicatorView(frame: .layoutRect(width: 414, height: 896, rectCenter: .center), type: .ballPulseSync, color: .white, padding: 150)
-        view.backgroundColor = .black.withAlphaComponent(0.2)
-        return view
-    }()
-    
-    private let userProfileImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.setDimensions(height: .makeWidth(70), width: .makeWidth(70))
-        imageView.layer.cornerRadius = .makeWidth(35)
-        imageView.layer.masksToBounds = true
-        return imageView
-    }()
-    
-    private lazy var profileSkeletonGradient: CAGradientLayer = {
-        let gradient = CAGradientLayer()
-        gradient.startPoint = CGPoint(x: 0, y: 0.5)
-        gradient.endPoint = CGPoint(x: 1, y: 0.5)
-        let animation = makeAnimationGroup()
-        animation.beginTime = 0.0
-        gradient.add(animation, forKey: "backgroundColor")
-      
-        return gradient
-    }()
-    
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.setWidth(.makeWidth(210))
-        label.font = .poppinsMedium(size: .makeWidth(18))
-        label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.75
-        return label
-    }()
-    
-    private let subLabel: UILabel = {
-        let label = UILabel()
-        label.setWidth(.makeWidth(270))
-        label.font = .poppinsMedium(size: .makeWidth(15))
-        label.adjustsFontSizeToFitWidth = true
-        label.textColor = .white
-        label.minimumScaleFactor = 0.75
-        return label
-    }()
-    
     var story: Story!
     var event: Event!
     var seen: Bool!
@@ -104,6 +51,12 @@ class StoryView: UIViewController, SkeletonLoadable {
         }
         
         setupProfileData(story, event: event)
+    }
+    
+    @objc func deleteStory(){
+        guard let uid = User.shared.id, let storyId = story.id else {return}
+        guard story.userId == uid || story.hostId == uid else {return}
+        StoryManager.shared.delete(storyId)
     }
     
     private func downloadVideo(_ url: String, _ completion: @escaping() -> Void){
@@ -165,6 +118,7 @@ class StoryView: UIViewController, SkeletonLoadable {
             self.userProfileImage.alpha = 1
             self.nameLabel.alpha = 1
             self.subLabel.alpha = 1
+            self.ellipsis.alpha = 1
         }
     }
     
@@ -174,6 +128,7 @@ class StoryView: UIViewController, SkeletonLoadable {
             self.userProfileImage.alpha = 0
             self.nameLabel.alpha = 0
             self.subLabel.alpha = 0
+            self.ellipsis.alpha = 0
         }
     }
     
@@ -214,6 +169,9 @@ class StoryView: UIViewController, SkeletonLoadable {
         subLabel.anchor(bottom: userProfileImage.bottomAnchor, paddingBottom: .wProportioned(10))
         subLabel.anchor(left: userProfileImage.rightAnchor, paddingLeft: .makeWidth(15))
         
+        
+        
+        
         Task{
             guard let user = await story.userId.getUser() else {return}
             userProfileImage.layer.addSublayer(profileSkeletonGradient)
@@ -229,7 +187,70 @@ class StoryView: UIViewController, SkeletonLoadable {
                 subLabel.text = "\(story.date.timeIntervalSinceNow.timeInSmallUnits) ago"
             }
         }
+    
     }
+    
+    var player: AVPlayer?
+    private var playerLayer: AVPlayerLayer!
+    var imageView: UIImageView = {
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: .makeWidth(414), height: .makeHeight(896)))
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    private let indicator: NVActivityIndicatorView = {
+        let view = NVActivityIndicatorView(frame: .layoutRect(width: 414, height: 896, rectCenter: .center), type: .ballPulseSync, color: .white, padding: 150)
+        view.backgroundColor = .black.withAlphaComponent(0.2)
+        return view
+    }()
+    
+     let userProfileImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.setDimensions(height: .makeWidth(70), width: .makeWidth(70))
+        imageView.layer.cornerRadius = .makeWidth(35)
+        imageView.layer.masksToBounds = true
+        return imageView
+    }()
+    
+    private lazy var profileSkeletonGradient: CAGradientLayer = {
+        let gradient = CAGradientLayer()
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint = CGPoint(x: 1, y: 0.5)
+        let animation = makeAnimationGroup()
+        animation.beginTime = 0.0
+        gradient.add(animation, forKey: "backgroundColor")
+      
+        return gradient
+    }()
+    
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.setWidth(.makeWidth(210))
+        label.font = .poppinsMedium(size: .makeWidth(17))
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.75
+        return label
+    }()
+    
+    private let subLabel: UILabel = {
+        let label = UILabel()
+        label.setWidth(.makeWidth(270))
+        label.font = .poppinsMedium(size: .makeWidth(14))
+        label.adjustsFontSizeToFitWidth = true
+        label.textColor = .white
+        label.minimumScaleFactor = 0.75
+        return label
+    }()
+    
+    private let ellipsis: UIButton = {
+        let ellipsis = UIButton()
+        let config = UIImage.SymbolConfiguration(pointSize: .wProportioned(35))
+        let image = UIImage(systemName: "ellipsis", withConfiguration: config)
+        ellipsis.setImage(image, for: .normal)
+        ellipsis.tintColor = .white
+        return ellipsis
+    }()
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

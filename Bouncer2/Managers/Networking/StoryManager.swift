@@ -18,10 +18,14 @@ final class StoryManager{
     
     public func postStory(_ story: Story, _ ref: DocumentReference) throws{
         try ref.setData(from: story)
-        USERS_COLLECTION.document(story.userId).updateData(["storiesPosted":  FieldValue.arrayUnion([ref.documentID])])
-        if let eventID = story.eventId {
-            try EVENTS_COLLECTION.document(eventID).collection("Stories").document(ref.documentID).setData(from: story)
-        }
+//        USERS_COLLECTION.document(story.userId).updateData(["storiesPosted":  FieldValue.arrayUnion([ref.documentID])])
+//        if let eventID = story.eventId {
+//            try EVENTS_COLLECTION.document(eventID).collection("Stories").document(ref.documentID).setData(from: story)
+//        }
+    }
+    
+    public func delete(_ storyID: String){
+        STORY_REF.document(storyID).delete()
     }
     
     public func logView(_ storyID: String, _ eventID: String? = nil){

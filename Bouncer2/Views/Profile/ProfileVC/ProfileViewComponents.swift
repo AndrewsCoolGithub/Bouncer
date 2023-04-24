@@ -120,7 +120,7 @@ struct ProfileViewComponents: SkeletonLoadable{
     let followIngLabel: UILabel = {
         let label = UILabel()
         label.font = .poppinsMedium(size: .makeWidth(14))
-        label.textColor = .nearlyWhite()
+        label.textColor = .offWhite()
         label.textAlignment = .left
         return label
     }()

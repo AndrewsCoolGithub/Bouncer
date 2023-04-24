@@ -40,12 +40,14 @@ class StoryVideoRecordingVC: UIViewController{
     var url: URL!
     var shouldFlip: Bool!
     var eventId: String?
+    var hostId: String?
     
-    init(_ url: URL, shouldFlip: Bool, eventId: String?){
+    init(_ url: URL, shouldFlip: Bool, eventId: String?, hostId: String?){
         super.init(nibName: nil, bundle: nil)
         view.addSubview(foreground)
         self.shouldFlip = shouldFlip
         self.eventId = eventId
+        self.hostId = hostId
         foreground.center = view.center
         self.url = url
         player = AVPlayer(url: url)
@@ -80,7 +82,7 @@ class StoryVideoRecordingVC: UIViewController{
             do{
                 let url = try await MediaManager.uploadVideo(url, path: storageRef, shouldFlip: shouldFlip)
                 guard let uid = User.shared.id else {return}
-                let story = Story(id: ref.documentID, eventId: self.eventId, userId: uid, url: url, type: .video, shouldMirror: shouldFlip, date: .now, _storyViews: [])
+                let story = Story(id: ref.documentID, eventId: self.eventId, hostId: self.hostId, userId: uid, url: url, type: .video, shouldMirror: shouldFlip, date: .now, _storyViews: [])
                 try StoryManager.shared.postStory(story, ref)
             }catch{
                 print(error)

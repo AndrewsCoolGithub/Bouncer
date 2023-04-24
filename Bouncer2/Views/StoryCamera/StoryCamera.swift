@@ -147,10 +147,12 @@ class StoryCameraVC: UIViewController, UINavigationControllerDelegate {
     var flashIsActive: Bool = false
     var gestures = Set<UIGestureRecognizer>()
     var eventID: String?
-    init(eventID: String?){
+    var hostID: String?
+    init(eventID: String?, hostId: String?){
         super.init(nibName: nil, bundle: nil)
         self.setUpCamera()
         self.eventID = eventID
+        self.hostID = hostId
        
     }
     
@@ -301,7 +303,7 @@ class StoryCameraVC: UIViewController, UINavigationControllerDelegate {
             do{
                 let url = try await MediaManager.uploadImage(self.imageView.image, path: storageRef)
                 guard let uid = User.shared.id else {return}
-                let story = Story(id: ref.documentID, eventId: self.eventID, userId: uid, url: url, type: .image, shouldMirror: false, date: .now, _storyViews: [])
+                let story = Story(id: ref.documentID, eventId: self.eventID, hostId: hostID, userId: uid, url: url, type: .image, shouldMirror: false, date: .now, _storyViews: [])
                 try StoryManager.shared.postStory(story, ref)
             }catch{
                 print(error)

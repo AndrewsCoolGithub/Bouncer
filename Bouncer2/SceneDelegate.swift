@@ -36,15 +36,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             User.setup()
             Task{
                 
-                let event = try await EVENTS_COLLECTION.document("MR4kdMeeeQbnEyHcLEIW").getDocument(as: Event.self)
-                let eventOverview = EventOverview()
-                let viewModel = EventOverviewViewModel(event: event)
-                let storyModel = EventOverviewStoryModel(event: event)
-                eventOverview.viewModel = viewModel
-                eventOverview.storyModel = storyModel
-                eventOverview.headerView = EventOverviewHeader(viewModel: viewModel, storyModel: storyModel)
-                eventOverview.contentView = EventOverviewContent(viewModel: viewModel)
-                let navCont = UINavigationController(rootViewController: eventOverview)
+//                let event = try await EVENTS_COLLECTION.document("MR4kdMeeeQbnEyHcLEIW").getDocument(as: Event.self)
+//                let eventOverview = EventOverview()
+//                let viewModel = EventOverviewViewModel(event: event)
+//                let storyModel = EventOverviewStoryModel(event: event)
+//                eventOverview.viewModel = viewModel
+//                eventOverview.storyModel = storyModel
+//                eventOverview.headerView = EventOverviewHeader(viewModel: viewModel, storyModel: storyModel)
+//                eventOverview.contentView = EventOverviewContent(viewModel: viewModel)
+//                let navCont = UINavigationController(rootViewController: eventOverview)
+//                navCont.navigationBar.isHidden = true
+//                self.window?.rootViewController = navCont
+                let tabBarController = TabBarController()
+                let navCont = UINavigationController(rootViewController: tabBarController)
                 navCont.navigationBar.isHidden = true
                 self.window?.rootViewController = navCont
                 

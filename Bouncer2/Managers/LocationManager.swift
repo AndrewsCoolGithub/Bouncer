@@ -125,10 +125,16 @@ class Location: NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         print("Entered region with id: \(region.identifier)")
+        Task{
+            try await EventManager.shared.addTo(collection: .guest, with: region.identifier)
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         print("Exited region with id: \(region.identifier)")
+        Task{
+            try await EventManager.shared.remove(from: .guest, for: region.identifier)
+        }
     }
 }
 

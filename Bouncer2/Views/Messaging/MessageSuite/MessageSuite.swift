@@ -99,9 +99,11 @@ extension MessageSuite: UICollectionViewDelegateFlowLayout{
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let messageDetail = dataSource?.itemIdentifier(for: indexPath), messageDetail.id != nil else {return}
+        guard let messageDetail = dataSource?.itemIdentifier(for: indexPath), let index = dataSource?.indexPath(for: messageDetail), messageDetail.id != nil else {return}
+        guard let cell = collectionView.cellForItem(at: index) as? MessageCell else {return}
+        let profiles = cell.profiles
         let controller = ChatViewController()
-        controller.loadMessages(for: messageDetail, users: messageDetail.users)
+        controller.loadMessages(for: messageDetail, profiles: profiles)
         navigationController?.pushViewController(controller, animated: true)
     }
 }

@@ -70,8 +70,8 @@ class ChatEmoteView: MessageReusableView{
             }
             print("DICT: \(self.dictionary)")
             ///Single emoji, with n reactions
-            let topRange = min(3, uids.count)
-            let imageURLs = uids[0...topRange-1].compactMap({viewModel.userData[$0]?.image_url})
+            let topRange = min(3, viewModel.profiles.count)
+            let imageURLs = viewModel.profiles[0...topRange-1].compactMap({$0.image_url})
             print("Create ImageViews")
 //            createStackWImageViews(imageURLs, uids.count, emotes[0].emote)
         }

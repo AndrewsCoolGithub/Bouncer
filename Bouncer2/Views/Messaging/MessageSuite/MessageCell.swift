@@ -14,6 +14,7 @@ class MessageCell: UICollectionViewCell{
    
     var cancellable: AnyCancellable?
     var imageCancellable: AnyCancellable?
+    @Published var profiles: [Profile] = []
     override func prepareForReuse() {
         super.prepareForReuse()
         cancellable?.cancel()
@@ -55,6 +56,7 @@ class MessageCell: UICollectionViewCell{
     
     fileprivate func setProfileImage(_ messageCellViewModel: MessageCellViewModel){
         imageCancellable = messageCellViewModel.$userData.receive(on: DispatchQueue.main).sink{ [weak self] profiles in
+            self?.profiles = Array(profiles.values)
             guard let imageUrl = profiles.values.first(where: {$0.id != User.shared.id})?.image_url else {return}
             let profilePhoto = self?.views.profileImage
             self?.views.skeletonGradient.frame = profilePhoto?.bounds ?? .zero

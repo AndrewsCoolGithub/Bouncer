@@ -116,7 +116,7 @@ class EventOverview: UIViewController{
     }
     
     @objc func addStory(){
-        let storyCameraVC = StoryCameraVC(eventID: viewModel.event.id)
+        let storyCameraVC = StoryCameraVC(eventID: viewModel.event.id, hostId: viewModel.host.id)
         navigationController?.pushViewController(storyCameraVC, animated: true)
     }
     

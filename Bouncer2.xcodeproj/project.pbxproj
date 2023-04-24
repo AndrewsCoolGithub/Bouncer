@@ -27,6 +27,7 @@
 		A409415B2822980B00094A64 /* Date&TImeIntervalExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A409415A2822980B00094A64 /* Date&TImeIntervalExt.swift */; };
 		A40AD6F32861B0AE006E674B /* MapAnnotationDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40AD6F22861B0AE006E674B /* MapAnnotationDetail.swift */; };
 		A40D24DD287CBD9800C29AE9 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40D24DC287CBD9800C29AE9 /* ProfileViewModel.swift */; };
+		A411130529F618F500AA1DC7 /* ChatViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A411130429F618F500AA1DC7 /* ChatViewComponents.swift */; };
 		A4124CCF2851CC3600979D26 /* UIViewExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CCE2851CC3600979D26 /* UIViewExt.swift */; };
 		A4124CD22851E63900979D26 /* AccountSignUpEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CD12851E63900979D26 /* AccountSignUpEntry.swift */; };
 		A4124CD42851FC1800979D26 /* PastelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4124CD32851FC1800979D26 /* PastelButton.swift */; };
@@ -199,6 +200,9 @@
 		A4EF368D2834E7B3000A95E5 /* EventSavePopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EF368C2834E7B3000A95E5 /* EventSavePopup.swift */; };
 		A4EF369428390A0A000A95E5 /* EventSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EF369328390A0A000A95E5 /* EventSummary.swift */; };
 		A4EF3698283B9983000A95E5 /* Pastel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EF3697283B9983000A95E5 /* Pastel.swift */; };
+		A4F45BE029F66DB900E9EAA8 /* ChatViewController+ChatReactDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F45BDF29F66DB900E9EAA8 /* ChatViewController+ChatReactDelegate.swift */; };
+		A4F45BE229F66E7900E9EAA8 /* ChatKeyboardUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F45BE129F66E7900E9EAA8 /* ChatKeyboardUpdater.swift */; };
+		A4F45BE429F66EDD00E9EAA8 /* ChatViewController+MessagesDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F45BE329F66EDD00E9EAA8 /* ChatViewController+MessagesDatasource.swift */; };
 		A4F6C1312881501600115972 /* ProfileEditContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F6C1302881501600115972 /* ProfileEditContentController.swift */; };
 		A4F6C133288150A300115972 /* ProfileEditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F6C132288150A300115972 /* ProfileEditCell.swift */; };
 		A4F6C1352881513700115972 /* ProfileTextEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F6C1342881513700115972 /* ProfileTextEdit.swift */; };
@@ -239,6 +243,7 @@
 		A409415A2822980B00094A64 /* Date&TImeIntervalExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date&TImeIntervalExt.swift"; sourceTree = "<group>"; };
 		A40AD6F22861B0AE006E674B /* MapAnnotationDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAnnotationDetail.swift; sourceTree = "<group>"; };
 		A40D24DC287CBD9800C29AE9 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		A411130429F618F500AA1DC7 /* ChatViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewComponents.swift; sourceTree = "<group>"; };
 		A4124CCE2851CC3600979D26 /* UIViewExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExt.swift; sourceTree = "<group>"; };
 		A4124CD12851E63900979D26 /* AccountSignUpEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSignUpEntry.swift; sourceTree = "<group>"; };
 		A4124CD32851FC1800979D26 /* PastelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastelButton.swift; sourceTree = "<group>"; };
@@ -414,6 +419,9 @@
 		A4EF368C2834E7B3000A95E5 /* EventSavePopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSavePopup.swift; sourceTree = "<group>"; };
 		A4EF369328390A0A000A95E5 /* EventSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSummary.swift; sourceTree = "<group>"; };
 		A4EF3697283B9983000A95E5 /* Pastel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pastel.swift; sourceTree = "<group>"; };
+		A4F45BDF29F66DB900E9EAA8 /* ChatViewController+ChatReactDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+ChatReactDelegate.swift"; sourceTree = "<group>"; };
+		A4F45BE129F66E7900E9EAA8 /* ChatKeyboardUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatKeyboardUpdater.swift; sourceTree = "<group>"; };
+		A4F45BE329F66EDD00E9EAA8 /* ChatViewController+MessagesDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+MessagesDatasource.swift"; sourceTree = "<group>"; };
 		A4F6C1302881501600115972 /* ProfileEditContentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditContentController.swift; sourceTree = "<group>"; };
 		A4F6C132288150A300115972 /* ProfileEditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditCell.swift; sourceTree = "<group>"; };
 		A4F6C1342881513700115972 /* ProfileTextEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTextEdit.swift; sourceTree = "<group>"; };
@@ -544,6 +552,19 @@
 				A409415528224EA800094A64 /* EventAnnotationView.swift */,
 			);
 			path = Annotation;
+			sourceTree = "<group>";
+		};
+		A411130329F617E100AA1DC7 /* MessageSuite */ = {
+			isa = PBXGroup;
+			children = (
+				A45FCF9D28B47848005B833B /* MessageSuite.swift */,
+				A4DCCEB128BC3EE100E01D3E /* MessageSuiteViewModel.swift */,
+				A45FCFA028B4789B005B833B /* MessageSuiteViewComponents.swift */,
+				A45FCFAA28B4CAD1005B833B /* MessageCell.swift */,
+				A42C9EE62944E82100D88181 /* MessageCellViewModel.swift */,
+				A45FCFAC28B4CB0A005B833B /* MessageCellViews.swift */,
+			);
+			path = MessageSuite;
 			sourceTree = "<group>";
 		};
 		A4124CD02851E60B00979D26 /* AccountSignUp */ = {
@@ -804,6 +825,10 @@
 			children = (
 				A4DCCEB328BC9AC200E01D3E /* ChatViewModel.swift */,
 				A45FCFAE28B76C9B005B833B /* ChatViewController.swift */,
+				A4F45BDF29F66DB900E9EAA8 /* ChatViewController+ChatReactDelegate.swift */,
+				A4F45BE329F66EDD00E9EAA8 /* ChatViewController+MessagesDatasource.swift */,
+				A4F45BE129F66E7900E9EAA8 /* ChatKeyboardUpdater.swift */,
+				A411130429F618F500AA1DC7 /* ChatViewComponents.swift */,
 				A45F8D5A28C9B4D700DDD90F /* ChatPopupView.swift */,
 				A4B9AD6428F3EE6000FAE6F1 /* Message Supplemental Views */,
 				A42DCBC528D4A18900C7CA84 /* EmoteSelector */,
@@ -816,12 +841,7 @@
 			isa = PBXGroup;
 			children = (
 				A45F8D5928C9B48F00DDD90F /* Chats */,
-				A45FCF9D28B47848005B833B /* MessageSuite.swift */,
-				A4DCCEB128BC3EE100E01D3E /* MessageSuiteViewModel.swift */,
-				A45FCFA028B4789B005B833B /* MessageSuiteViewComponents.swift */,
-				A45FCFAA28B4CAD1005B833B /* MessageCell.swift */,
-				A42C9EE62944E82100D88181 /* MessageCellViewModel.swift */,
-				A45FCFAC28B4CB0A005B833B /* MessageCellViews.swift */,
+				A411130329F617E100AA1DC7 /* MessageSuite */,
 				A49B7FA02930A7D900A79DEB /* NewMessage */,
 			);
 			path = Messaging;
@@ -1381,11 +1401,13 @@
 				A45FCFA128B4789B005B833B /* MessageSuiteViewComponents.swift in Sources */,
 				A44E35ED2947C877005DEC4C /* Cache.swift in Sources */,
 				A42D5E06287E2626005F5748 /* AllEventsTab.swift in Sources */,
+				A4F45BE429F66EDD00E9EAA8 /* ChatViewController+MessagesDatasource.swift in Sources */,
 				A49CD7142832311900BD8594 /* EventSuiteCell.swift in Sources */,
 				A49B7FA62930B6D200A79DEB /* SortedSet.swift in Sources */,
 				A45BD7EF295AAC660022A541 /* StoryView.swift in Sources */,
 				A474AA0C285C8E5E00DE93C9 /* PastelIcon.swift in Sources */,
 				A44267E52813E2F8003ED294 /* Profile.swift in Sources */,
+				A4F45BE029F66DB900E9EAA8 /* ChatViewController+ChatReactDelegate.swift in Sources */,
 				A49B7FA92933460F00A79DEB /* NewMessageUserCell.swift in Sources */,
 				A44E35E12946821C005DEC4C /* EventOverviewViewModel.swift in Sources */,
 				A42731D0291E4FB200CB6B66 /* EventSuiteDetail.swift in Sources */,
@@ -1401,6 +1423,7 @@
 				A4F7DDDC286DBA780029BEB9 /* FullDetailViewComponents.swift in Sources */,
 				A4577AAD282E033700B1750D /* EventPreviewHeader.swift in Sources */,
 				A474AA0A285C844800DE93C9 /* AccountInfo.swift in Sources */,
+				A4F45BE229F66E7900E9EAA8 /* ChatKeyboardUpdater.swift in Sources */,
 				A4C61651292A031D00A882F7 /* CompassPoint.swift in Sources */,
 				A4FEBCBE28771A5200918FA8 /* Contact.swift in Sources */,
 				A4CA8ECC285F306D00745B73 /* TabBarController.swift in Sources */,
@@ -1440,6 +1463,7 @@
 				A4CFCD4A284D8DF90060CB44 /* CGFloatExt.swift in Sources */,
 				A4CD8BCC2889618E005B8E78 /* SearchViewController.swift in Sources */,
 				A4577AA2282CF68600B1750D /* EventMapPreview.swift in Sources */,
+				A411130529F618F500AA1DC7 /* ChatViewComponents.swift in Sources */,
 				A4DC850F2956D9FC0089C325 /* StoryViewController.swift in Sources */,
 				A4FEBCC028771C0A00918FA8 /* AccountContacts.swift in Sources */,
 				A409414E28204BF100094A64 /* EventScheduleSelect.swift in Sources */,

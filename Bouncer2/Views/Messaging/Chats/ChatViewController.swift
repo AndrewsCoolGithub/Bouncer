@@ -28,9 +28,10 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
     let keyboardUpdater = ChatKeyboardUpdater()
     var keyboardStatus: Bool = false
     var messageInputBarOrgin: CGPoint!
+    var viewComponents = ChatViewComponents()
     
-    func loadMessages(for messageDetail: MessageDetail, users: [String]){
-        let viewModel = ChatViewModel(messageDetail, users: users)
+    func loadMessages(for messageDetail: MessageDetail, profiles: [Profile]){
+        let viewModel = ChatViewModel(messageDetail, profiles: profiles)
         self.viewModel = viewModel
         viewModel.$messages.sink { [weak self] messages in
             guard messages != nil else {return}
@@ -226,7 +227,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
     }
     
     var replyMessage: Message?
-    fileprivate func setupReplyHeader(_ displayName: String, _ message: Message) {
+    internal func setupReplyHeader(_ displayName: String, _ message: Message) {
         replyMessage = message
         let myButton = UIButton()
         myButton.setDimensions(height: .makeHeight(.makeHeight(85)), width: .makeWidth(414))
@@ -284,6 +285,67 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messageInputBarOrgin = messageInputBar.frame.origin
         guard viewModel != nil else {fatalError("loadMessages must be called ")}
         setupMessageInputBar()
+        guard let recipientProfile = viewModel?.profiles.first(where: {$0.id != User.shared.id}) else {return}
+        setupHeaderBar(recipientProfile)
+    }
+    
+    func setupHeaderBar(_ recipient: Profile){
+        let headerChatBackground = viewComponents.headerChatBackground
+        headerChatBackground.setColors(User.shared.colors.uiColors())
+        view.addSubview(headerChatBackground)
+
+        
+        let backButton = viewComponents.backButton
+        headerChatBackground.addSubview(backButton)
+        backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: .wProportioned(20))
+        backButton.anchor(left: view.leftAnchor, paddingLeft: .wProportioned(20))
+        backButton.addTarget(self, action: #selector(goBack), for: .touchUpInside)
+
+        let profileImage = viewComponents.profileImage
+        headerChatBackground.addSubview(profileImage)
+        profileImage.centerY(inView: backButton, leftAnchor: backButton.rightAnchor, paddingLeft: .wProportioned(20))
+        
+        let skeletonGradient = viewComponents.profileSkeletonGradient
+        profileImage.layer.addSublayer(skeletonGradient)
+        
+        profileImage.sd_setImage(with: URL(string: recipient.image_url)) { i, e, c, u in
+            skeletonGradient.removeFromSuperlayer()
+        }
+
+        let displayNameLabel = viewComponents.displayNameLabel
+        headerChatBackground.addSubview(displayNameLabel)
+        displayNameLabel.text = recipient.display_name
+        displayNameLabel.anchor(top: profileImage.topAnchor)
+        displayNameLabel.anchor(left: profileImage.rightAnchor, paddingLeft: .wProportioned(15))
+
+        let userNameLabel = viewComponents.userNameLabel
+        headerChatBackground.addSubview(userNameLabel)
+        userNameLabel.text = recipient.user_name
+        userNameLabel.anchor(bottom: profileImage.bottomAnchor)
+        userNameLabel.anchor(left: profileImage.rightAnchor, paddingLeft: .wProportioned(15))
+        
+        let videoCallButton = viewComponents.videoCallButton
+        headerChatBackground.addSubview(videoCallButton)
+        videoCallButton.centerYright(inView: backButton, rightAnchor: view.rightAnchor, paddingRight: .wProportioned(20))
+        videoCallButton.addTarget(self, action: #selector(startVideoCall), for: .touchUpInside)
+        
+        let phoneCallButton = viewComponents.phoneCallButton
+        headerChatBackground.addSubview(phoneCallButton)
+        phoneCallButton.centerYright(inView: videoCallButton, rightAnchor: videoCallButton.leftAnchor, paddingRight: .wProportioned(15))
+        phoneCallButton.addTarget(self, action: #selector(startPhoneCall), for: .touchUpInside)
+        
+    }
+    
+    @objc func goBack(_ sender: UIButton){
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func startPhoneCall(_ sender: UIButton) {
+        print("MKE THE PHONE CALL")
+    }
+    
+    @objc func startVideoCall(_ sender: UIButton) {
+        print("DO THE VIDEO CALL STUFF")
     }
     
     @objc func endReply(){
@@ -315,7 +377,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messageInputBar.inputTextView.text = ""
        
         if let replyMessage = replyMessage?.toCodable() {
-            let replyReceipt = ReplyReceipt(messageID: replyMessage.messageID, userID: replyMessage.senderID, displayName: sender.displayName, senderDisplayName: replyMessage.displayName, dataType: replyMessage.dataType, text: replyMessage.text, mediaURL: replyMessage.mediaURL, duration: replyMessage.duration)
+            let replyReceipt = ReplyReceipt(messageID: replyMessage.messageID, userID: replyMessage.senderID, displayName:  replyMessage.displayName, senderDisplayName: sender.displayName, dataType: replyMessage.dataType, text: replyMessage.text, mediaURL: replyMessage.mediaURL, duration: replyMessage.duration)
             viewModel?.sendMessage(.text, content: content, replyReceipt: replyReceipt)
             endReply()
         }else{
@@ -327,14 +389,16 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
    
 
     
-    //MARK: Avatar
+    //MARK: - Avatar
     
+    //MARK: DONT THINK THIS FUCTION WORKS, actual dimensions are 30/30 on iPhone 11 (Frame: (0.0, 6.0, 30.0, 30.0) )
     func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
             return CGSize(width: .makeHeight(50), height: .makeHeight(50))
     }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         
+
         let message = message as! Message
         let gradient = CAGradientLayer()
         gradient.startPoint = CGPoint(x: 0, y: 0.5)
@@ -345,7 +409,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         gradient.frame = avatarView.bounds
         avatarView.layer.addSublayer(gradient)
         
-        guard let imageURL = viewModel!.userData[message.sender.senderId]?.image_url else {return}
+        guard let imageURL = viewModel!.profiles.first(where: {$0.id == message.sender.senderId})?.image_url else {return}
         avatarView.sd_setImage(with: URL(string: imageURL)) { i, e, c, u in
             gradient.removeFromSuperlayer()
         }
@@ -415,214 +479,9 @@ extension ChatViewController: MessageCellDelegate{
     
 }
 
-extension ChatViewController: MessagesDataSource {
-    func currentSender() -> MessageKit.SenderType {
-        sender
-    }
 
-    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return messages.count
-    }
-    
-   
-    func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        guard let data = messages[section] as? Message, data.emojiReactions != nil else {return .zero}
-        return CGSize(width: 35, height: 20)
-    }
-    
-    func headerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        guard let data = (messages[section] as? Message)?.toCodable(),
-              let replyRec = data.replyReceipt,
-              let dataType = DataType(rawValue: replyRec.dataType) else {return .zero}
-        
-        switch dataType {
-        case .text:
-            let size = replyRec.text!.sizeOfString(usingFont: UIFont.systemFont(ofSize: 12), maxHeight: 120, maxWidth: .makeWidth(300))
-            return CGSize(width: size.width, height: size.height + 40)
-        case .audio:
-            return .zero
-        case .image:
-            return .zero
-        case .video:
-            return .zero
-        }
-    }
-    
-    //HEY YOU, ADD HEADER VIEW SIZE FOR REPLY VIEW, ok bye
-    //FIRST ADD REPLY DATA and FireBase FUNCS
-    
-    func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        return messages[indexPath.section]
-    }
-    
-    func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        if indexPath.section == messages.count - 1{
-            return 15
-        }
-        return 0
-    }
-    
-//    func messageTimestampLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-//        //TODO: - Replace day of the week if today / yesterday
-//
-//
-//        return nil
-//    }
-    
-    func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        let message = message as! Message
-        if !isNextMessageSameSender(at: indexPath), isFromCurrentSender(message: message), message.isDelivered {
-            guard let readReceipts = message.readReceipts else {
-                return NSAttributedString(
-                  string: "Delivered",
-                  attributes: [NSAttributedString.Key.font: UIFont.poppinsRegular(size: .makeHeight(15)), NSAttributedString.Key.foregroundColor: UIColor.nearlyWhite()])
-            }
-            
-            let timeRead = readReceipts.sorted(by: {$0.timeRead < $1.timeRead})[0].timeRead
-            let timeSince = (-timeRead.timeIntervalSince(.now)).timeInUnits
-            
-            return NSAttributedString(
-              string: "Seen \(timeSince) ago",
-              attributes: [NSAttributedString.Key.font: UIFont.poppinsRegular(size: .makeHeight(15)), NSAttributedString.Key.foregroundColor: UIColor.nearlyWhite()])
-            
-        }else if !message.isDelivered{
-            return NSAttributedString(
-              string: "Sending",
-              attributes: [NSAttributedString.Key.font: UIFont.poppinsRegular(size: .makeHeight(15)),
-                            NSAttributedString.Key.foregroundColor: UIColor.nearlyWhite()])
-        }
-        return nil
-    }
-}
 
-extension ChatViewController: ChatReactDelegate{
-    
-    func openEmoteSelector(_ message: Message, _ popUpProp: ChatPopupVC.ChatPopupProperties) {
-        let emoteSelector = ChatEmoteSelector(viewModel: viewModel)
-        emoteSelector.chatEmoteSelectorCC = ChatEmoteSelectorCC()
-        emoteSelector.popupProp = popUpProp
-        emoteSelector.chatEmoteSelectorCC.delegate = self
-        emoteSelector.chatEmoteSelectorCC.message = message
-        emoteSelector.addPanel(toParent: self, animated: true)
-        
-    }
-    
-    func replyTo(_ message: Message) {
-        self.setupReplyHeader(message.sender.displayName, message)
-    }
-    
-    func emoteReaction(for message: Message, _ emote: String) {
-        guard let index = messages.firstIndex(where: {$0.messageId == message.messageId}) else {return}
-        var temp = message
-        if temp.emojiReactions != nil{
-            if let existingIndex = message.emojiReactions!.firstIndex(where: {$0.uid == message.sender.senderId}){
-                if temp.emojiReactions![existingIndex].emote == emote{
-                    temp.emojiReactions!.remove(at: existingIndex)
-                    if temp.emojiReactions!.isEmpty{
-                        temp.emojiReactions = nil
-                    }
-                }else{
-                    temp.emojiReactions![existingIndex] = EmoteReaction(emote: emote, uid: message.sender.senderId)
-                }
-            }else{
-                temp.emojiReactions!.append(EmoteReaction(emote: emote, uid: message.sender.senderId))
-            }
-        }else{
-            temp.emojiReactions = [EmoteReaction(emote: emote, uid: message.sender.senderId)]
-        }
-        
-        self.messages[index] = temp
-        do{
-            try viewModel?.modifyMessage(temp)
-        }catch{
-            showMessage(withTitle: "Error", message: "Your reaction failed, check your connection.")
-        }
-    }
-}
 
-protocol ChatReactDelegate: NSObject{
-    func replyTo(_ message: Message)
-    
-    func emoteReaction(for message: Message, _ emote: String)
-    
-    func openEmoteSelector(_ message: Message, _ popUpProp: ChatPopupVC.ChatPopupProperties)
-}
 
-public class ChatKeyboardUpdater{
-    
-    @Published var frame: CGRect = CGRect(x: 0, y: 0, width: 0, height: .makeHeight(95))
-    
-    @Published var willChangeFrame: Bool = false
-    
-    
-    init(){
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow(notification:)),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardDidShow(notification:)),
-                                               name: UIResponder.keyboardDidShowNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide(notification:)),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardDidHide(notification:)),
-                                               name: UIResponder.keyboardDidHideNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillChangeFrame(notification:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardDidChangeFrame(notification:)),
-                                               name: UIResponder.keyboardDidChangeFrameNotification,
-                                               object: nil)
-    }
-    
-    deinit{
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    
-    
-    @objc func keyboardWillShow(notification: Notification){
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {return}
-        self.frame = keyboardFrame
-    }
-    
-    @objc func keyboardDidShow(notification: Notification){
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {return}
-        self.frame = keyboardFrame
-    }
-    
-    @objc func keyboardWillHide(notification: Notification){
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {return}
-        self.frame = keyboardFrame
-    }
-    
-    @objc func keyboardDidHide(notification: Notification){
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {return}
-        self.frame = keyboardFrame
-    }
-    
-    @objc func keyboardWillChangeFrame(notification: Notification){
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {return}
-        self.frame = keyboardFrame
-        self.willChangeFrame = true
-    }
-    
-    @objc func keyboardDidChangeFrame(notification: Notification){
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {return}
-        self.frame = keyboardFrame
-        self.willChangeFrame = false
-    }
-}
+
+

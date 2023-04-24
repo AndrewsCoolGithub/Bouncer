@@ -13,7 +13,7 @@ class EventOverviewContent: UIView{
     var components = EventOverviewContentComponents()
     var dataSource: UICollectionViewDiffableDataSource<Section, Profile>?
     enum Section: String, CaseIterable{
-        case PeopleYouKnow = "People you know"
+        case PeopleYouKnow = "People you follow"
         case Guests = "Guests"
         case Host = "Hosted by"
     }

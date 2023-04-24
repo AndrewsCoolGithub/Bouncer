@@ -15,15 +15,17 @@ class ChatViewModel: ObservableObject{
     
     @Published var messages: [Message]?
     
-    @Published var userData = [String : Profile]()
-    
+//    @Published var userData = [String : Profile]()
+   
+    var profiles: [Profile] = []
     let messageDetail: MessageDetail
     
-    
-    init(_ messageDetail: MessageDetail, users: [String]){
+ 
+    init(_ messageDetail: MessageDetail, profiles: [Profile]){
         self.messageDetail = messageDetail
+        self.profiles = profiles
         Task{
-            try await grabUserData(users)
+//            try await grabUserData(users)
             FirestoreSubscription.subscribeToCollection(id: messageDetail.id!, collection: .Messages).sink { [weak self] snapshot in
                 self?.messages = snapshot.documents.compactMap { (doc) -> Message? in
                     return try? doc.data(as: MessageCodable.self).toMessage()
@@ -37,12 +39,13 @@ class ChatViewModel: ObservableObject{
         try CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document(message.messageId).setData(from: codable)
     }
     
-    func grabUserData(_ users: [String]) async throws{
-        for userID in users{
-            let data = try await USERS_COLLECTION.document(userID).getDocument().data(as: Profile.self)
-            userData[userID] = data
-        }
-    }
+//    func grabUserData(_ users: [String]) async throws{
+//        for userID in users{
+//            let data = try await USERS_COLLECTION.document(userID).getDocument().data(as: Profile.self)
+//            print(data)
+//            userData[userID] = data
+//        }
+//    }
     
     func sendMessage(_ dataType: DataType, content: Any, replyReceipt: ReplyReceipt?){
         let doc = CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document()

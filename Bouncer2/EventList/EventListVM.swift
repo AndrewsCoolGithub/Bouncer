@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class AllEventListVM: ObservableObject{
+class AllEventListVM: ObservableObject {
     
     @Published var events = [Event]()
     

@@ -63,13 +63,13 @@ final class StoryViewController: UIViewController, UIPageViewControllerDelegate{
         pageVC.view.layer.masksToBounds = true
         pageVC.setViewControllers([views[startIndex]], direction: .forward, animated: true)
         
-        view.addSubview(leftView)
-        leftView.centerY(inView: view, leftAnchor: view.leftAnchor)
-        leftView.setDimensions(height: .makeHeight(896), width: .makeWidth(207))
-
-        view.addSubview(rightView)
-        rightView.centerYright(inView: view, rightAnchor: view.rightAnchor)
-        rightView.setDimensions(height: .makeHeight(896), width: .makeWidth(207))
+//        view.addSubview(leftView)
+//        leftView.centerY(inView: view, leftAnchor: view.leftAnchor)
+//        leftView.setDimensions(height: .makeHeight(896), width: .makeWidth(207))
+//
+//        view.addSubview(rightView)
+//        rightView.centerYright(inView: view, rightAnchor: view.rightAnchor)
+//        rightView.setDimensions(height: .makeHeight(896), width: .makeWidth(207))
         
         pauseGesture = UILongPressGestureRecognizer(target: self, action:  #selector(pause))
         pauseGesture.minimumPressDuration = 0.2
@@ -87,6 +87,8 @@ final class StoryViewController: UIViewController, UIPageViewControllerDelegate{
        
         rightView.addGestureRecognizer(forwardGesture)
         rightView.addGestureRecognizer(pauseGesture2)
+        
+        
         
     }
     
@@ -122,6 +124,15 @@ final class StoryViewController: UIViewController, UIPageViewControllerDelegate{
             navigationController?.dismiss(animated: true)
         }
     }
+    
+    private let ellipsis: UIButton = {
+        let ellipsis = UIButton()
+        let config = UIImage.SymbolConfiguration(pointSize: .wProportioned(35))
+        let image = UIImage(systemName: "ellipsis", withConfiguration: config)
+        ellipsis.setImage(image, for: .normal)
+        ellipsis.tintColor = .white
+        return ellipsis
+    }()
 }
 
 

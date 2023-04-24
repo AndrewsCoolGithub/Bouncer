@@ -148,8 +148,9 @@ final class NewMessageViewController: UIViewController{
     @objc func finish(){
         do{
             let messageDetail = try viewModel.createNewChat(viewModel.selectedUsers.map({$0.profile}))
+            let profiles = viewModel.selectedUsers.map({$0.profile})
             let controller = ChatViewController()
-            controller.loadMessages(for: messageDetail, users: messageDetail.users)
+            controller.loadMessages(for: messageDetail, profiles: profiles)
             navigationController?.popViewController(animated: false)
             navigationController?.pushViewController(controller, animated: true)
 
