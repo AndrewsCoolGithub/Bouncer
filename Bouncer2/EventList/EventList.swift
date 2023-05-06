@@ -49,7 +49,6 @@ class EventList: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        print("Segemnted Frame: \(codeSegmented.frame)")
     }
 }
 

@@ -11,15 +11,26 @@ import Combine
 import UIKit
 import InputBarAccessoryView
 
+
+//TODO: FOR FILE:
+/** Move: REPLY FUNCTIONALITY,  DELEGATE METHODS, EXTENSIONS, etc.
+ 
+ Important: HeaderView navigation bar doesnt load wihtout internet connection
+ */
+
 protocol MessageBarDelegate: AnyObject{
     func showBar()
     func hideBar()
 }
 
-class ChatViewController: MessagesViewController, MessagesLayoutDelegate, SkeletonLoadable, InputBarAccessoryViewDelegate, MessageBarDelegate{
-
-    func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
-        
+class ChatViewController: MessagesViewController, MessagesLayoutDelegate, SkeletonLoadable, InputBarAccessoryViewDelegate, MessageBarDelegate, UINavigationControllerDelegate{
+    
+    func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {
+       print("Our text is: \(text)")
+   }
+    
+    func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {
+        print(size)
     }
    
     let sender = Sender(senderId: User.shared.id!, displayName: User.shared.displayName ?? "Me")
@@ -61,23 +72,19 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
     }
     
     func blurWithPastel(_ messageContainerView: MessageContainerView){
-        if let pastel = messageContainerView.subviews.first(where: {$0 is Pastel}) {
+        if let pastel = messageContainerView.subviews.first(where: {$0 is ChatMessageBubble}) {
             pastel.removeFromSuperview()
         }
-        
-        if let blur = messageContainerView.subviews.first(where: {$0 is UIVisualEffectView}) {
-            blur.removeFromSuperview()
-        }
+      
+        let pastel = ChatMessageBubble(frame: .zero, colors: viewModel?.styleColors ?? User.defaultColors.colors)
+        pastel.frame = messageContainerView.bounds
         
         let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
-        blur.frame = messageContainerView.bounds
+        blur.frame = pastel.bounds
         blur.alpha = 0.5
-      
-        let pastel = Pastel()
-        pastel.alpha = 1
-        pastel.frame = messageContainerView.bounds
+        pastel.addSubview(blur)
+        
         messageContainerView.insertSubview(pastel, at: 0)
-        messageContainerView.insertSubview(blur, aboveSubview: pastel)
     }
     
    
@@ -145,7 +152,6 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
             self?.messageInputBar.isHidden = false
            
         }
-         print("Show bar")
     }
     
     func hideBar(){
@@ -167,7 +173,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
 //                                                  withHorizontalFittingPriority: .required, // Width is fixed
 //                                                  verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
 //    }
-    
+    let inputDelegate = ChatViewControllerInputTextViewDelegate()
     fileprivate func setupMessageInputBar() {
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
@@ -178,25 +184,32 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messagesCollectionView.messagesCollectionViewFlowLayout.setMessageOutgoingAvatarSize(.zero)
         messageInputBar.sendButton.addTarget(self, action: #selector(sendClicked), for: .touchUpInside)
         
+        inputDelegate.i = self
+        messageInputBar.inputTextView.delegate = inputDelegate
         
-        let sendButton = messageInputBar.sendButton
-        sendButton.tintColor = .systemCyan
-        sendButton.setTitleColor(.systemCyan, for: .normal)
-        let shareIcon = UIImage(named: "share-icon")!.withRenderingMode(.alwaysTemplate)
-        sendButton.setImage(shareIcon, for: .normal)
-        sendButton.title = ""
-        sendButton.setSize(CGSize(width: 30, height: 30), animated: false)
+//        let sendButton = messageInputBar.sendButton
+//        sendButton.tintColor = .white
+//        sendButton.setTitleColor(.systemCyan, for: .normal)
+//        let shareIcon = UIImage(named: "share-icon")?.tintedWithLinearGradientColors(uiColors: userColors ?? User.defaultColors.colors)
+//        sendButton.setImage(shareIcon, for: .normal)
+//        sendButton.title = ""
+//        sendButton.setSize(CGSize(width: 30, height: 30), animated: false)
         
+        messageInputBar.sendButton.isHidden = true
+        messageInputBar.inputTextView.returnKeyType = .send
         messageInputBar.delegate = self
+       
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messagesCollectionView.register(ChatEmoteView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
         messagesCollectionView.register(ChatReplyView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
+        
         let cameraItem = InputBarButtonItem(type: .system)
-        cameraItem.tintColor = .systemCyan
-        let cameraIcon = UIImage(named: "camera-filled-icon")?.withRenderingMode(.alwaysTemplate)
+        cameraItem.tintColor = .white
+        let cameraIcon = UIImage(named: "camera-filled-icon")
         cameraItem.image = cameraIcon
+        //TODO: - Camera button won't react to tintedWithLinearGradientColors (posibly order of operations within InputBarItem
         cameraItem.addTarget(
             self,
             action: #selector(cameraPressed),
@@ -205,16 +218,44 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         
         cameraItem.setSize(CGSize(width: 30, height: 30), animated: false)
         
+        
+        let cameraRollItem = InputBarButtonItem(type: .system)
+        cameraRollItem.tintColor = .white
+        let cameraRollIcon = UIImage(systemName: "photo.on.rectangle.angled", withConfiguration: UIImage.SymbolConfiguration(pointSize: .wProportioned(20)))
+        cameraRollItem.image = cameraRollIcon
+        cameraRollItem.addTarget(
+            self,
+            action: #selector(openCameraRoll),
+            for: .primaryActionTriggered
+        )
+        cameraRollItem.setSize(CGSize(width: 30, height: 30), animated: false)
+        messageInputBar.sendButton.removeFromSuperview()
+        
+        let microphoneItem = InputBarButtonItem(type: .system)
+        microphoneItem.tintColor = .white
+        microphoneItem.image = UIImage(systemName: "mic.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: .wProportioned(25)))
+        microphoneItem.addTarget(
+            self,
+            action: #selector(cameraPressed),
+            for: .primaryActionTriggered
+        )
+       
+        microphoneItem.setSize(CGSize(width: 30, height: 30), animated: false)
+        messageInputBar.sendButton.removeFromSuperview()
+        
         messageInputBar.leftStackView.alignment = .center
+        messageInputBar.rightStackView.alignment = .center
         messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
-        messageInputBar.setRightStackViewWidthConstant(to: 35, animated: false)
+        messageInputBar.setRightStackViewWidthConstant(to: 100, animated: false)
         messageInputBar.setStackViewItems([cameraItem], forStack: .left, animated: false)
+        messageInputBar.setStackViewItems([cameraRollItem, microphoneItem], forStack: .right, animated: false)
         messageInputBar.backgroundColor = .nearlyBlack()
         messageInputBar.backgroundView.backgroundColor = .nearlyBlack()
         messageInputBar.separatorLine.isHidden = true
         
+        
         let inputTextView = messageInputBar.inputTextView
-        inputTextView.tintColor = .systemCyan
+        
         inputTextView.textColor = .white
         inputTextView.backgroundColor = .lightGreyColor()
         inputTextView.layer.cornerRadius = 14.0
@@ -224,6 +265,22 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         inputTextView.placeholderLabel.text = "Message..."
         inputTextView.textContainerInset = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
         inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 6, left: 15, bottom: 6, right: 15)
+        
+        inputTextView.tintColor = viewModel?.styleColors.brightestColor
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5){
+            print("MessageInputBar frame : \(self.messageInputBar.frame), textView: \(inputTextView.frame)")
+            
+        }
+    }
+    
+    @objc func openCameraRoll(){
+        
+        let cameraRollVC = ChatCameraRollPanel(ChatCameraRollVC())
+        cameraRollVC.addPanel(toParent: self, animated: true)
+        
+        
+        hideBar()
+        
     }
     
     var replyMessage: Message?
@@ -278,6 +335,10 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messageInputBar.topStackView.addArrangedSubview(myButton)
     }
     
+     
+    
+    //MARK: - ViewDidLoad
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .nearlyBlack()
@@ -290,8 +351,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
     }
     
     func setupHeaderBar(_ recipient: Profile){
-        let headerChatBackground = viewComponents.headerChatBackground
-        headerChatBackground.setColors(User.shared.colors.uiColors())
+        let headerChatBackground = ChatHeaderBackground(frame: CGRect(origin: .zero, size: CGSize(width: .makeWidth(414), height: .wProportioned(75) + SafeArea.topSafeArea())), colors: recipient.colors?.uiColors() ?? User.defaultColors.colors)
         view.addSubview(headerChatBackground)
 
         
@@ -372,7 +432,9 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
     }
     
     @objc func sendClicked(){
-        guard let content = messageInputBar.inputTextView.text else {return}
+        print(messageInputBar.inputTextView.images)
+        guard let content = messageInputBar.inputTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines), !content.isBlank else {return}
+        
         
         messageInputBar.inputTextView.text = ""
        
@@ -439,7 +501,7 @@ extension ChatViewController: MessagesDisplayDelegate{
             return .white
         }
         
-        return .nearlyWhite()
+        return .offWhite()
     }
     
     func messageFooterView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
@@ -455,8 +517,11 @@ extension ChatViewController: MessagesDisplayDelegate{
     func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
         
         let reusableView = messagesCollectionView.dequeueReusableHeaderView(ChatReplyView.self, for: indexPath)
+        
         guard let data = (self.messages[indexPath.section] as? Message)?.replyReceipt else {return reusableView}
         guard let text = data.text else {return reusableView}
+
+        reusableView.styleColors = viewModel?.styleColors
         reusableView.setup(text, displayName: data.displayName, senderDisplayName: data.senderDisplayName)
 //        reusableView.maxWidth = .makeWidth(414)
 //        reusableView.textView.text = text

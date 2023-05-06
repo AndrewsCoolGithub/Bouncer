@@ -47,6 +47,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //                let navCont = UINavigationController(rootViewController: eventOverview)
 //                navCont.navigationBar.isHidden = true
 //                self.window?.rootViewController = navCont
+                
+//                let navCont = UINavigationController(rootViewController: ChatCameraRollVC())
+//                navCont.navigationBar.isHidden = true
                 let tabBarController = TabBarController()
                 let navCont = UINavigationController(rootViewController: tabBarController)
                 navCont.navigationBar.isHidden = true

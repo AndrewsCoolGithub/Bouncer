@@ -48,4 +48,16 @@ extension String{
             
         return CGSize(width: min(width + 18, maxWidth), height: min(height + 16, maxHeight))
     }
+    
+   
+    var isBlank: Bool {
+        return allSatisfy({ $0.isWhitespace })
+    }
+    
+}
+
+extension Optional where Wrapped == String {
+    var isBlank: Bool {
+        return self?.isBlank ?? true
+    }
 }

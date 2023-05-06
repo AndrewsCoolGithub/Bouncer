@@ -1,27 +1,22 @@
 //
-//  Pastel.swift
+//  ChatMessageBubble.swift
 //  Bouncer2
 //
-//  Created by Andrew Kestler on 5/23/22.
+//  Created by Andrew Kestler on 4/28/23.
 //
 
-import Foundation
 import Pastel
+import UIKit
 
-class Pastel: PastelView{
+class ChatMessageBubble: PastelView {
     
-    override init(frame: CGRect){
+     init(frame: CGRect, colors: [UIColor]){
         super.init(frame: frame)
+         
         startPastelPoint = .bottomLeft
         endPastelPoint = .topRight
         animationDuration = 5
-      
-        if let colors = User.shared.colors{
-            setColors(colors.uiColors())
-        }else{
-            setColors(User.defaultColors.colors)
-        }
-        
+        setColors(colors)
         startAnimation()
     }
     

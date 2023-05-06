@@ -7,6 +7,7 @@
 
 import Foundation
 import Firebase
+import FirebaseStorage
 
 let CHAT_COLLECTION = Firestore.firestore().collection("Chats")
 final class MessageManager{
@@ -14,12 +15,35 @@ final class MessageManager{
     static let shared = MessageManager()
     private init(){}
     
-    public func send(_ detail: MessageDetail, message: MessageCodable) throws{
+    public func send(_ detail: MessageDetail, message: MessageCodable, image: UIImage? = nil) throws{
         guard let id = detail.id else { return }
-        let newDetail = MessageDetail(id: detail.id, users: detail.users, chatName: detail.chatName, lastMessage: message, lastActive: .now)
-        try CHAT_COLLECTION.document(id).setData(from: newDetail)
-        try CHAT_COLLECTION.document(id).collection("Messages").document(message.messageID).setData(from: message)
+        
+        guard let dataType = DataType(rawValue: message.dataType) else {return}
+        switch  dataType{
+        case .text:
+            let newDetail = MessageDetail(id: id, users: detail.users, chatName: detail.chatName, lastMessage: message, lastActive: .now)
+            try CHAT_COLLECTION.document(id).setData(from: newDetail)
+            try CHAT_COLLECTION.document(id).collection("Messages").document(message.messageID).setData(from: message)
+        case .audio:
+            break
+        case .image:
+            Task{
+                let path = Storage.storage().reference().child("Messages").child(message.messageID)
+                let url = try await MediaManager.uploadImage(image, path: path)
+                let newMessage = MessageCodable(senderID: message.senderID, messageID: message.messageID, displayName: message.displayName, sentDate: .now, readReceipts: nil, dataType: message.dataType, text: message.text, mediaURL: url, duration: message.duration, replyReceipt: message.replyReceipt, emojiReactions: message.emojiReactions)
+                let newDetail = MessageDetail(id: id, users: detail.users, chatName: detail.chatName, lastMessage: newMessage, lastActive: .now)
+                try CHAT_COLLECTION.document(id).setData(from: newDetail)
+                try CHAT_COLLECTION.document(id).collection("Messages").document(message.messageID).setData(from: newMessage)
+            }
+        case .video:
+            break
+        }
+        
+        
     }
+    
+    
+    
     
     
     /*/ newMostRecentMessage param exists when message to be removed is the most recent. Is messages last index  - 1 */
@@ -47,7 +71,7 @@ final class MessageManager{
             users.append(User.shared.profile)
         }
         
-        var names = users.map { $0.display_name }.joined(separator: ", ")
+        let names = users.map { $0.display_name }.joined(separator: ", ")
         if users.count == 1{
             users.append(User.shared.profile)
         }

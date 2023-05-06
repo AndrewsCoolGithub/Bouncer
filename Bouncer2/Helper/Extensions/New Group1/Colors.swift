@@ -213,4 +213,64 @@ extension UIColor {
     }
     return self
   }
+    
+    
+
+        // Check if the color is light or dark, as defined by the injected lightness threshold.
+        // Some people report that 0.7 is best. I suggest to find out for yourself.
+        // A nil value is returned if the lightness couldn't be determined.
+    
+    var brightnessVal: CGFloat {
+        let originalCGColor = self.cgColor
+
+        // Now we need to convert it to the RGB colorspace. UIColor.white / UIColor.black are greyscale and not RGB.
+        // If you don't do this then you will crash when accessing components index 2 below when evaluating greyscale colors.
+        let RGBCGColor = originalCGColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil)
+        guard let components = RGBCGColor?.components else {
+            return 0
+        }
+        
+        guard components.count >= 3 else {
+            return 0
+        }
+
+        return CGFloat(((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000)
+    }
+    
+}
+
+extension Array where Element == UIColor {
+    var brightestColor: UIColor {
+        
+        var brightness: CGFloat = 0
+        var brightestColor: UIColor?
+        for color in self {
+            let brightnessVal = color.brightnessVal
+            if brightnessVal > brightness{
+                brightestColor = color
+            }
+            brightness = brightnessVal
+        }
+        return brightestColor ?? .white
+    }
+}
+extension UIColor {
+
+    func rgb() -> (red:Int, green:Int, blue:Int, alpha:Int)? {
+        var fRed : CGFloat = 0
+        var fGreen : CGFloat = 0
+        var fBlue : CGFloat = 0
+        var fAlpha: CGFloat = 0
+        if self.getRed(&fRed, green: &fGreen, blue: &fBlue, alpha: &fAlpha) {
+            let iRed = Int(fRed * 255.0)
+            let iGreen = Int(fGreen * 255.0)
+            let iBlue = Int(fBlue * 255.0)
+            let iAlpha = Int(fAlpha * 255.0)
+
+            return (red:iRed, green:iGreen, blue:iBlue, alpha:iAlpha)
+        } else {
+            // Could not extract RGBA components:
+            return nil
+        }
+    }
 }

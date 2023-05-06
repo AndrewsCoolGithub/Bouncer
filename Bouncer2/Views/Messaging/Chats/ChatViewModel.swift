@@ -18,12 +18,14 @@ class ChatViewModel: ObservableObject{
 //    @Published var userData = [String : Profile]()
    
     var profiles: [Profile] = []
+    var styleColors: [UIColor] = []
     let messageDetail: MessageDetail
     
  
     init(_ messageDetail: MessageDetail, profiles: [Profile]){
         self.messageDetail = messageDetail
         self.profiles = profiles
+        self.styleColors = profiles.first(where: {$0.id != User.shared.profile.id})?.colors?.uiColors() ?? User.defaultColors.colors
         Task{
 //            try await grabUserData(users)
             FirestoreSubscription.subscribeToCollection(id: messageDetail.id!, collection: .Messages).sink { [weak self] snapshot in

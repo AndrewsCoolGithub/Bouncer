@@ -12,6 +12,8 @@ class ChatReplyView: MessageReusableView{
     
     static let id = "chat-reply-view"
     
+    var styleColors: [UIColor]?
+    
     fileprivate lazy var label: UITextView = {
         let label = UITextView()
         label.font = .systemFont(ofSize: 12, weight: .medium)
@@ -42,8 +44,8 @@ class ChatReplyView: MessageReusableView{
         return view
     }()
     
-    fileprivate lazy var pastel: Pastel = {
-        let pastel = Pastel(frame: .zero)
+    fileprivate lazy var pastel: ChatMessageBubble = {
+        let pastel = ChatMessageBubble(frame: .zero, colors: self.styleColors ?? [.white])
         pastel.layer.cornerRadius = .makeWidth(15)
         pastel.layer.masksToBounds = true
         return pastel
@@ -61,7 +63,7 @@ class ChatReplyView: MessageReusableView{
         didSet{
             let x = .makeWidth(414) - labelSize.width - 25
             let y = self.frame.height - labelSize.height - 5
-            pastel = Pastel(frame:  CGRect(x: x, y: CGFloat(y), width: labelSize.width, height: labelSize.height))
+            pastel = ChatMessageBubble(frame:  CGRect(x: x, y: CGFloat(y), width: labelSize.width, height: labelSize.height), colors: self.styleColors ?? [.white])
             pastel.layer.cornerRadius = .makeWidth(15)
             pastel.layer.masksToBounds = true
             blur.frame = CGRect(x: x, y: CGFloat(y), width: labelSize.width, height: labelSize.height + 1)
@@ -90,7 +92,7 @@ class ChatReplyView: MessageReusableView{
         }else if senderDisplayName == User.shared.displayName{
             replyingToLabel.text = "You replied to \(displayName)"
         }else{
-            replyingToLabel.text = "\(senderDisplayName) replied to \(displayName)"
+            replyingToLabel.text = "\(senderDisplayName) replied to \(User.shared.displayName == displayName ? "You" : displayName)"
         }
         
         addSubview(pastel)
@@ -125,26 +127,18 @@ class ChatReplyView: MessageReusableView{
             
             spacerView.anchor(top: label.topAnchor, left: self.leftAnchor, bottom: label.bottomAnchor, right: label.leftAnchor, paddingLeft: 14 + avatarWidth, paddingRight: 8)
         }
-        
-      
-        
-       
-        
-        
-        
-        //blurWithPastel(self)
     }
     
-    func blurWithPastel(_ messageContainerView: MessageReusableView){
-        if let pastel = messageContainerView.subviews.first(where: {$0 is Pastel}) {
-            pastel.removeFromSuperview()
-        }
-        
-        if let blur = messageContainerView.subviews.first(where: {$0 is UIVisualEffectView}) {
-            blur.removeFromSuperview()
-        }
-        
-        messageContainerView.insertSubview(pastel, at: 0)
-        messageContainerView.insertSubview(blur, aboveSubview: pastel)
-    }
+//    func blurWithPastel(_ messageContainerView: MessageReusableView){
+//        if let pastel = messageContainerView.subviews.first(where: {$0 is Pastel}) {
+//            pastel.removeFromSuperview()
+//        }
+//        
+//        if let blur = messageContainerView.subviews.first(where: {$0 is UIVisualEffectView}) {
+//            blur.removeFromSuperview()
+//        }
+//        
+//        messageContainerView.insertSubview(pastel, at: 0)
+//        messageContainerView.insertSubview(blur, aboveSubview: pastel)
+//    }
 }
