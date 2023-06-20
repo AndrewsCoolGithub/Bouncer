@@ -1045,10 +1045,10 @@
 			isa = PBXGroup;
 			children = (
 				A4FFF25828D1C313007BED60 /* ChatEmoteView.swift */,
-				A4AEC35029FDF02C008DFA85 /* ChatCameraRollCV */,
 				A46629FB29FC6DA70080F562 /* ChatHeaderBackground.swift */,
 				A46629FE29FC732A0080F562 /* ChatMessageBubble.swift */,
 				A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */,
+				A4AEC35029FDF02C008DFA85 /* ChatCameraRollCV */,
 			);
 			path = "Chat Supplemental Views";
 			sourceTree = "<group>";

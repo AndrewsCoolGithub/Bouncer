@@ -9,12 +9,15 @@ import FloatingPanel
 
 class ChatCameraRollPanel: FloatingPanelController{
     
+    
+    weak var chatCameraRollVC: ChatCameraRollVC?
+    
     init(_ vc: ChatCameraRollVC){
         super.init(delegate: nil)
         delegate = self
-       
+        self.chatCameraRollVC = vc
         let appearance = SurfaceAppearance()
-        appearance.cornerRadius = .makeWidth(25)
+        appearance.cornerRadius = .makeWidth(39.5)
         appearance.backgroundColor = .greyColor()
         
        
@@ -22,6 +25,7 @@ class ChatCameraRollPanel: FloatingPanelController{
         surfaceView.appearance = appearance
         set(contentViewController: vc)
         
+       
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -29,10 +33,22 @@ class ChatCameraRollPanel: FloatingPanelController{
     }
     
     class PanelLayout: FloatingPanelLayout{
+        private let mHeight: CGFloat = .makeHeight(896)
+        private let itemDimension: CGFloat = .makeWidth(414)/3
         var position: FloatingPanelPosition = .bottom
-        var initialState: FloatingPanelState = .full
+        var initialState: FloatingPanelState = .tip
         var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
-            return [.tip: FloatingPanelLayoutAnchor(absoluteInset: .makeHeight(896) - ((.wProportioned(414)/3)*2.1), edge: .top, referenceGuide: .superview), .full: FloatingPanelLayoutAnchor(fractionalInset: 0.33, edge: .top, referenceGuide: .superview)]
+            return [
+                    .tip: FloatingPanelLayoutAnchor(
+                    absoluteInset: mHeight - (itemDimension * 2),
+                    edge: .top,
+                    referenceGuide: .superview),
+                        
+                    .full: FloatingPanelLayoutAnchor(
+                    absoluteInset: itemDimension * 2,
+                    edge: .top,
+                    referenceGuide: .safeArea)
+                ]
         }
     }
 }
@@ -40,5 +56,23 @@ class ChatCameraRollPanel: FloatingPanelController{
 
 
 extension ChatCameraRollPanel: FloatingPanelControllerDelegate{
+    func floatingPanelDidMove(_ fpc: FloatingPanelController) {
+        let surfaceY = max(fpc.surfaceLocation.y, 0)
+        let maxY = fpc.surfaceLocation(for: .full).y
+        chatCameraRollVC?.collectionView?.frame.size.height = min(.makeHeight(896) - surfaceY, .makeHeight(896) - maxY)
+    }
     
+    func floatingPanelWillEndDragging(_ fpc: FloatingPanelController, withVelocity velocity: CGPoint, targetState: UnsafeMutablePointer<FloatingPanelState>) {
+        
+        let tipLocation = self.surfaceLocation(for: .tip).y
+        let tipRange = (tipLocation-45...tipLocation+45)
+        if tipRange.lowerBound < self.surfaceLocation.y {
+            self.move(to: .hidden, animated: true)
+            let chatVC = self.parent as? ChatViewController
+            
+            self.removePanelFromParent(animated: true) {
+                chatVC?.showBar()
+            }
+        }
+    }
 }

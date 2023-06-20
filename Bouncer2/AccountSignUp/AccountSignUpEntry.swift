@@ -140,7 +140,8 @@ extension AccountSignUpEntry: UITextFieldDelegate{
         }
         
         if text == "" && string.count == 1{
-            textField.text = "("
+            textField.text = "(\(string)"
+            return false
         }
         
         if text.first == "(" && range.lowerBound == 1{
