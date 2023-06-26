@@ -46,7 +46,7 @@ struct Message: Hashable, MessageType{
         self.messageId = messageId
         self.sentDate = sentDate
         self.isDelivered = isDelivered
-        self.kind = Message.getData(dataType, text: text, mediaURL: mediaURL, duration: duration, image: image, placeholderImage: placeholderImage)
+        self.kind = Message.getData(dataType, text: text, mediaURL: mediaURL, duration: duration, image: nil, placeholderImage: placeholderImage)
         self.readReceipts = readReceipts
         self.emojiReactions = emojiReactions
         self.replyReceipt = replyReceipt
@@ -73,7 +73,10 @@ struct Message: Hashable, MessageType{
             return .audio(Audio(url: URL(string: mediaURL!)!, duration: duration ?? 0.0))
             //TODO: Add a placeholder Image
         case .image:
-            return .photo(Media(url: URL(string: mediaURL!)!, image: image!, placeholderImage: placeholderImage!, size: CGSize(width: 300, height: 500)))
+            let imageview = UIImageView()
+            imageview.image = UIImage()
+            imageview.sd_setImage(with: URL(string: mediaURL!)!)
+            return .photo(Media(url: URL(string: mediaURL!)!, image: imageview.image ?? UIImage(), placeholderImage: placeholderImage ?? UIImage(), size: CGSize(width: 300, height: 500)))
         case .video:
             return .video(Media(url: URL(string: mediaURL!)!, image: nil, placeholderImage: placeholderImage!, size: CGSize(width: 300, height: 500)))
         }

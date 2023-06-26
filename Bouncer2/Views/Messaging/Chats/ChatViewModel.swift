@@ -27,7 +27,6 @@ class ChatViewModel: ObservableObject{
         self.profiles = profiles
         self.styleColors = profiles.first(where: {$0.id != User.shared.profile.id})?.colors?.uiColors() ?? User.defaultColors.colors
         Task{
-//            try await grabUserData(users)
             FirestoreSubscription.subscribeToCollection(id: messageDetail.id!, collection: .Messages).sink { [weak self] snapshot in
                 self?.messages = snapshot.documents.compactMap { (doc) -> Message? in
                     return try? doc.data(as: MessageCodable.self).toMessage()
@@ -36,18 +35,34 @@ class ChatViewModel: ObservableObject{
         }
     }
     
+    func remove(_ message: Message){
+        Task{
+            guard let messages = messages else {return}
+            if messages.last == message && messages.count <= 1{
+                try await MessageManager.shared.remove(messageDetail, message: message.toCodable(), newMostRecentMessage: nil)
+                DispatchQueue.main.async {
+                    self.messages?.removeAll(where: {$0 == message})
+                }
+            }else if messages.last == message && messages.count > 1{
+                try await MessageManager.shared.remove(messageDetail, message: message.toCodable(), newMostRecentMessage: messages[messages.count-2].toCodable())
+                DispatchQueue.main.async {
+                    self.messages?.removeAll(where: {$0 == message})
+                }
+            }else{
+                try await MessageManager.shared.remove(messageDetail, message: message.toCodable())
+                DispatchQueue.main.async {
+                    self.messages?.removeAll(where: {$0 == message})
+                }
+            }
+        }
+    }
+        
+    
+    
     func modifyMessage(_ message: Message) throws{
         let codable = message.toCodable()
         try CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document(message.messageId).setData(from: codable)
     }
-    
-//    func grabUserData(_ users: [String]) async throws{
-//        for userID in users{
-//            let data = try await USERS_COLLECTION.document(userID).getDocument().data(as: Profile.self)
-//            print(data)
-//            userData[userID] = data
-//        }
-//    }
     
     func sendMessage(_ dataType: DataType, content: Any, replyReceipt: ReplyReceipt?){
         let doc = CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document()
@@ -71,6 +86,15 @@ class ChatViewModel: ObservableObject{
         case .audio:
             return
         case .image:
+            let image = content as! UIImage
+            let message = MessageCodable(senderID: senderID, messageID: messageID, displayName: displayName, sentDate: .now, readReceipts: nil, dataType: "image", text: nil, mediaURL: nil, duration: 0, replyReceipt: nil, emojiReactions: nil)
+            do{
+                try MessageManager.shared.send(self.messageDetail, message: message, image: image)
+                
+            }catch{
+                
+            }
+            
             return
         case .video:
             return

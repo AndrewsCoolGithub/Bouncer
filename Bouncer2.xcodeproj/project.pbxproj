@@ -152,6 +152,7 @@
 		A49CD7142832311900BD8594 /* EventSuiteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49CD7132832311900BD8594 /* EventSuiteCell.swift */; };
 		A49CD718283244E200BD8594 /* EventDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49CD717283244E200BD8594 /* EventDraft.swift */; };
 		A49CD72528325C1B00BD8594 /* EventSuiteCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49CD72428325C1B00BD8594 /* EventSuiteCellViewModel.swift */; };
+		A4A039442A48E663000EB360 /* Sequences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A039432A48E663000EB360 /* Sequences.swift */; };
 		A4A0BEE6287FE95A00F2D54C /* ColorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A0BEE5287FE95A00F2D54C /* ColorModel.swift */; };
 		A4A382F72A00805E00A4B4B4 /* ChatCameraRollVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A382F62A00805E00A4B4B4 /* ChatCameraRollVC.swift */; };
 		A4A382FB2A00827800A4B4B4 /* ChatCameraRollViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A382FA2A00827800A4B4B4 /* ChatCameraRollViewComponents.swift */; };
@@ -378,6 +379,7 @@
 		A49CD7132832311900BD8594 /* EventSuiteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteCell.swift; sourceTree = "<group>"; };
 		A49CD717283244E200BD8594 /* EventDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDraft.swift; sourceTree = "<group>"; };
 		A49CD72428325C1B00BD8594 /* EventSuiteCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSuiteCellViewModel.swift; sourceTree = "<group>"; };
+		A4A039432A48E663000EB360 /* Sequences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequences.swift; sourceTree = "<group>"; };
 		A4A0BEE5287FE95A00F2D54C /* ColorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorModel.swift; sourceTree = "<group>"; };
 		A4A382F62A00805E00A4B4B4 /* ChatCameraRollVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCameraRollVC.swift; sourceTree = "<group>"; };
 		A4A382FA2A00827800A4B4B4 /* ChatCameraRollViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCameraRollViewComponents.swift; sourceTree = "<group>"; };
@@ -649,6 +651,7 @@
 				A4F6C136288167CA00115972 /* UITextViewExt.swift */,
 				A42C8A832852FEAA0080C1BB /* UITextFieldExt.swift */,
 				A4FFF25628D19671007BED60 /* EmojiStringToImage.swift */,
+				A4A039432A48E663000EB360 /* Sequences.swift */,
 				A451A9F028D5E44400C0EAA1 /* CharacterExt.swift */,
 				A4E902B92974D4FF002B0E21 /* URLEXT.swift */,
 			);
@@ -850,7 +853,6 @@
 				A45FCFAE28B76C9B005B833B /* ChatViewController.swift */,
 				A4F45BE129F66E7900E9EAA8 /* ChatKeyboardUpdater.swift */,
 				A411130429F618F500AA1DC7 /* ChatViewComponents.swift */,
-				A45F8D5A28C9B4D700DDD90F /* ChatPopupView.swift */,
 				A42DCBC528D4A18900C7CA84 /* EmoteSelector */,
 				A4FA2CA628E148EF001195D2 /* EmoteCustomize */,
 			);
@@ -1044,6 +1046,7 @@
 		A4B9AD6428F3EE6000FAE6F1 /* Chat Supplemental Views */ = {
 			isa = PBXGroup;
 			children = (
+				A45F8D5A28C9B4D700DDD90F /* ChatPopupView.swift */,
 				A4FFF25828D1C313007BED60 /* ChatEmoteView.swift */,
 				A46629FB29FC6DA70080F562 /* ChatHeaderBackground.swift */,
 				A46629FE29FC732A0080F562 /* ChatMessageBubble.swift */,
@@ -1408,6 +1411,7 @@
 				A409415B2822980B00094A64 /* Date&TImeIntervalExt.swift in Sources */,
 				A43D8AB92919776700D5387D /* FullDetailHostView.swift in Sources */,
 				A4A55ACF2855C43C005EBD78 /* SkeletonLoadable.swift in Sources */,
+				A4A039442A48E663000EB360 /* Sequences.swift in Sources */,
 				A4DC85092956ABD30089C325 /* StoryManager.swift in Sources */,
 				A402D8BD293F883C00C9772C /* NewMessageViewController+UITextField.swift in Sources */,
 				A4D81F4129F9B72200A3143E /* CVCInputTextViewDelegate.swift in Sources */,

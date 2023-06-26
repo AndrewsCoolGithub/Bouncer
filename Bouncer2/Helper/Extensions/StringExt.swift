@@ -9,6 +9,8 @@ import UIKit
 
 extension String{
     
+    
+    
     func isValid(_ minCount: Int) -> Bool{
         return self.trimmingCharacters(in: .whitespacesAndNewlines).count >= minCount
     }

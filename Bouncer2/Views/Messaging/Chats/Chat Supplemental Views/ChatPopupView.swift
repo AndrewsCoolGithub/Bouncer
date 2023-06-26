@@ -280,7 +280,9 @@ class ChatPopupVC: UIViewController{
             animateOut()
             delegate.replyTo(self.message)
         case .delete:
-            print("Delete")
+            barActions.showBar()
+            animateOut()
+            delegate.delete(self.message)
         case .report:
             print("Report")
         case .copy:

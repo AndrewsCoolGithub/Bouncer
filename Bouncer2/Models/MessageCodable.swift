@@ -30,10 +30,13 @@ struct MessageCodable: Codable, Identifiable, Hashable{
     let replyReceipt: ReplyReceipt? 
     let emojiReactions: [EmoteReaction]?
     
-    
     func toMessage() -> Message {
-        return Message(senderID: senderID, displayName: displayName, messageId: messageID, sentDate: sentDate, emojiReactions: emojiReactions, replyReceipt: replyReceipt, dataType: DataType(rawValue: dataType)!, text: text)
+        return Message(senderID: senderID, displayName: displayName, messageId: messageID, sentDate: sentDate, emojiReactions: emojiReactions, replyReceipt: replyReceipt, dataType: DataType(rawValue: dataType)!, text: text, mediaURL: mediaURL)
+        
     }
 }
-
+enum FetchError: Error{
+    case badID
+    case badImage
+}
 

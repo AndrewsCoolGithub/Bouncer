@@ -55,6 +55,8 @@ final class MessageManager{
             try CHAT_COLLECTION.document(id).setData(from: detail)
         }
         try await CHAT_COLLECTION.document(id).collection("Messages").document(message.messageID).delete()
+        let path = Storage.storage().reference().child("Messages").child(message.messageID)
+        try await path.delete()
     }
     
     public func fetchChats() async throws -> [MessageDetail]{

@@ -11,9 +11,15 @@ import Photos
 class ChatCameraRollVC: UIViewController{
     
     var fetchResult: PHFetchResult<PHAsset> = PhotosManager.shared.fetchAssets()
-    let components = ChatCameraRollViewComponents()
+    var components = ChatCameraRollViewComponents()
     
-    weak var collectionView: UICollectionView?
+    var selectedAssets: [PHAsset] = [] {
+        didSet{
+            showSendBanner(!selectedAssets.isEmpty)
+        }
+    }
+    
+    
     enum DragState{
         case collectionView
         case floatingPanel
@@ -21,19 +27,33 @@ class ChatCameraRollVC: UIViewController{
     
     var dragState: DragState = .collectionView
     
+    let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let cv = UICollectionView(frame: CGRect(x: 0, y: 0, width: .makeWidth(414), height: .makeHeight(270)), collectionViewLayout: layout)
+        cv.register(ChatCameraRollCVCell.self, forCellWithReuseIdentifier: ChatCameraRollCVCell.id)
+        cv.backgroundColor = .greyColor()
+        return cv
+    }()
+    
     override func viewDidLoad(){
         super.viewDidLoad()
-        let collectionView = components.collectionView
+        setupCV()
+
+    }
+    
+    fileprivate func setupCV() {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.alwaysBounceVertical = true
         
         view.addSubview(collectionView)
-        self.collectionView = collectionView
         collectionView.allowsMultipleSelection = true
     }
     
-//    @objc func determineOffset(_ sender: UIPanGestureRecognizer){}
+    fileprivate func showSendBanner(_ isShown: Bool){
+        guard let panel = self.parent as? ChatCameraRollPanel else {return}
+        panel.showSendBanner(isShown)
+    }
     
 }
 
@@ -102,5 +122,15 @@ extension ChatCameraRollVC: UICollectionViewDelegateFlowLayout{
             }
         }
         dragState = .collectionView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? ChatCameraRollCVCell else {return}
+        selectedAssets.append(cell.asset)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? ChatCameraRollCVCell else {return}
+        selectedAssets.removeAll(where: {$0 == cell.asset})
     }
 }

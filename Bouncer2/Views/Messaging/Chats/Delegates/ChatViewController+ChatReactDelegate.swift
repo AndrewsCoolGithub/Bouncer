@@ -7,6 +7,10 @@
 
 import Foundation
 extension ChatViewController: ChatReactDelegate{
+    func delete(_ message: Message) {
+        self.viewModel?.remove(message)
+    }
+    
     
     func openEmoteSelector(_ message: Message, _ popUpProp: ChatPopupVC.ChatPopupProperties) {
         let emoteSelector = ChatEmoteSelector(viewModel: viewModel)
@@ -52,6 +56,7 @@ extension ChatViewController: ChatReactDelegate{
 }
 
 protocol ChatReactDelegate: NSObject{
+    func delete(_ message: Message)
     func replyTo(_ message: Message)
     
     func emoteReaction(for message: Message, _ emote: String)

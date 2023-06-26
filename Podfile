@@ -24,6 +24,7 @@ target 'Bouncer2' do
   pod 'NVActivityIndicatorView'
   pod 'MessageKit'
   pod "ABVideoRangeSlider"
+  pod 'Kingfisher', '~> 7.0'
 #  pod 'HKVideoRangeSlider'
 #  pod 'MapboxNavigation', '~> 1.0'
 #  pod 'MapboxCoreNavigation', '~> 1.0'
