@@ -37,7 +37,7 @@ struct Message: Hashable, MessageType{
     
     let dataType: DataType
     
-    private let mediaURL: String?
+    let mediaURL: String?
     private let text: String?
     private let duration: Float?
     
@@ -78,7 +78,7 @@ struct Message: Hashable, MessageType{
             imageview.sd_setImage(with: URL(string: mediaURL!)!)
             return .photo(Media(url: URL(string: mediaURL!)!, image: imageview.image ?? UIImage(), placeholderImage: placeholderImage ?? UIImage(), size: CGSize(width: 300, height: 500)))
         case .video:
-            return .video(Media(url: URL(string: mediaURL!)!, image: nil, placeholderImage: placeholderImage!, size: CGSize(width: 300, height: 500)))
+            return .video(Media(url: URL(string: mediaURL!)!, image: nil, placeholderImage: placeholderImage ?? UIImage(), size: CGSize(width: 300, height: 500)))
         }
     
     }

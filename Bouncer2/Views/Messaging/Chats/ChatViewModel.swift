@@ -89,7 +89,7 @@ class ChatViewModel: ObservableObject{
             let image = content as! UIImage
             let message = MessageCodable(senderID: senderID, messageID: messageID, displayName: displayName, sentDate: .now, readReceipts: nil, dataType: "image", text: nil, mediaURL: nil, duration: 0, replyReceipt: nil, emojiReactions: nil)
             do{
-                try MessageManager.shared.send(self.messageDetail, message: message, image: image)
+                try MessageManager.shared.send(self.messageDetail, message: message, image)
                 
             }catch{
                 

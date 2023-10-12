@@ -23,20 +23,21 @@ protocol MessageBarDelegate: AnyObject{
     func hideBar()
 }
 
-class ChatViewController: MessagesViewController, MessagesLayoutDelegate, SkeletonLoadable, InputBarAccessoryViewDelegate, MessageBarDelegate, UINavigationControllerDelegate{
+class ChatViewController: MessagesViewController,  SkeletonLoadable, InputBarAccessoryViewDelegate, MessageBarDelegate, UINavigationControllerDelegate{
     
     func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {
-       print("Our text is: \(text)")
+//       print("Our text is: \(text)")
    }
     
     func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {
-        print(size)
+//        print(size)
     }
    
     let sender = Sender(senderId: User.shared.id!, displayName: User.shared.displayName ?? "Me")
     var messages: [MessageType] = []
     var viewModel: ChatViewModel?
     let keyboardUpdater = ChatKeyboardUpdater()
+    let inputDelegate = ChatViewControllerInputTextViewDelegate()
     var keyboardStatus: Bool = false
     var messageInputBarOrgin: CGPoint!
     var viewComponents = ChatViewComponents()
@@ -67,7 +68,6 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
        
         blurWithPastel(cell.messageContainerView)
         
-        
         return cell
     }
     
@@ -87,30 +87,8 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messageContainerView.insertSubview(pastel, at: 0)
     }
     
-   
-    
-    //MARK: - Long Press Action
     
     
-    @objc func longPressDo(_ gestureRecognizer: UILongPressGestureRecognizer) {
-        if (gestureRecognizer.state != .began) {
-            return
-        }
-        
-        let p = gestureRecognizer.location(in: messagesCollectionView) ///For grabbing IndexPath
-       
-        if let indexPath = messagesCollectionView.indexPathForItem(at: p) {
-            
-            let cell = messagesCollectionView.cellForItem(at: indexPath)! as! MessageContentCell
-            let message = self.messages[indexPath.section] as! Message
-            let point = gestureRecognizer.location(in: view) ///Positioning Reaction Bubble
-            cell.setupSubviews()
-            if cell.gestureRecognizerShouldBegin(gestureRecognizer){
-                HapticsManager.shared.selectionVibration()
-                showPopupView(cell, message, point)
-            }
-        }
-    }
     
     fileprivate func showPopupView(_ cell: MessageContentCell, _ message: Message, _ point: CGPoint) {
         let convertedPoint = cell.convert(cell.messageContainerView.frame.origin, to: view)
@@ -134,16 +112,9 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         chatPopup.willMove(toParent: self)
         view.addSubview(chatPopup.view)
         
-        ///TODO: -
-//        ///Dismiss pop up if user decides to open emojis or any keyboard activity that chages the frame
-//        var cancellable: AnyCancellable?
-//        cancellable = keyboardUpdater.$willChangeFrame.sink { bool in
-//            if bool {
-//                chatPopup.animateOut()
-//                cancellable?.cancel()
-//            }
-//        }
     }
+    
+    
     
      func showBar() {
          UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1.2, initialSpringVelocity: 1.5) { [weak self] in
@@ -161,19 +132,8 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
             self?.messageInputBar.isHidden = true
         }
     }
-//    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//
-//        // Get the view for the first header
-//        let indexPath = IndexPath(row: 0, section: section)
-//        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-//
-//        // Use this view to calculate the optimal size based on the collection view's width
-//        
-//        return headerView.systemLayoutSizeFitting(CGSize(width: 1, height: UIView.layoutFittingExpandedSize.height),
-//                                                  withHorizontalFittingPriority: .required, // Width is fixed
-//                                                  verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
-//    }
-    let inputDelegate = ChatViewControllerInputTextViewDelegate()
+
+   
     fileprivate func setupMessageInputBar() {
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
@@ -187,14 +147,6 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         inputDelegate.i = self
         messageInputBar.inputTextView.delegate = inputDelegate
         
-//        let sendButton = messageInputBar.sendButton
-//        sendButton.tintColor = .white
-//        sendButton.setTitleColor(.systemCyan, for: .normal)
-//        let shareIcon = UIImage(named: "share-icon")?.tintedWithLinearGradientColors(uiColors: userColors ?? User.defaultColors.colors)
-//        sendButton.setImage(shareIcon, for: .normal)
-//        sendButton.title = ""
-//        sendButton.setSize(CGSize(width: 30, height: 30), animated: false)
-        
         messageInputBar.sendButton.isHidden = true
         messageInputBar.inputTextView.returnKeyType = .send
         messageInputBar.delegate = self
@@ -202,6 +154,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
+        messagesCollectionView.messageCellDelegate = self
         messagesCollectionView.register(ChatEmoteView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter)
         messagesCollectionView.register(ChatReplyView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         
@@ -273,15 +226,7 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         }
     }
     
-    @objc func openCameraRoll(){
-        
-        let cameraRollVC = ChatCameraRollPanel(ChatCameraRollVC())
-        cameraRollVC.addPanel(toParent: self, animated: true)
-        
-        
-        hideBar()
-        
-    }
+    
     
     var replyMessage: Message?
     internal func setupReplyHeader(_ displayName: String, _ message: Message) {
@@ -396,6 +341,25 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         
     }
     
+    //MARK: - @objc Functions
+    
+    @objc func longPressDo(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if (gestureRecognizer.state != .began) { return }
+        
+        let p = gestureRecognizer.location(in: messagesCollectionView) ///For grabbing IndexPath
+       
+        if let indexPath = messagesCollectionView.indexPathForItem(at: p) { ///Gives index of cell at touch
+            let cell = messagesCollectionView.cellForItem(at: indexPath)! as! MessageContentCell
+            let message = self.messages[indexPath.section] as! Message
+            let point = gestureRecognizer.location(in: view) ///Positioning Reaction Bubble
+            cell.setupSubviews()
+            if cell.gestureRecognizerShouldBegin(gestureRecognizer){
+                HapticsManager.shared.selectionVibration()
+                showPopupView(cell, message, point)
+            }
+        }
+    }
+    
     @objc func goBack(_ sender: UIButton){
         navigationController?.popViewController(animated: true)
     }
@@ -427,7 +391,19 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
         }
     }
     
+    @objc func openCameraRoll(){
+        let cameraRollVC = ChatCameraRollPanel(ChatCameraRollVC())
+        cameraRollVC.addPanel(toParent: self, animated: true)
+        hideBar()
+        
+    }
+    
     @objc func cameraPressed(){
+        let cameraVC = StoryCameraVC(eventID: nil, hostId: nil, type: .message, messageDetail: viewModel?.messageDetail)
+        cameraVC.willMove(toParent: self)
+        addChild(cameraVC)
+        self.view.addSubview(cameraVC.view)
+        hideBar()
         
     }
     
@@ -454,99 +430,10 @@ class ChatViewController: MessagesViewController, MessagesLayoutDelegate, Skelet
     //MARK: - Avatar
     
     //MARK: DONT THINK THIS FUCTION WORKS, actual dimensions are 30/30 on iPhone 11 (Frame: (0.0, 6.0, 30.0, 30.0) )
-    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-            return CGSize(width: .makeHeight(50), height: .makeHeight(50))
-    }
     
-    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        
-
-        let message = message as! Message
-        let gradient = CAGradientLayer()
-        gradient.startPoint = CGPoint(x: 0, y: 0.5)
-        gradient.endPoint = CGPoint(x: 1, y: 0.5)
-        let animation = makeAnimationGroup()
-        animation.beginTime = 0.0
-        gradient.add(animation, forKey: "backgroundColor")
-        gradient.frame = avatarView.bounds
-        avatarView.layer.addSublayer(gradient)
-        
-        guard let imageURL = viewModel!.profiles.first(where: {$0.id == message.sender.senderId})?.image_url else {return}
-        avatarView.sd_setImage(with: URL(string: imageURL)) { i, e, c, u in
-            gradient.removeFromSuperlayer()
-        }
-    }
-    
-    func messageBottomLabelAlignment(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> LabelAlignment? {
-        return LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 6))
-    }
     
     func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
         guard indexPath.section + 1 < messages.count else { return false }
         return messages[indexPath.section].sender.senderId == messages[indexPath.section + 1].sender.senderId
       }
 }
-//MARK: - Display Delegate
-extension ChatViewController: MessagesDisplayDelegate{
-    func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        if message.sender.senderId == User.shared.id{
-            return .blueMinty()
-        }
-        
-        return .lightGreyColor()
-    }
-    
-    func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        if message.sender.senderId == User.shared.id{
-            return .white
-        }
-        
-        return .offWhite()
-    }
-    
-    func messageFooterView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
-        
-        let reusableView = messagesCollectionView.dequeueReusableFooterView(ChatEmoteView.self, for: indexPath)
-        guard let cell = messagesCollectionView.cellForItem(at: indexPath) as? MessageContentCell else {return reusableView}
-        guard let reactions = (self.messages[indexPath.section] as? Message)?.emojiReactions else { return  reusableView}
-        let convertedPoint = cell.convert(cell.messageContainerView.frame.origin, to: view)
-        reusableView.setup(with: reactions, viewModel!, convertedPoint.x)
-        return reusableView
-    }
-    
-    func messageHeaderView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
-        
-        let reusableView = messagesCollectionView.dequeueReusableHeaderView(ChatReplyView.self, for: indexPath)
-        
-        guard let data = (self.messages[indexPath.section] as? Message)?.replyReceipt else {return reusableView}
-        guard let text = data.text else {return reusableView}
-
-        reusableView.styleColors = viewModel?.styleColors
-        reusableView.setup(text, displayName: data.displayName, senderDisplayName: data.senderDisplayName)
-//        reusableView.maxWidth = .makeWidth(414)
-//        reusableView.textView.text = text
-        return reusableView
-    }
-    
-    
-}
-
-extension ChatViewController: MessageCellDelegate{
-    //TODO: Open profile by avatar tap
-    
-    func didTapMessage(in cell: MessageCollectionViewCell) {
-        
-    }
-    
-    func didTapBackground(in cell: MessageCollectionViewCell) {
-        
-    }
-    
-}
-
-
-
-
-
-
-

@@ -41,13 +41,20 @@ class StoryVideoRecordingVC: UIViewController{
     var shouldFlip: Bool!
     var eventId: String?
     var hostId: String?
+    var messageDetail: MessageDetail?
+    var type: StoryCameraVC.CameraType = .story
     
-    init(_ url: URL, shouldFlip: Bool, eventId: String?, hostId: String?){
+    init(_ url: URL, shouldFlip: Bool, eventId: String?, hostId: String?, _ messageDetail: MessageDetail? = nil, type: StoryCameraVC.CameraType = .story){
         super.init(nibName: nil, bundle: nil)
         view.addSubview(foreground)
         self.shouldFlip = shouldFlip
         self.eventId = eventId
         self.hostId = hostId
+        self.messageDetail = messageDetail
+        self.type = type
+        if messageDetail == nil && type == .message {
+            fatalError("message detail must exist when type is message")
+        }
         foreground.center = view.center
         self.url = url
         player = AVPlayer(url: url)
@@ -67,7 +74,14 @@ class StoryVideoRecordingVC: UIViewController{
         discardButton.addTarget(self, action: #selector(discard), for: .touchUpInside)
         
         view.addSubview(continueButton)
-        continueButton.addTarget(self, action: #selector(post), for: .touchUpInside)
+        switch self.type{
+            
+        case .story:
+            continueButton.addTarget(self, action: #selector(post), for: .touchUpInside)
+        case .message:
+            continueButton.addTarget(self, action: #selector(postMessage), for: .touchUpInside)
+        }
+        
         
     }
     
@@ -80,9 +94,9 @@ class StoryVideoRecordingVC: UIViewController{
         let storageRef = Storage.storage().reference().child("Stories").child(ref.documentID)
         Task{
             do{
-                let url = try await MediaManager.uploadVideo(url, path: storageRef, shouldFlip: shouldFlip)
+                let videoInfo = try await MediaManager.uploadVideo(url, path: storageRef, shouldFlip: shouldFlip)
                 guard let uid = User.shared.id else {return}
-                let story = Story(id: ref.documentID, eventId: self.eventId, hostId: self.hostId, userId: uid, url: url, type: .video, shouldMirror: shouldFlip, date: .now, _storyViews: [])
+                let story = Story(id: ref.documentID, eventId: self.eventId, hostId: self.hostId, userId: uid, url: videoInfo, type: .video, shouldMirror: shouldFlip, date: .now, _storyViews: [])
                 try StoryManager.shared.postStory(story, ref)
             }catch{
                 print(error)
@@ -92,6 +106,22 @@ class StoryVideoRecordingVC: UIViewController{
         guard let rootVC = navigationController?.viewControllers.first(where: {$0 is EventOverview}) else {return}
         player.pause()
         navigationController?.popToViewController(rootVC, animated: true)
+    }
+    
+    @objc func postMessage(){
+        print("Post Video Message")
+        guard let messageDetail = messageDetail else {return}
+        let doc = CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document()
+        let messageID = doc.documentID
+        let displayName = User.shared.displayName!
+        let senderID = User.shared.id!
+        let message = MessageCodable(senderID: senderID, messageID: messageID, displayName: displayName, sentDate: .now, readReceipts: nil, dataType: "video", text: nil, mediaURL: nil, duration: 0, replyReceipt: nil, emojiReactions: nil)
+        do{
+            try MessageManager.shared.send(messageDetail, message: message, nil, self.url, shouldFlip)
+        }catch{
+            print("error: \(error)")
+        }
+       
     }
     
     @objc func discard(){

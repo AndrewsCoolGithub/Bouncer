@@ -15,7 +15,7 @@ final class MessageManager{
     static let shared = MessageManager()
     private init(){}
     
-    public func send(_ detail: MessageDetail, message: MessageCodable, image: UIImage? = nil) throws{
+    public func send(_ detail: MessageDetail, message: MessageCodable, _ image: UIImage? = nil, _ videoURL: URL? = nil, _ shouldFlip: Bool? = nil) throws{
         guard let id = detail.id else { return }
         
         guard let dataType = DataType(rawValue: message.dataType) else {return}
@@ -30,16 +30,22 @@ final class MessageManager{
             Task{
                 let path = Storage.storage().reference().child("Messages").child(message.messageID)
                 let url = try await MediaManager.uploadImage(image, path: path)
-                let newMessage = MessageCodable(senderID: message.senderID, messageID: message.messageID, displayName: message.displayName, sentDate: .now, readReceipts: nil, dataType: message.dataType, text: message.text, mediaURL: url, duration: message.duration, replyReceipt: message.replyReceipt, emojiReactions: message.emojiReactions)
+                let newMessage = message.addURL(url)
                 let newDetail = MessageDetail(id: id, users: detail.users, chatName: detail.chatName, lastMessage: newMessage, lastActive: .now)
                 try CHAT_COLLECTION.document(id).setData(from: newDetail)
                 try CHAT_COLLECTION.document(id).collection("Messages").document(message.messageID).setData(from: newMessage)
             }
         case .video:
-            break
+            Task{
+                let path = Storage.storage().reference().child("Messages").child(message.messageID)
+                guard let videoURL = videoURL, let _shouldFlip = shouldFlip else {fatalError("send was called w/ type video, and no videoURL/shouldFlip bool was provided.")}
+                let videoInfo = try await MediaManager.uploadVideo(videoURL, path: path, shouldFlip: _shouldFlip)
+                let newMessage = message.addURL(videoInfo)
+                let newDetail = MessageDetail(id: id, users: detail.users, chatName: detail.chatName, lastMessage: newMessage, lastActive: .now)
+                try CHAT_COLLECTION.document(id).setData(from: newDetail)
+                try CHAT_COLLECTION.document(id).collection("Messages").document(message.messageID).setData(from: newMessage)
+            }
         }
-        
-        
     }
     
     

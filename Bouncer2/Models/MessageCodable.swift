@@ -34,6 +34,10 @@ struct MessageCodable: Codable, Identifiable, Hashable{
         return Message(senderID: senderID, displayName: displayName, messageId: messageID, sentDate: sentDate, emojiReactions: emojiReactions, replyReceipt: replyReceipt, dataType: DataType(rawValue: dataType)!, text: text, mediaURL: mediaURL)
         
     }
+    
+    func addURL(_ url: String) -> MessageCodable {
+        return MessageCodable(senderID: senderID, messageID: messageID, displayName: displayName, sentDate: .now, readReceipts: readReceipts, dataType: dataType, text: text, mediaURL: url, duration: duration, replyReceipt: replyReceipt, emojiReactions: emojiReactions)
+    }
 }
 enum FetchError: Error{
     case badID

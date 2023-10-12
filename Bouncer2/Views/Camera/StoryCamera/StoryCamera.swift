@@ -148,8 +148,22 @@ class StoryCameraVC: UIViewController, UINavigationControllerDelegate {
     var gestures = Set<UIGestureRecognizer>()
     var eventID: String?
     var hostID: String?
-    init(eventID: String?, hostId: String?){
+    var type: CameraType = .story
+    var messageDetail: MessageDetail!
+    enum CameraType{
+        case story
+        case message
+    }
+    /*
+    Message Detail is required when cameratype is message.
+    */
+    init(eventID: String?, hostId: String?, type: CameraType, messageDetail: MessageDetail? = nil){
         super.init(nibName: nil, bundle: nil)
+        if type == .message && messageDetail == nil || type == .story && messageDetail != nil{
+            fatalError("Message Detail is only required when cameratype is message.")
+        }
+        self.type = type
+        self.messageDetail = messageDetail
         self.setUpCamera()
         self.eventID = eventID
         self.hostID = hostId
@@ -181,8 +195,12 @@ class StoryCameraVC: UIViewController, UINavigationControllerDelegate {
         discardButton.addTarget(self, action: #selector(discardMedia), for: .touchUpInside)
         addGestures()
         
-        continueButton.addTarget(self, action: #selector(post), for: .touchUpInside)
-        
+        switch type{
+        case .story:
+            continueButton.addTarget(self, action: #selector(postStory), for: .touchUpInside)
+        case .message:
+            continueButton.addTarget(self, action: #selector(postMessage), for: .touchUpInside)
+        }
     }
     
     
@@ -295,7 +313,7 @@ class StoryCameraVC: UIViewController, UINavigationControllerDelegate {
     }
     
     
-    @objc func post(){
+    @objc func postStory(){
         let ref = STORY_REF.document()
         let storageRef = Storage.storage().reference().child("Stories").child(ref.documentID)
         
@@ -313,9 +331,40 @@ class StoryCameraVC: UIViewController, UINavigationControllerDelegate {
         guard let rootVC = navigationController?.viewControllers.first(where: {$0 is EventOverview}) else {return}
         navigationController?.popToViewController(rootVC, animated: true)
     }
+    
+    @objc func postMessage(){
+        print("Post Message")
+        let doc = CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document()
+        let messageID = doc.documentID
+        let displayName = User.shared.displayName!
+        let senderID = User.shared.id!
+        
+        let image = self.imageView.image
+        let message = MessageCodable(senderID: senderID, messageID: messageID, displayName: displayName, sentDate: .now, readReceipts: nil, dataType: "image", text: nil, mediaURL: nil, duration: 0, replyReceipt: nil, emojiReactions: nil)
+        do{
+            try MessageManager.shared.send(self.messageDetail, message: message, image)
+        }catch{
+            print("error: \(error)")
+        }
+       
+    }
    
     @objc func cancel(){
-        navigationController?.popViewController(animated: true)
+        switch type{
+        case .message:
+            guard let chatVC = self.parent as? ChatViewController else {
+                debugPrint("ChatVC is not parent, parent is: \(self.parent)")
+                return
+            }
+            
+            self.view.removeFromSuperview()
+            self.removeFromParent()
+            chatVC.showBar()
+            
+        case .story:
+            navigationController?.popViewController(animated: true)
+        }
+        
         DispatchQueue.global().async {
             self.session?.stopRunning()
             

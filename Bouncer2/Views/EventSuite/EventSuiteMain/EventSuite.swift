@@ -20,7 +20,6 @@ class EventSuite: UIViewController{
     var upcoming: [Event]? = []
     private var dataSource: UICollectionViewDiffableDataSource<Section, EventSuiteCellViewModel>?
     private var cancellable = Set<AnyCancellable>()
-    private let cameraVC = CameraVC()
     
     
     let components = EventSuiteViewComponents()
@@ -71,6 +70,7 @@ class EventSuite: UIViewController{
     
   
     @objc func openEventCreator(){
+        let cameraVC = CameraVC()
         navigationController?.pushViewController(cameraVC, animated: true)
     }
     
