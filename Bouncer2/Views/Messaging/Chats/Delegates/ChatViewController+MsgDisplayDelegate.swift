@@ -6,6 +6,7 @@
 //
 
 import MessageKit
+import AVKit
 
 extension ChatViewController: MessagesDisplayDelegate{
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
@@ -50,6 +51,26 @@ extension ChatViewController: MessagesDisplayDelegate{
     
     //MARK: Setup video
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        
+        
+        
+        guard let data = message as? Message,
+              data.dataType == .video,
+              let rawURL = data.mediaURL,
+              let mediaURL = URL(string: rawURL) else {return}
+        
+        
+        
+        let vc = ChatViewVideoPlayerVC(mediaURL)
+        
+        
+        
+        
+        
+        imageView.addSubview(vc.view)
+        self.addChild(vc)
+        imageView.addSubview(vc.view)
+        vc.didMove(toParent: self)
         
         
     }

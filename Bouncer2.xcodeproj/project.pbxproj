@@ -101,6 +101,7 @@
 		A4581D042860A305008FF2BC /* MapEventAnnotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4581D032860A305008FF2BC /* MapEventAnnotView.swift */; };
 		A45BD7EF295AAC660022A541 /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45BD7EE295AAC660022A541 /* StoryView.swift */; };
 		A45BD7F1295AB8E10022A541 /* DoublyLinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45BD7F0295AB8E10022A541 /* DoublyLinkedList.swift */; };
+		A45DB8172ADC71C900C8198E /* MessageVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45DB8162ADC71C900C8198E /* MessageVideoPlayer.swift */; };
 		A45F8D5B28C9B4D700DDD90F /* ChatPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F8D5A28C9B4D700DDD90F /* ChatPopupView.swift */; };
 		A45FCF9E28B47848005B833B /* MessageSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45FCF9D28B47848005B833B /* MessageSuite.swift */; };
 		A45FCFA128B4789B005B833B /* MessageSuiteViewComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45FCFA028B4789B005B833B /* MessageSuiteViewComponents.swift */; };
@@ -185,6 +186,7 @@
 		A4AE75C5294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AE75C4294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift */; };
 		A4AEC34D29FDEB41008DFA85 /* PhotosManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AEC34C29FDEB41008DFA85 /* PhotosManager.swift */; };
 		A4AEC35229FDF03C008DFA85 /* ChatCameraRollCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AEC35129FDF03C008DFA85 /* ChatCameraRollCVCell.swift */; };
+		A4B90A682ADDBC6C0080AAE3 /* ChatViewVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B90A672ADDBC6C0080AAE3 /* ChatViewVideoPlayer.swift */; };
 		A4B9AD6628F3EE9000FAE6F1 /* ChatReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */; };
 		A4BD3899294B6DC400AA1E1A /* StoryCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BD3898294B6DC400AA1E1A /* StoryCamera.swift */; };
 		A4C4E6F22815377B000F7366 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A4C4E6F12815377B000F7366 /* GoogleService-Info.plist */; };
@@ -331,6 +333,7 @@
 		A4581D032860A305008FF2BC /* MapEventAnnotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEventAnnotView.swift; sourceTree = "<group>"; };
 		A45BD7EE295AAC660022A541 /* StoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
 		A45BD7F0295AB8E10022A541 /* DoublyLinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoublyLinkedList.swift; sourceTree = "<group>"; };
+		A45DB8162ADC71C900C8198E /* MessageVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageVideoPlayer.swift; sourceTree = "<group>"; };
 		A45F8D5A28C9B4D700DDD90F /* ChatPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPopupView.swift; sourceTree = "<group>"; };
 		A45FCF9D28B47848005B833B /* MessageSuite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSuite.swift; sourceTree = "<group>"; };
 		A45FCFA028B4789B005B833B /* MessageSuiteViewComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSuiteViewComponents.swift; sourceTree = "<group>"; };
@@ -417,6 +420,7 @@
 		A4AE75C4294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoryCamera+AccessoryFeatures.swift"; sourceTree = "<group>"; };
 		A4AEC34C29FDEB41008DFA85 /* PhotosManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosManager.swift; sourceTree = "<group>"; };
 		A4AEC35129FDF03C008DFA85 /* ChatCameraRollCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCameraRollCVCell.swift; sourceTree = "<group>"; };
+		A4B90A672ADDBC6C0080AAE3 /* ChatViewVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewVideoPlayer.swift; sourceTree = "<group>"; };
 		A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReplyView.swift; sourceTree = "<group>"; };
 		A4BD3898294B6DC400AA1E1A /* StoryCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCamera.swift; sourceTree = "<group>"; };
 		A4C4E6F12815377B000F7366 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -857,6 +861,7 @@
 				A4B9AD6428F3EE6000FAE6F1 /* Chat Supplemental Views */,
 				A4DCCEB328BC9AC200E01D3E /* ChatViewModel.swift */,
 				A45FCFAE28B76C9B005B833B /* ChatViewController.swift */,
+				A4B90A672ADDBC6C0080AAE3 /* ChatViewVideoPlayer.swift */,
 				A4F45BE129F66E7900E9EAA8 /* ChatKeyboardUpdater.swift */,
 				A411130429F618F500AA1DC7 /* ChatViewComponents.swift */,
 				A42DCBC528D4A18900C7CA84 /* EmoteSelector */,
@@ -1056,6 +1061,7 @@
 			isa = PBXGroup;
 			children = (
 				A45F8D5A28C9B4D700DDD90F /* ChatPopupView.swift */,
+				A45DB8162ADC71C900C8198E /* MessageVideoPlayer.swift */,
 				A4FFF25828D1C313007BED60 /* ChatEmoteView.swift */,
 				A46629FB29FC6DA70080F562 /* ChatHeaderBackground.swift */,
 				A46629FE29FC732A0080F562 /* ChatMessageBubble.swift */,
@@ -1391,9 +1397,11 @@
 				A409415028204C0900094A64 /* EventTypeSelect.swift in Sources */,
 				A42731D8291F599000CB6B66 /* SuggestedCard.swift in Sources */,
 				A409411E281BCDA900094A64 /* EventTitleSelect.swift in Sources */,
+				A4B90A682ADDBC6C0080AAE3 /* ChatViewVideoPlayer.swift in Sources */,
 				A46438E728E3A00900AAC51E /* CustomEmoteCell.swift in Sources */,
 				A49624BB2898090E003F8368 /* SearchHeaderCell.swift in Sources */,
 				A4A996762813C63C009DED0B /* Colors.swift in Sources */,
+				A45DB8172ADC71C900C8198E /* MessageVideoPlayer.swift in Sources */,
 				A4721D3A2871787100F763AF /* FirestoreSubscription.swift in Sources */,
 				A42731DE291FC9D200CB6B66 /* SuggestedCollectionView.swift in Sources */,
 				A448ED732951371B009BD7C2 /* StoryVideoRecordingVC.swift in Sources */,

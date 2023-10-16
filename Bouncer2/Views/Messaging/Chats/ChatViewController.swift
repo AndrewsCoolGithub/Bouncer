@@ -25,6 +25,8 @@ protocol MessageBarDelegate: AnyObject{
 
 class ChatViewController: MessagesViewController,  SkeletonLoadable, InputBarAccessoryViewDelegate, MessageBarDelegate, UINavigationControllerDelegate{
     
+    var loaderDelegate: VideoLoaderDelegate!
+    
     func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {
 //       print("Our text is: \(text)")
    }
