@@ -12,16 +12,29 @@ class ChatViewVideoPlayerVC: AVPlayerViewController{
     
     init(_ mediaURL: URL){
         super.init(nibName: nil, bundle: nil)
-        self.player = AVPlayer(url: mediaURL)
+//        setAudioMix()
+        let playerObj = AVPlayer(url: mediaURL)
+        playerObj.isMuted = true
+        
+        self.player = playerObj
         NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem, queue: .main) { [weak self] _ in
             self?.player?.seek(to: CMTime.zero)
             self?.player?.play()
         }
     }
     
+    func setAudioMix(){ /// Stop app from interrupting other audio playback, since video is muted
+        do{
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        }catch{
+            print("something went wrong: \(error.localizedDescription)")
+        }
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        player?.play()
+//        player?.play()
     }
     
     override func viewDidDisappear(_ animated: Bool) {

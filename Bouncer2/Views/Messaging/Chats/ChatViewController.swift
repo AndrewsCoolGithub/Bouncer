@@ -9,6 +9,7 @@ import Foundation
 import MessageKit
 import Combine
 import UIKit
+import AVFoundation
 import InputBarAccessoryView
 
 
@@ -72,6 +73,36 @@ class ChatViewController: MessagesViewController,  SkeletonLoadable, InputBarAcc
         
         return cell
     }
+    
+    var playingVC: ChatViewVideoPlayerVC?
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let cells = self.messagesCollectionView.visibleCells
+        for cell in cells {
+            guard let cell = cell as? MediaMessageCell else {return}
+            let f = cell.frame
+            let w = self.view.window!
+            let rect = w.convert(f, from: cell.superview!)
+            let inter = rect.intersection(w.bounds)
+            let ratio = (inter.width * inter.height) / (f.width * f.height)
+            let rep = (String(Int(ratio * 100)) + "%")
+            if ratio * 100 > 80{
+               
+                guard let playerVC = cell.imageView.subviews.first?.next as? ChatViewVideoPlayerVC else {return}
+                if playingVC != nil && playerVC != self.playingVC {
+                    self.playingVC?.player?.pause()
+//                    self.playingVC?.player?.seek(to: CMTime.zero) ///Only place we're using AvFoundation, refactor into ..PlayerVC
+                    self.playingVC = nil
+                }
+                
+                
+                self.playingVC = playerVC
+                if self.playingVC?.player?.rate == 0 && self.playingVC?.player?.error == nil{
+                    playerVC.player?.play()
+                }
+            }
+        }
+    }
+
     
     func blurWithPastel(_ messageContainerView: MessageContainerView){
         if let pastel = messageContainerView.subviews.first(where: {$0 is ChatMessageBubble}) {

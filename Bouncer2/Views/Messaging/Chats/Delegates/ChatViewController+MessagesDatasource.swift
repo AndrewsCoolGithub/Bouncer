@@ -11,7 +11,8 @@ extension ChatViewController: MessagesDataSource {
     func currentSender() -> MessageKit.SenderType {
         sender
     }
-
+    
+    
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
         return messages.count
     }

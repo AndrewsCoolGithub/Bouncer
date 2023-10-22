@@ -60,18 +60,19 @@ extension ChatViewController: MessagesDisplayDelegate{
               let mediaURL = URL(string: rawURL) else {return}
         
         
+        //If has avplayer, remove from view and remove parent from ChatVC
+        
+        if imageView.subviews.first?.next is ChatViewVideoPlayerVC {
+            guard let oldController = imageView.subviews.first?.next as? ChatViewVideoPlayerVC else {return}
+            oldController.view.removeFromSuperview()
+            oldController.removeFromParent()
+        }
         
         let vc = ChatViewVideoPlayerVC(mediaURL)
         
-        
-        
-        
-        
-        imageView.addSubview(vc.view)
         self.addChild(vc)
         imageView.addSubview(vc.view)
         vc.didMove(toParent: self)
-        
         
     }
     
