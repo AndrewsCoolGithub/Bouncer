@@ -185,6 +185,7 @@
 		A4AE75C5294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AE75C4294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift */; };
 		A4AEC34D29FDEB41008DFA85 /* PhotosManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AEC34C29FDEB41008DFA85 /* PhotosManager.swift */; };
 		A4AEC35229FDF03C008DFA85 /* ChatCameraRollCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AEC35129FDF03C008DFA85 /* ChatCameraRollCVCell.swift */; };
+		A4B309522AE5C5E600AE3C07 /* ProximityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B309512AE5C5E600AE3C07 /* ProximityManager.swift */; };
 		A4B90A682ADDBC6C0080AAE3 /* ChatViewVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B90A672ADDBC6C0080AAE3 /* ChatViewVideoPlayer.swift */; };
 		A4B9AD6628F3EE9000FAE6F1 /* ChatReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */; };
 		A4BD3899294B6DC400AA1E1A /* StoryCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BD3898294B6DC400AA1E1A /* StoryCamera.swift */; };
@@ -418,6 +419,7 @@
 		A4AE75C4294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoryCamera+AccessoryFeatures.swift"; sourceTree = "<group>"; };
 		A4AEC34C29FDEB41008DFA85 /* PhotosManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosManager.swift; sourceTree = "<group>"; };
 		A4AEC35129FDF03C008DFA85 /* ChatCameraRollCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCameraRollCVCell.swift; sourceTree = "<group>"; };
+		A4B309512AE5C5E600AE3C07 /* ProximityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximityManager.swift; sourceTree = "<group>"; };
 		A4B90A672ADDBC6C0080AAE3 /* ChatViewVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewVideoPlayer.swift; sourceTree = "<group>"; };
 		A4B9AD6528F3EE9000FAE6F1 /* ChatReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReplyView.swift; sourceTree = "<group>"; };
 		A4BD3898294B6DC400AA1E1A /* StoryCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCamera.swift; sourceTree = "<group>"; };
@@ -781,6 +783,7 @@
 				A49CD7102832284B00BD8594 /* DraftManager.swift */,
 				A4AEC34C29FDEB41008DFA85 /* PhotosManager.swift */,
 				A409412A281D796F00094A64 /* HapticManager.swift */,
+				A4B309512AE5C5E600AE3C07 /* ProximityManager.swift */,
 				A4FEBCBB2877198000918FA8 /* ContactsManager.swift */,
 				A4577AB0282E156100B1750D /* LocationManager.swift */,
 			);
@@ -1555,6 +1558,7 @@
 				A42C8A822852FBDF0080C1BB /* AccountVerfiy.swift in Sources */,
 				A451A9F128D5E44400C0EAA1 /* CharacterExt.swift in Sources */,
 				A440F53128574E15003E7690 /* MediaManager.swift in Sources */,
+				A4B309522AE5C5E600AE3C07 /* ProximityManager.swift in Sources */,
 				A4AE75C3294D197F00381A85 /* StoryCamera+Actions.swift in Sources */,
 				A4577AB1282E156100B1750D /* LocationManager.swift in Sources */,
 				A44E35FA29480112005DEC4C /* EventOverviewHostCell.swift in Sources */,

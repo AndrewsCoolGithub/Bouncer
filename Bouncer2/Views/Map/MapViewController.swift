@@ -99,6 +99,12 @@ class MapViewController: UIViewController{
     var count: Int = 0
 }
 extension MapViewController: MGLMapViewDelegate{
+    
+    func mapView(_ mapView: MGLMapView, didUpdate userLocation: MGLUserLocation?) {
+        guard let userLocation = userLocation?.location else {return}
+        Location.shared.checkForUpdate(userLocation)
+    }
+    
     func mapView(_ mapView: MGLMapView, didFinishLoading style: MGLStyle) {
         var bool: Bool = true
         self.initialLocation = User.shared.$locationInfo.sink { location in

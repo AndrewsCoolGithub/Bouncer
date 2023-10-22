@@ -48,7 +48,6 @@ class Location: NSObject, CLLocationManagerDelegate {
         info.latitude = mostRecentLocation.coordinate.latitude
         info.longitude = mostRecentLocation.coordinate.longitude
 
-        checkForUpdate(mostRecentLocation)
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(mostRecentLocation) { (placemarks, error) in
             guard let placemarks = placemarks, let placemark = placemarks.first else { return }
@@ -102,38 +101,57 @@ class Location: NSObject, CLLocationManagerDelegate {
     func checkForUpdate(_ location: CLLocation){
         let events = EventManager.shared.getEventsForRegionMonitoring(location)
         guard !events.isEmpty else {return}
-        
+
         var newRegions = [String : CLCircularRegion]()
         events.forEach { event in
-            newRegions[event.id!] = CLCircularRegion(center: event.getLocation().coordinate,
-                                                     radius: 100,
-                                                     identifier: event.id!)
+            let region = CLCircularRegion(center: event.getLocation().coordinate,
+                                         radius: 200,
+                                         identifier: event.id!)
+            region.notifyOnEntry = true
+            region.notifyOnExit = true
+            newRegions[event.id!] = region
         }
-        
+
         for region in locationManager.monitoredRegions{
             if newRegions[region.identifier] == nil{
                 locationManager.stopMonitoring(for: region)
+            }else{
+                locationManager.requestState(for: region)
             }
         }
         
+
         newRegions.values.forEach { region in
-            locationManager.startMonitoring(for: region)
+            if !locationManager.monitoredRegions.contains(where: {$0.identifier == region.identifier}) {
+                locationManager.startMonitoring(for: region)
+            }
         }
-        
-        print("Monitering \(locationManager.monitoredRegions.count) regions: \(locationManager.monitoredRegions)")
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         print("Entered region with id: \(region.identifier)")
         Task{
             try await EventManager.shared.addTo(collection: .guest, with: region.identifier)
         }
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         print("Exited region with id: \(region.identifier)")
         Task{
             try await EventManager.shared.remove(from: .guest, for: region.identifier)
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+        if state == .inside{
+            Task{
+                try await EventManager.shared.addTo(collection: .guest, with: region.identifier)
+            }
+        }else{
+            Task{
+                try await EventManager.shared.remove(from: .guest, for: region.identifier)
+                print("Exited region with id from state call: \(region.identifier)")
+            }
         }
     }
 }
