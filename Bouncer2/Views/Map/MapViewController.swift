@@ -25,15 +25,12 @@ class MapViewController: UIViewController{
     }()
     
     let zoomButton: UIButton = {
-        let button = UIButton()
-        let config = UIImage.SymbolConfiguration(pointSize: .makeHeight(30), weight: .semibold)
-        button.setImage(UIImage(systemName: "location.north.fill", withConfiguration: config), for: .normal)
-        button.backgroundColor = .black.withAlphaComponent(0.25)
+        let button = UIButton(frame: .layoutRect(width: 50, height: 50, rectCenter: .centerX, padding: Padding(anchor: .bottom, padding: .makeHeight(120)), keepAspect: true))
+        button.layer.applySketchShadow(color: .nearlyBlack().withAlphaComponent(0.3), alpha: 1, x: 0, y: .makeHeight(3), blur: .makeWidth(2), spread: .makeWidth(1.5), withRounding: .makeWidth(25))
+        button.backgroundColor = .greyColor()
+        button.layer.cornerRadius = .makeWidth(25)
+        button.setImage(UIImage(systemName: "location.north.fill"), for: .normal)
         button.tintColor = .white
-        button.backgroundColor = .nearlyBlack().withAlphaComponent(0.2)
-        button.setDimensions(height: .makeWidth(40), width: .makeWidth(40))
-        button.layer.cornerRadius = .makeWidth(20)
-        button.layer.masksToBounds = true
         return button
     }()
     
@@ -76,7 +73,6 @@ class MapViewController: UIViewController{
         
         view.addSubview(zoomButton)
         zoomButton.addTarget(self, action: #selector(zoomPressed), for: .touchUpInside)
-        zoomButton.anchor(bottom: view.bottomAnchor,  paddingBottom: .makeHeight(100))
         
         
         if let panGeture = mapView.gestureRecognizers?.first(where: {$0 is UIPanGestureRecognizer}) as? UIPanGestureRecognizer{
@@ -85,7 +81,8 @@ class MapViewController: UIViewController{
     }
     
     @objc func zoomPressed(_ sender: UIButton){
-        print("Button pressed")
+        guard let userLocation = mapView.userLocation?.coordinate else {return}
+        mapView.setCenter(userLocation, zoomLevel: 14, animated: true)
     }
     
     @objc func returnToLastCamera(){
@@ -120,6 +117,40 @@ class MapViewController: UIViewController{
 }
 
 extension MapViewController: MGLMapViewDelegate{
+    
+    func mapView(_ mapView: MGLMapView, regionDidChangeAnimated animated: Bool) {
+        
+        guard let userLocationCoord = mapView.userLocation?.coordinate else {return}
+        let centerCoord = mapView.centerCoordinate
+       
+        let divisor = pow(10.0, Double(6)) ///Only compare first 6 decimal places
+        let centerCordLat = (centerCoord.latitude * divisor).rounded() / divisor
+        let centerCordLon = (centerCoord.longitude * divisor).rounded() / divisor
+        
+        let userCordLat = (userLocationCoord.latitude * divisor).rounded() / divisor
+        let userCordLon = (userLocationCoord.longitude * divisor).rounded() / divisor
+
+        
+        if (centerCordLat == userCordLat && centerCordLon == userCordLon) && mapView.zoomLevel == 14  {
+            if zoomButton.isHidden == false {
+                UIView.animate(withDuration: 0.35, animations: {
+                    self.zoomButton.alpha = 0
+                }) { (finished)  in
+                    if finished {
+                        self.zoomButton.isHidden = true
+                    }
+                }
+            }
+        }else{
+            if zoomButton.isHidden == true{
+                zoomButton.isHidden = false
+                zoomButton.alpha = 0
+                UIView.animate(withDuration: 0.5) {
+                    self.zoomButton.alpha = 1
+                }
+            }
+        }
+    }
     
     func mapView(_ mapView: MGLMapView, didUpdate userLocation: MGLUserLocation?) {
         guard let userLocation = userLocation?.location else {return}
