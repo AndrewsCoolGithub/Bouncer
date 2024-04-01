@@ -29,6 +29,10 @@ class MessageSuite: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.addSubview(components.pastelView)
+        
+        
         view.backgroundColor = .purple
         view.addSubview(components.messagesCollectionView)
         components.messagesCollectionView.delegate = self

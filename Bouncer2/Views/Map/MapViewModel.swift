@@ -18,12 +18,10 @@ final class MapViewModel: ObservableObject{
     @Published var centerOnEvent: Event?
     
     init(){
-      
         fetchEvents()
     }
     
     func fetchEvents() {
-        
         EventManager.shared.$events.sink { [weak self] events in
             guard events.count > 0 else {return}
             self?.publicEvents = self?.makeRoute(events)

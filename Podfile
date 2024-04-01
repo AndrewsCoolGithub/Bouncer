@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
- platform :ios, '15.0'
+# platform :ios, '9.0'
 
 target 'Bouncer2' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -23,11 +23,5 @@ target 'Bouncer2' do
   pod 'Pastel'
   pod 'NVActivityIndicatorView'
   pod 'MessageKit'
-  pod "ABVideoRangeSlider"
-  pod 'Kingfisher', '~> 7.0'
-#  pod 'HKVideoRangeSlider'
-#  pod 'MapboxNavigation', '~> 1.0'
-#  pod 'MapboxCoreNavigation', '~> 1.0'
-  
 
 end

@@ -1,15 +1,15 @@
-[![Build Status](https://travis-ci.org/SCENEE/FloatingPanel.svg?branch=master)](https://travis-ci.org/SCENEE/FloatingPanel)
-[![Version](https://img.shields.io/cocoapods/v/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift 5](https://img.shields.io/badge/swift-5-orange.svg?style=flat)](https://swift.org/)
 [![Platform](https://img.shields.io/cocoapods/p/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
-[![Swift 5](https://img.shields.io/badge/Swift-5-orange.svg?style=flat)](https://swift.org/)
+[![Version](https://img.shields.io/cocoapods/v/FloatingPanel.svg)](https://cocoapods.org/pods/FloatingPanel)
+![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/scenee/FloatingPanel/ci.yml?branch=master)
+[![Carthage compatible](https://img.shields.io/badge/carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 # FloatingPanel
 
-FloatingPanel is a simple and easy-to-use UI component for a new interface introduced in Apple Maps, Shortcuts and Stocks app.
-The new interface displays the related contents and utilities in parallel as a user wants.
+FloatingPanel is a simple and easy-to-use UI component designed for a user interface featured in Apple Maps, Shortcuts and Stocks app.
+The user interface displays related content and utilities alongside the main content.
 
-📝[Here](https://docs.scenee.com/documentation/floatingpanel) is the API references for the latest version powered by [DocC](https://developer.apple.com/documentation/docc).
+Please see also [the API reference](https://floatingpanel.github.io/2.8.1/documentation/floatingpanel/) for more details.
 
 ![Maps](https://github.com/SCENEE/FloatingPanel/blob/master/assets/maps.gif)
 ![Stocks](https://github.com/SCENEE/FloatingPanel/blob/master/assets/stocks.gif)
@@ -21,47 +21,47 @@ The new interface displays the related contents and utilities in parallel as a u
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
-    - [CocoaPods](#cocoapods)
-    - [Carthage](#carthage)
-    - [Swift Package Manager](#swift-package-manager)
+  - [CocoaPods](#cocoapods)
+  - [Carthage](#carthage)
+  - [Swift Package Manager](#swift-package-manager)
 - [Getting Started](#getting-started)
-    - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
-    - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
+  - [Add a floating panel as a child view controller](#add-a-floating-panel-as-a-child-view-controller)
+  - [Present a floating panel as a modality](#present-a-floating-panel-as-a-modality)
 - [View hierarchy](#view-hierarchy)
 - [Usage](#usage)
-    - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
-    - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
-    - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
-        - [Change the initial layout](#change-the-initial-layout)
-    - [Update your panel layout](#update-your-panel-layout)
-        - [Support your landscape layout](#support-your-landscape-layout)
-        - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
-        - [Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame](#specify-an-anchor-for-each-state-by-an-inset-of-the-floatingpanelcontrollerview-frame)
-        - [Change the backdrop alpha](#change-the-backdrop-alpha)
-        - [Using custome panel states](#using-custome-panel-states)
-    - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
-        - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
-        - [Activate the rubber-band effect on panel edges](#activate-the-rubber-band-effect-on-panel-edges)
-        - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
-    - [Specify the panel move's boundary](#specify-the-panel-moves-boundary)
-    - [Customize the surface design](#customize-the-surface-design)
-        - [Modify your surface appearance](#modify-your-surface-appearance)
-        - [Use a custom grabber handle](#use-a-custom-grabber-handle)
-        - [Customize layout of the grabber handle](#customize-layout-of-the-grabber-handle)
-        - [Customize content padding from surface edges](#customize-content-padding-from-surface-edges)
-        - [Customize margins of the surface edges](#customize-margins-of-the-surface-edges)
-    - [Customize gestures](#customize-gestures)
-        - [Suppress the panel interaction](#suppress-the-panel-interaction)
-        - [Add tap gestures to the surface view](#add-tap-gestures-to-the-surface-view)
-        - [Interrupt the delegate methods of `FloatingPanelController.panGestureRecognizer`](#interrupt-the-delegate-methods-of-floatingpanelcontrollerpangesturerecognizer)
-    - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
-    - [Move a position with an animation](#move-a-position-with-an-animation)
-    - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
-    - [Enabling the tap-to-dismiss action of the backdrop view](#enabling-the-tap-to-dismiss-action-of-the-backdrop-view)
+  - [Show/Hide a floating panel in a view with your view hierarchy](#showhide-a-floating-panel-in-a-view-with-your-view-hierarchy)
+  - [Scale the content view when the surface position changes](#scale-the-content-view-when-the-surface-position-changes)
+  - [Customize the layout with `FloatingPanelLayout` protocol](#customize-the-layout-with-floatingpanellayout-protocol)
+    - [Change the initial layout](#change-the-initial-layout)
+  - [Update your panel layout](#update-your-panel-layout)
+    - [Support your landscape layout](#support-your-landscape-layout)
+    - [Use the intrinsic size of a content in your panel layout](#use-the-intrinsic-size-of-a-content-in-your-panel-layout)
+    - [Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame](#specify-an-anchor-for-each-state-by-an-inset-of-the-floatingpanelcontrollerview-frame)
+    - [Change the backdrop alpha](#change-the-backdrop-alpha)
+    - [Using custome panel states](#using-custome-panel-states)
+  - [Customize the behavior with `FloatingPanelBehavior` protocol](#customize-the-behavior-with-floatingpanelbehavior-protocol)
+    - [Modify your floating panel's interaction](#modify-your-floating-panels-interaction)
+    - [Activate the rubber-band effect on panel edges](#activate-the-rubber-band-effect-on-panel-edges)
+    - [Manage the projection of a pan gesture momentum](#manage-the-projection-of-a-pan-gesture-momentum)
+  - [Specify the panel move's boundary](#specify-the-panel-moves-boundary)
+  - [Customize the surface design](#customize-the-surface-design)
+    - [Modify your surface appearance](#modify-your-surface-appearance)
+    - [Use a custom grabber handle](#use-a-custom-grabber-handle)
+    - [Customize layout of the grabber handle](#customize-layout-of-the-grabber-handle)
+    - [Customize content padding from surface edges](#customize-content-padding-from-surface-edges)
+    - [Customize margins of the surface edges](#customize-margins-of-the-surface-edges)
+  - [Customize gestures](#customize-gestures)
+    - [Suppress the panel interaction](#suppress-the-panel-interaction)
+    - [Add tap gestures to the surface view](#add-tap-gestures-to-the-surface-view)
+    - [Interrupt the delegate methods of `FloatingPanelController.panGestureRecognizer`](#interrupt-the-delegate-methods-of-floatingpanelcontrollerpangesturerecognizer)
+  - [Create an additional floating panel for a detail](#create-an-additional-floating-panel-for-a-detail)
+  - [Move a position with an animation](#move-a-position-with-an-animation)
+  - [Work your contents together with a floating panel behavior](#work-your-contents-together-with-a-floating-panel-behavior)
+  - [Enabling the tap-to-dismiss action of the backdrop view](#enabling-the-tap-to-dismiss-action-of-the-backdrop-view)
+  - [Allow to scroll content of the tracking scroll view in addition to the most expanded state](#allow-to-scroll-content-of-the-tracking-scroll-view-in-addition-to-the-most-expanded-state)
 - [Notes](#notes)
-    - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
-    - [UISearchController issue](#uisearchcontroller-issue)
-    - [FloatingPanelSurfaceView's issue on iOS 10](#floatingpanelsurfaceviews-issue-on-ios-10)
+  - ['Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller](#show-or-show-detail-segues-from-floatingpanelcontrollers-content-view-controller)
+  - [UISearchController issue](#uisearchcontroller-issue)
 - [Maintainer](#maintainer)
 - [License](#license)
 
@@ -75,14 +75,14 @@ The new interface displays the related contents and utilities in parallel as a u
 - [x] Removal interaction
 - [x] Multi panel support
 - [x] Modal presentation
-- [x] 4 positioning support(top, left, bottom, right)
+- [x] Support for 4 positions (top, left, bottom, right)
 - [x] 1 or more magnetic anchors(full, half, tip and more)
 - [x] Layout support for all trait environments(i.e. Landscape orientation)
 - [x] Common UI elements: surface, backdrop and grabber handle
-- [x] Free from common issues of Auto Layout and gesture handling
+- [x] Free from common Auto Layout and gesture handling issues
 - [x] Compatible with Objective-C
 
-Examples are here.
+Examples can be found here:
 
 - [Examples/Maps](https://github.com/SCENEE/FloatingPanel/tree/master/Examples/Maps) like Apple Maps.app.
 - [Examples/Stocks](https://github.com/SCENEE/FloatingPanel/tree/master/Examples/Stocks) like Apple Stocks.app.
@@ -91,11 +91,7 @@ Examples are here.
 
 ## Requirements
 
-FloatingPanel is written in Swift 5.0+. Compatible with iOS 11.0+.
-
-The deployment is still iOS 10, but it is recommended to use this library on iOS 11+.
-
-:pencil2: You would like to use Swift 4.0. Please use FloatingPanel v1. 
+FloatingPanel is written in Swift 5.0+ and compatible with iOS 11.0+. 
 
 ## Installation
 
@@ -107,8 +103,6 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod 'FloatingPanel'
 ```
-
-:pencil2: FloatingPanel v1.7.0 or later requires CocoaPods v1.7.0+ for `swift_versions` support.
 
 ### Carthage
 
@@ -168,7 +162,8 @@ self.present(fpc, animated: true, completion: nil)
 
 You can show a floating panel over UINavigationController from the container view controllers as a modality of `.overCurrentContext` style.
 
-:pencil2: FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [Transitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Sources/Transitioning.swift).
+> [!NOTE]
+> FloatingPanelController has the custom presentation controller. If you would like to customize the presentation/dismissal, please see [Transitioning](https://github.com/SCENEE/FloatingPanel/blob/master/Sources/Transitioning.swift).
 
 ## View hierarchy
 
@@ -252,7 +247,8 @@ fpc.contentMode = .fitToBounds
 
 Otherwise, `FloatingPanelController` fixes the content by the height of the top most position.
 
-:pencil2: In `.fitToBounds` mode, the surface height changes as following a user interaction so that you have a responsibility to configure Auto Layout constrains not to break the layout of a content view by the elastic surface height.
+> [!NOTE]
+> In `.fitToBounds` mode, the surface height changes as following a user interaction so that you have a responsibility to configure Auto Layout constrains not to break the layout of a content view by the elastic surface height.
 
 ### Customize the layout with `FloatingPanelLayout` protocol
 
@@ -269,13 +265,11 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 class MyFloatingPanelLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition = .bottom
     let initialState: FloatingPanelState = .tip
-    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
-            .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
-            .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .bottom, referenceGuide: .safeArea),
-        ]
-    }
+    let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
+        .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .bottom, referenceGuide: .safeArea),
+    ]
 }
 ```
 
@@ -321,12 +315,11 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 class LandscapePanelLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition = .bottom
     let initialState: FloatingPanelState = .tip
-    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
-            .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea),
-        ]
-    }
+    let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .safeArea),
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 69.0, edge: .bottom, referenceGuide: .safeArea),
+    ]
+    
     func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         return [
             surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 8.0),
@@ -345,17 +338,16 @@ class LandscapePanelLayout: FloatingPanelLayout {
 class IntrinsicPanelLayout: FloatingPanelLayout {
     let position: FloatingPanelPosition = .bottom
     let initialState: FloatingPanelState = .full
-    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0, referenceGuide: .safeArea),
-            .half: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .safeArea),
-        ]
-    }
+    let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelIntrinsicLayoutAnchor(absoluteOffset: 0, referenceGuide: .safeArea),
+        .half: FloatingPanelIntrinsicLayoutAnchor(fractionalOffset: 0.5, referenceGuide: .safeArea),
+    ]
     ...
 }
 ```
 
-:pencil2: `FloatingPanelIntrinsicLayout` is deprecated on v1.
+> [!WARNING]
+> `FloatingPanelIntrinsicLayout` is deprecated on v1.
 
 #### Specify an anchor for each state by an inset of the `FloatingPanelController.view` frame
 
@@ -364,18 +356,16 @@ Use `.superview` reference guide in your anchors.
 ```swift
 class MyFullScreenLayout: FloatingPanelLayout {
     ...
-    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
-        return [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .superview),
-            .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .superview),
-            .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .bottom, referenceGuide: .superview),
-        ]
-
-    }
+    let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] = [
+        .full: FloatingPanelLayoutAnchor(absoluteInset: 16.0, edge: .top, referenceGuide: .superview),
+        .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .superview),
+        .tip: FloatingPanelLayoutAnchor(absoluteInset: 44.0, edge: .bottom, referenceGuide: .superview),
+    ]
 }
 ```
 
-:pencil2: `FloatingPanelFullScreenLayout` is deprecated on v1.
+> [!WARNING]
+> `FloatingPanelFullScreenLayout` is deprecated on v1.
 
 #### Change the backdrop alpha
 
@@ -433,13 +423,14 @@ class ViewController: UIViewController, FloatingPanelControllerDelegate {
 class CustomPanelBehavior: FloatingPanelBehavior {
     let springDecelerationRate = UIScrollView.DecelerationRate.fast.rawValue + 0.02
     let springResponseTime = 0.4
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedTargetPosition: FloatingPanelState) -> Bool {
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedState: FloatingPanelState) -> Bool {
         return true
     }
 }
 ```
 
-:pencil2: `floatingPanel(_ vc:behaviorFor:)` is deprecated on v1.
+> [!WARNING]
+> `floatingPanel(_ vc:behaviorFor:)` is deprecated on v1.
 
 #### Activate the rubber-band effect on panel edges
 
@@ -459,7 +450,7 @@ This allows full projectional panel behavior. For example, a user can swipe up a
 ```swift
 class MyPanelBehavior: FloatingPanelBehavior {
     ...
-    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedTargetPosition: FloatingPanelPosition) -> Bool {
+    func shouldProjectMomentum(_ fpc: FloatingPanelController, to proposedState: FloatingPanelPosition) -> Bool {
         return true
     }
 }
@@ -481,7 +472,8 @@ func floatingPanelDidMove(_ vc: FloatingPanelController) {
 }
 ```
 
-:pencil2: `{top,bottom}InteractionBuffer` property is removed from `FloatingPanelLayout` since v2.
+> [!WARNING]
+> `{top,bottom}InteractionBuffer` property is removed from `FloatingPanelLayout` since v2.
 
 ### Customize the surface design
 
@@ -522,7 +514,8 @@ fpc.surfaceView.grabberHandlePadding = 10.0
 fpc.surfaceView.grabberHandleSize = .init(width: 44.0, height: 12.0)
 ```
 
-:pencil2: Note that `grabberHandleSize` width and height are reversed in the left/right position.
+> [!NOTE]
+> `grabberHandleSize` width and height are reversed in the left/right position.
 
 #### Customize content padding from surface edges
 
@@ -671,6 +664,24 @@ The tap-to-dismiss action is disabled by default. So it needs to be enabled as b
 fpc.backdropView.dismissalTapGestureRecognizer.isEnabled = true
 ```
 
+### Allow to scroll content of the tracking scroll view in addition to the most expanded state
+
+Just define conditions to allow content scrolling in `floatingPanel(:_:shouldAllowToScroll:in)` delegate method. If the returned value is true, the scroll content scrolls when its scroll position is not at the top of the content.
+
+```swift
+class MyViewController: FloatingPanelControllerDelegate {
+    ... 
+
+    func floatingPanel(
+        _ fpc: FloatingPanelController,
+        shouldAllowToScroll trackingScrollView: UIScrollView,
+        in state: FloatingPanelState
+    ) -> Bool {
+        return state == .full || state == .half
+    }
+}
+```
+
 ## Notes
 
 ### 'Show' or 'Show Detail' Segues from `FloatingPanelController`'s content view controller
@@ -710,21 +721,6 @@ It's a great way to decouple between a floating panel and the content VC.
 `UISearchController` isn't able to be used with `FloatingPanelController` by the system design.
 
 Because `UISearchController` automatically presents itself modally when a user interacts with the search bar, and then it swaps the superview of the search bar to the view managed by itself while it displays. As a result, `FloatingPanelController` can't control the search bar when it's active, as you can see from [the screen shot](https://github.com/SCENEE/FloatingPanel/issues/248#issuecomment-521263831).
-
-### FloatingPanelSurfaceView's issue on iOS 10
-
-* On iOS 10, `FloatingPanelSurfaceView.cornerRadius` isn't not automatically masked with the top rounded corners  because of `UIVisualEffectView` issue. See https://forums.developer.apple.com/thread/50854. 
-So you need to draw top rounding corners of your content.  Here is an example in Examples/Maps.
-```swift
-override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
-    if #available(iOS 10, *) {
-        visualEffectView.layer.cornerRadius = 9.0
-        visualEffectView.clipsToBounds = true
-    }
-}
-```
-* If you sets clear color to `FloatingPanelSurfaceView.backgroundColor`, please note the bottom overflow of your content on bouncing at full position. To prevent it, you need to expand your content. For example, See Example/Maps App's Auto Layout settings of `UIVisualEffectView` in Main.storyboard.
 
 ## Maintainer
 

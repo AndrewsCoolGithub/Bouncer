@@ -23,6 +23,7 @@ final class EventManager: ObservableObject{
     @Published var modified = [Event]()
     @Published var upcoming = [Event]()
     @Published var previouslyHosted = [Event]()
+    @Published var attending = [Event]()
     
     public func stopListeningForEvents() {
         if listener != nil {
@@ -36,6 +37,7 @@ final class EventManager: ObservableObject{
         self.listenForChanges()
         self.fetchEventHistory()
         self.fetchUpcoming()
+        self.isAttending()
     }
     
     //MARK: - Create
@@ -184,6 +186,19 @@ final class EventManager: ObservableObject{
     /** Remove from Event Collection (rsvp, waitlist, invited, guest) */
     func remove(from collection: EventCollections, for eventID: String, userID uid: String? = nil) async throws{
         try await EVENTS_COLLECTION.document(eventID).updateData([collection.rawValue: FieldValue.arrayRemove([uid != nil ? uid! : User.shared.id!])])
+    }
+    
+    //MARK: - isAttending Listener
+    
+    /** Checks events guestLists to determine the event you are attending for eventOverview display*/
+    
+    func isAttending(){
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        EVENTS_COLLECTION.whereField(EventFields.guestIds, arrayContains: uid).addSnapshotListener { snap, e in
+            self.attending = snap?.documents.compactMap({ doc -> Event? in
+                return try? doc.data(as: Event.self)
+            }) ?? []
+        }
     }
 }
 

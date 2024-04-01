@@ -79,7 +79,9 @@ class StoryVideoRecordingVC: UIViewController{
         case .story:
             continueButton.addTarget(self, action: #selector(post), for: .touchUpInside)
         case .message:
-            continueButton.addTarget(self, action: #selector(postMessage), for: .touchUpInside)
+            break
+            //TODO: Video Message posting
+            //continueButton.addTarget(self, action: #selector(postMessage), for: .touchUpInside)
         }
         
         
@@ -108,21 +110,21 @@ class StoryVideoRecordingVC: UIViewController{
         navigationController?.popToViewController(rootVC, animated: true)
     }
     
-    @objc func postMessage(){
-        print("Post Video Message")
-        guard let messageDetail = messageDetail else {return}
-        let doc = CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document()
-        let messageID = doc.documentID
-        let displayName = User.shared.displayName!
-        let senderID = User.shared.id!
-        let message = MessageCodable(senderID: senderID, messageID: messageID, displayName: displayName, sentDate: .now, readReceipts: nil, dataType: "video", text: nil, mediaURL: nil, duration: 0, replyReceipt: nil, emojiReactions: nil)
-        do{
-            try MessageManager.shared.send(messageDetail, message: message, nil, self.url, shouldFlip)
-        }catch{
-            print("error: \(error)")
-        }
-       
-    }
+//    @objc func postMessage(){
+//        print("Post Video Message")
+//        guard let messageDetail = messageDetail else {return}
+//        let doc = CHAT_COLLECTION.document(messageDetail.id!).collection("Messages").document()
+//        let messageID = doc.documentID
+//        let displayName = User.shared.displayName!
+//        let senderID = User.shared.id!
+//        let message = MessageCodable(senderID: senderID, messageID: messageID, displayName: displayName, sentDate: .now, readReceipts: nil, dataType: "video", text: nil, mediaURL: nil, duration: 0, replyReceipt: nil, emojiReactions: nil)
+//        do{
+//            try MessageManager.shared.send(messageDetail, message: message, nil, self.url, shouldFlip)
+//        }catch{
+//            print("error: \(error)")
+//        }
+//       
+//    }
     
     @objc func discard(){
         navigationController?.popViewController(animated: true)

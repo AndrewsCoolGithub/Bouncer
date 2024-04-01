@@ -25,9 +25,10 @@ struct MessageCellViews: SkeletonLoadable{
         let animation = makeAnimationGroup()
         animation.beginTime = 0.0
         gradient.add(animation, forKey: "backgroundColor")
-       
+        gradient.frame = profileImage.bounds
         return gradient
     }()
+    
     
     let nameLabel: UILabel = {
         let label = UILabel()

@@ -7,7 +7,7 @@
 
 import UIKit
 import AVFoundation
-import ABVideoRangeSlider
+
 import Combine
 
 extension StoryCameraVC{
@@ -62,17 +62,21 @@ extension StoryCameraVC{
             switchButton.isHidden = true
             cancelButton.isHidden = true
             debugPrint("long press started")
-            
+            //TODO: Unique URL is required
             
             let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0] as URL
             let filePath = documentsURL.appendingPathComponent("tempMovie").appendingPathExtension("mov")
-            if FileManager.default.fileExists(atPath: filePath.absoluteString) {
+            
+//            if FileManager.default.fileExists(atPath: filePath.absoluteString) {
+                
                 do {
                     try FileManager.default.removeItem(at: filePath)
                 }
                 catch {
+                    print("StoryCameraVC 76 - Error: \(error)")
                 }
-            }
+//            }
+            
             
             if self.flashIsActive == true && self.position == .front {
                 view.addSubview(shutterView)

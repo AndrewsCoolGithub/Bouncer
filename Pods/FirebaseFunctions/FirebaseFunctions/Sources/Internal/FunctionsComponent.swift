@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Foundation
 import FirebaseAppCheckInterop
 import FirebaseAuthInterop
 import FirebaseCore
-import FirebaseCoreExtension
 import FirebaseMessagingInterop
+import Foundation
+
+// Avoids exposing internal FirebaseCore APIs to Swift users.
+@_implementationOnly import FirebaseCoreExtension
 
 @objc(FIRFunctionsProvider)
 protocol FunctionsProvider {
@@ -34,7 +36,8 @@ protocol FunctionsProvider {
   // MARK: - Private Variables
 
   /// The app associated with all functions instances in this container.
-  private let app: FirebaseApp
+  /// This is `unowned` instead of `weak` so it can be used without unwrapping in `functions()`
+  private unowned let app: FirebaseApp
 
   /// A map of active instances, grouped by app. Keys are FirebaseApp names and values are arrays
   /// containing all instances of Functions associated with the given app.

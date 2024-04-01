@@ -55,4 +55,9 @@ struct MessageSuiteViewComponents{
         button.layer.masksToBounds = true
         return button
     }()
+    
+    let pastelView: Pastel = {
+        let pastel = Pastel(frame: CGRect(origin: .zero, size: CGSize(width: .makeWidth(414), height: SafeArea.topSafeArea() + .makeWidth(60))))
+        return pastel
+    }()
 }

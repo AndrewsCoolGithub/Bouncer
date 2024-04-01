@@ -57,10 +57,9 @@ class MessageCell: UICollectionViewCell{
     fileprivate func setProfileImage(_ messageCellViewModel: MessageCellViewModel){
         imageCancellable = messageCellViewModel.$userData.receive(on: DispatchQueue.main).sink{ [weak self] profiles in
             self?.profiles = Array(profiles.values)
-            guard let imageUrl = profiles.values.first(where: {$0.id != User.shared.id})?.image_url else {return}
             let profilePhoto = self?.views.profileImage
-            self?.views.skeletonGradient.frame = profilePhoto?.bounds ?? .zero
             profilePhoto?.layer.addSublayer(self?.views.skeletonGradient ?? CALayer())
+            guard let imageUrl = profiles.values.first(where: {$0.id != User.shared.id})?.image_url else {return}
             profilePhoto?.sd_setImage(with: URL(string: imageUrl)) { [weak self] i, e, c, u in
                 self?.views.skeletonGradient.removeFromSuperlayer()
             }

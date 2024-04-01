@@ -1,6 +1,7 @@
 // Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
 import UIKit
+import os.log
 
 /// An interface for generating layout information for a panel.
 @objc public protocol FloatingPanelLayout {
@@ -44,8 +45,8 @@ open class FloatingPanelBottomLayout: NSObject, FloatingPanelLayout {
 
     open func prepareLayout(surfaceView: UIView, in view: UIView) -> [NSLayoutConstraint] {
         return [
-            surfaceView.leftAnchor.constraint(equalTo: view.fp_safeAreaLayoutGuide.leftAnchor, constant: 0.0),
-            surfaceView.rightAnchor.constraint(equalTo: view.fp_safeAreaLayoutGuide.rightAnchor, constant: 0.0),
+            surfaceView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0.0),
+            surfaceView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 0.0),
         ]
     }
 
@@ -91,6 +92,9 @@ class LayoutAdapter {
     private(set) var attractionConstraint: NSLayoutConstraint?
 
     private var staticConstraint: NSLayoutConstraint?
+
+    /// A layout constraint to limit the content size in ``FloatingPanelAdaptiveLayoutAnchor``.
+    private var contentBoundingConstraint: NSLayoutConstraint?
 
     private var anchorStates: Set<FloatingPanelState> {
         return Set(layout.anchors.keys)
@@ -262,12 +266,25 @@ class LayoutAdapter {
     }
 
     var offsetFromMostExpandedAnchor: CGFloat {
+        return offset(from: mostExpandedState)
+    }
+
+    /// The distance from the given state position to the current surface location.
+    ///
+    /// If the returned value is positive, it indicates that the surface is moving from
+    /// the given state position to closer to the `hidden` state position. In other
+    /// words, the surface is within the given state position. Otherwise, it indicates
+    /// that the surface is outside this position and is moving away from the `hidden`
+    /// state position.
+    func offset(from state: FloatingPanelState) -> CGFloat {
+        let offset: CGFloat
         switch position {
         case .top, .left:
-            return edgePosition(surfaceView.presentationFrame) - position(for: mostExpandedState)
+            offset = position(for: state) - edgePosition(surfaceView.frame)
         case .bottom, .right:
-            return position(for: mostExpandedState) - edgePosition(surfaceView.presentationFrame)
+            offset = edgePosition(surfaceView.frame) - position(for: state)
         }
+        return offset.rounded(by: surfaceView.fp_displayScale)
     }
 
     private var hiddenAnchor: FloatingPanelLayoutAnchoring {
@@ -330,12 +347,27 @@ class LayoutAdapter {
                 if anchor.referenceGuide == .safeArea {
                     referenceBoundsLength += position.inset(safeAreaInsets)
                 }
-                return dimension - diff
+                let maxPosition: CGFloat = {
+                    if let maxBounds = anchor.contentBoundingGuide.maxBounds(vc) {
+                        return layout.position.mainLocation(maxBounds.origin)
+                            + layout.position.mainDimension(maxBounds.size)
+                    } else {
+                        return .infinity
+                    }
+                }()
+                return min(dimension - diff, maxPosition)
             case .bottom, .right:
                 if anchor.referenceGuide == .safeArea {
                     referenceBoundsLength -= position.inset(safeAreaInsets)
                 }
-                return referenceBoundsLength - dimension + diff
+                let minPosition: CGFloat = {
+                    if let maxBounds = anchor.contentBoundingGuide.maxBounds(vc) {
+                        return layout.position.mainLocation(maxBounds.origin)
+                    } else {
+                        return -(.infinity)
+                    }
+                }()
+                return max(referenceBoundsLength - dimension + diff, minPosition)
             }
         case let anchor as FloatingPanelLayoutAnchor:
             let referenceBounds = anchor.referenceGuide == .safeArea ? bounds.inset(by: safeAreaInsets) : bounds
@@ -403,13 +435,13 @@ class LayoutAdapter {
             switch position {
             case .top, .bottom:
                 surfaceConstraints = [
-                    surfaceView.leftAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.leftAnchor, constant: 0.0),
-                    surfaceView.rightAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.rightAnchor, constant: 0.0),
+                    surfaceView.leftAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.leftAnchor, constant: 0.0),
+                    surfaceView.rightAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.rightAnchor, constant: 0.0),
                 ]
             case .left, .right:
                 surfaceConstraints = [
-                    surfaceView.topAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.topAnchor, constant: 0.0),
-                    surfaceView.bottomAnchor.constraint(equalTo: vc.fp_safeAreaLayoutGuide.bottomAnchor, constant: 0.0),
+                    surfaceView.topAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.topAnchor, constant: 0.0),
+                    surfaceView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: 0.0),
                 ]
             }
         }
@@ -517,7 +549,7 @@ class LayoutAdapter {
         let layoutGuideProvider: LayoutGuideProvider
         switch anchor.referenceGuide {
         case .safeArea:
-            layoutGuideProvider = vc.fp_safeAreaLayoutGuide
+            layoutGuideProvider = vc.view.safeAreaLayoutGuide
         case .superview:
             layoutGuideProvider = vc.view
         }
@@ -629,8 +661,9 @@ class LayoutAdapter {
     // The method is separated from prepareLayout(to:) for the rotation support
     // It must be called in FloatingPanelController.traitCollectionDidChange(_:)
     func updateStaticConstraint() {
-        NSLayoutConstraint.deactivate(constraint: staticConstraint)
+        NSLayoutConstraint.deactivate([staticConstraint, contentBoundingConstraint].compactMap{ $0 })
         staticConstraint = nil
+        contentBoundingConstraint = nil
 
         if vc.contentMode == .fitToBounds {
             surfaceView.containerOverflow = 0
@@ -654,7 +687,18 @@ class LayoutAdapter {
                 constant = 0.0
             }
             let baseAnchor = position.mainDimensionAnchor(anchor.contentLayoutGuide)
-            staticConstraint = surfaceAnchor.constraint(equalTo: baseAnchor, constant: constant)
+            if let boundingLayoutGuide = anchor.contentBoundingGuide.layoutGuide(vc) {
+                if anchor.isAbsolute {
+                    contentBoundingConstraint = baseAnchor.constraint(lessThanOrEqualTo: position.mainDimensionAnchor(boundingLayoutGuide),
+                                                               constant: anchor.offset)
+                } else {
+                    contentBoundingConstraint = baseAnchor.constraint(lessThanOrEqualTo: position.mainDimensionAnchor(boundingLayoutGuide),
+                                                               multiplier: anchor.offset)
+                }
+                staticConstraint = surfaceAnchor.constraint(lessThanOrEqualTo: baseAnchor, constant: constant)
+            } else {
+                staticConstraint = surfaceAnchor.constraint(equalTo: baseAnchor, constant: constant)
+            }
         default:
             switch position {
             case .top, .left:
@@ -673,14 +717,14 @@ class LayoutAdapter {
             staticConstraint?.identifier = "FloatingPanel-static-width"
         }
 
-        NSLayoutConstraint.activate(constraint: staticConstraint)
+        NSLayoutConstraint.activate([staticConstraint, contentBoundingConstraint].compactMap{ $0 })
 
         surfaceView.containerOverflow = position.mainDimension(vc.view.bounds.size)
     }
 
-    func updateInteractiveEdgeConstraint(diff: CGFloat, overflow: Bool, allowsRubberBanding: (UIRectEdge) -> Bool) {
+    func updateInteractiveEdgeConstraint(diff: CGFloat, scrollingContent: Bool, allowsRubberBanding: (UIRectEdge) -> Bool) {
         defer {
-            log.debug("update surface location = \(surfaceLocation)")
+            os_log(msg, log: devLog, type: .debug, "update surface location = \(surfaceLocation)")
         }
 
         let minConst: CGFloat = position(for: leastCoordinateState)
@@ -701,7 +745,7 @@ class LayoutAdapter {
             const = maxConst + rubberBandEffect(for: buffer, base: base)
         }
 
-        if overflow == false {
+        if scrollingContent {
             const = min(max(const, minConst), maxConst)
         }
 
@@ -720,9 +764,9 @@ class LayoutAdapter {
         defer {
             if forceLayout {
                 layoutSurfaceIfNeeded()
-                log.debug("activateLayout for \(state) -- surface.presentation = \(self.surfaceView.presentationFrame) surface.frame = \(self.surfaceView.frame)")
+                os_log(msg, log: devLog, type: .debug, "activateLayout for \(state) -- surface.presentation = \(self.surfaceView.presentationFrame) surface.frame = \(self.surfaceView.frame)")
             } else {
-                log.debug("activateLayout for \(state)")
+                os_log(msg, log: devLog, type: .debug, "activateLayout for \(state)")
             }
         }
 
@@ -738,12 +782,6 @@ class LayoutAdapter {
             NSLayoutConstraint.activate(constraint: self.fitToBoundsConstraint)
         }
 
-        var state = state
-
-        if validStates.contains(state) == false {
-            state = layout.initialState
-        }
-
         // Recalculate the intrinsic size of a content view. This is because
         // UIView.systemLayoutSizeFitting() returns a different size between an
         // on-screen and off-screen view which includes
@@ -757,7 +795,7 @@ class LayoutAdapter {
             if let constraints = stateConstraints[state] {
                 NSLayoutConstraint.activate(constraints)
             } else {
-                log.error("Couldn't find any constraints for \(state)")
+                os_log(msg, log: sysLog, type: .fault, "Error: can not find any constraints for \(state)")
             }
         }
     }

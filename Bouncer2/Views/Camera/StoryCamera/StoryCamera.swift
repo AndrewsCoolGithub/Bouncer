@@ -393,6 +393,8 @@ extension StoryCameraVC: AVCaptureFileOutputRecordingDelegate{
         
         if error == nil {
             didGetVideo(outputFileURL)
+        }else{
+            print("StoryCameraVC-397: Error = \(error)")
         }
         
 

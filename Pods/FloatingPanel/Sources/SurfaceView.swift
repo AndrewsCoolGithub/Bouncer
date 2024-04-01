@@ -1,6 +1,7 @@
 // Copyright 2018-Present Shin Yamamoto. All rights reserved. MIT license.
 
 import UIKit
+import os.log
 
 /// An object for customizing the appearance of a surface view
 @objc(FloatingPanelSurfaceAppearance)
@@ -53,17 +54,13 @@ public class SurfaceAppearance: NSObject {
     /// Defines the curve used for rendering the rounded corners of the layer.
     ///
     /// Defaults to `.circular`.
-    
-
-   private var _cornerCurve: Any? = nil
-   @available(iOS 13.0, *)
-   public var cornerCurve: CALayerCornerCurve!{
-       get{
-           return _cornerCurve as? CALayerCornerCurve ?? .circular
-       }set{
-           _cornerCurve = newValue
-       }
+    @available(iOS 13.0, *)
+    public var cornerCurve: CALayerCornerCurve {
+        get { _cornerCurve ?? .circular }
+        set { _cornerCurve = newValue }
     }
+
+    private var _cornerCurve: CALayerCornerCurve?
 
     /// An array of shadows used to create drop shadows underneath a surface view.
     public var shadows: [Shadow] = [Shadow()]
@@ -322,7 +319,7 @@ public class SurfaceView: UIView {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        log.debug("surface view frame = \(frame)")
+        os_log(msg, log: devLog, type: .debug, "surface view frame = \(frame)")
 
         containerView.backgroundColor = appearance.backgroundColor
 
@@ -386,29 +383,24 @@ public class SurfaceView: UIView {
         }
         containerView.layer.masksToBounds = true
         if position.inset(containerMargins) != 0 {
-            if #available(iOS 11, *) {
-                containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner,
-                                                     .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            }
+            containerView.layer.maskedCorners = [
+                .layerMinXMinYCorner, .layerMaxXMinYCorner,
+                .layerMinXMaxYCorner, .layerMaxXMaxYCorner
+            ]
             return
         }
-        if #available(iOS 11, *) {
-            // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
-            // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
-            // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
-            switch position {
-            case .top:
-                containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            case .left:
-                containerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-            case .bottom:
-                containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            case .right:
-                containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-            }
-        } else {
-            // Can't use `containerView.layer.mask` because of a UIVisualEffectView issue in iOS 10, https://forums.developer.apple.com/thread/50854
-            // Instead, a user should display rounding corners appropriately.
+        // Don't use `contentView.clipToBounds` because it prevents content view from expanding the height of a subview of it
+        // for the bottom overflow like Auto Layout settings of UIVisualEffectView in Main.storyboard of Example/Maps.
+        // Because the bottom of contentView must be fit to the bottom of a screen to work the `safeLayoutGuide` of a content VC.
+        switch position {
+        case .top:
+            containerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        case .left:
+            containerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+        case .bottom:
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        case .right:
+            containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         }
     }
 
@@ -450,5 +442,23 @@ public class SurfaceView: UIView {
 
     func hasStackView() -> Bool {
         return contentView?.subviews.reduce(false) { $0 || ($1 is UIStackView) } ?? false
+    }
+
+    func grabberAreaContains(_ location: CGPoint) -> Bool {
+        // Sometimes a dragging finger's location is out of surface frame.
+        let cappedLocation: CGPoint
+        // Because the maximum width / height is out of bounds in CGRect.contains(_:)
+        let adjustment = 1 / fp_displayScale
+        switch position {
+        case .top:
+            cappedLocation = CGPoint(x: location.x, y: min(location.y, bounds.height - adjustment))
+        case .left:
+            cappedLocation = CGPoint(x: min(location.x, bounds.width - adjustment), y: location.y)
+        case .bottom:
+            cappedLocation = CGPoint(x: location.x, y: max(location.y, 0))
+        case .right:
+            cappedLocation = CGPoint(x: max(location.x, 0), y: location.y)
+        }
+        return grabberAreaFrame.contains(cappedLocation)
     }
 }

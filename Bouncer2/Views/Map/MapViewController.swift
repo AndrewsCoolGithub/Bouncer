@@ -24,6 +24,19 @@ class MapViewController: UIViewController{
         return mapView
     }()
     
+    let zoomButton: UIButton = {
+        let button = UIButton()
+        let config = UIImage.SymbolConfiguration(pointSize: .makeHeight(30), weight: .semibold)
+        button.setImage(UIImage(systemName: "location.north.fill", withConfiguration: config), for: .normal)
+        button.backgroundColor = .black.withAlphaComponent(0.25)
+        button.tintColor = .white
+        button.backgroundColor = .nearlyBlack().withAlphaComponent(0.2)
+        button.setDimensions(height: .makeWidth(40), width: .makeWidth(40))
+        button.layer.cornerRadius = .makeWidth(20)
+        button.layer.masksToBounds = true
+        return button
+    }()
+    
     let viewModel = MapViewModel()
     var cancellable = Set<AnyCancellable>()
     var initialLocation: AnyCancellable?
@@ -61,12 +74,19 @@ class MapViewController: UIViewController{
         
         detail.dismissButton.addTarget(self, action: #selector(returnToLastCamera), for: .touchUpInside)
         
+        view.addSubview(zoomButton)
+        zoomButton.addTarget(self, action: #selector(zoomPressed), for: .touchUpInside)
+        zoomButton.anchor(bottom: view.bottomAnchor,  paddingBottom: .makeHeight(100))
+        
+        
         if let panGeture = mapView.gestureRecognizers?.first(where: {$0 is UIPanGestureRecognizer}) as? UIPanGestureRecognizer{
             panGeture.addTarget(self, action: #selector(didScrollInMap))
         }
     }
     
-   
+    @objc func zoomPressed(_ sender: UIButton){
+        print("Button pressed")
+    }
     
     @objc func returnToLastCamera(){
         if let savedCamera = self.savedCamera{
@@ -98,6 +118,7 @@ class MapViewController: UIViewController{
     }
     var count: Int = 0
 }
+
 extension MapViewController: MGLMapViewDelegate{
     
     func mapView(_ mapView: MGLMapView, didUpdate userLocation: MGLUserLocation?) {

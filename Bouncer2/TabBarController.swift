@@ -16,6 +16,7 @@ class TabBarController: UITabBarController{
    
     
     fileprivate var components = TabBarViewComponents()
+    fileprivate var eventAttendingView: EventAttendingView?
     var cancellable = Set<AnyCancellable>()
     
     
@@ -34,6 +35,7 @@ class TabBarController: UITabBarController{
         view.backgroundColor = .clear
         
         listenForProfileImage()
+        listenForEventAttending()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -80,6 +82,41 @@ class TabBarController: UITabBarController{
                 skeletonGradient.removeFromSuperlayer()
             })
         }.store(in: &cancellable)
+    }
+    
+    fileprivate func listenForEventAttending() {
+        EventManager.shared.$attending.sink { [weak self] events in
+            guard let self = self else {return}
+            guard !events.isEmpty else { removeAttendingView(); return}
+            
+            if self.eventAttendingView != nil && events[0] != self.eventAttendingView?.event{
+                removeAttendingView()
+            }
+           
+            if let currentView = self.eventAttendingView, currentView.event == events[0]{
+                return ///View exists with correct event
+            }else if let currentView = self.eventAttendingView, currentView.event != events[0]{
+                removeAttendingView()
+                createAttendingView(events[0]) ///View exists with wrong event
+            }else{
+                createAttendingView(events[0]) ///No view exists
+            }
+            
+            
+        }.store(in: &cancellable)
+    }
+    
+    fileprivate func removeAttendingView(){
+        self.eventAttendingView?.removeFromSuperview()
+        self.eventAttendingView = nil
+    }
+    
+    fileprivate func createAttendingView(_ event: Event){
+        self.eventAttendingView = EventAttendingView(event)
+        view.addSubview(eventAttendingView!)
+        eventAttendingView?.centerX(inView: view, topAnchor: view.safeAreaLayoutGuide.topAnchor, paddingTop: .makeWidth(5))
+        eventAttendingView?.setHeight(.makeWidth(55))
+        eventAttendingView?.setWidth(.makeWidth(175))
     }
     
     @objc func openProfile(){
@@ -136,6 +173,23 @@ private struct TabBarViewComponents: SkeletonLoadable{
         return button
    }()
     
+    let attendingButton: UIButton = {
+        let button = UIButton()
+//        button.backgroundColor = .init(white: 0.5, alpha: 0.5)
+//        button.layer.compositingFilter = "multiplyBlendMode"
+        button.layer.cornerRadius = .makeWidth(27.5)
+        button.backgroundColor = .nearlyBlack().withAlphaComponent(0.2)
+        
+        
+//        let gradientOverlay = CAGradientLayer()
+//        gradientOverlay.frame = button.bounds
+//        gradientOverlay.colors = [UIColor.white.cgColor, UIColor.greyColor().cgColor]
+//        gradientOverlay.startPoint = CGPoint(x: 0.5, y: 0)
+//        gradientOverlay.endPoint = CGPoint(x: 0.5, y: 1)
+//        button.layer.insertSublayer(gradientOverlay, at: 0)
+        return button
+    }()
+    
     lazy var profileSkeletonGradient: CAGradientLayer = {
         let gradient = CAGradientLayer()
         gradient.startPoint = CGPoint(x: 0, y: 0.5)
@@ -147,3 +201,5 @@ private struct TabBarViewComponents: SkeletonLoadable{
         return gradient
     }()
 }
+
+
