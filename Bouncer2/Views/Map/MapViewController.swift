@@ -20,7 +20,6 @@ class MapViewController: UIViewController{
         mapView.isHapticFeedbackEnabled = true
         mapView.showsUserLocation = true
         mapView.attributionButton.isHidden = true
-        
         return mapView
     }()
     
@@ -32,6 +31,17 @@ class MapViewController: UIViewController{
         button.setImage(UIImage(systemName: "location.north.fill"), for: .normal)
         button.tintColor = .white
         return button
+    }()
+    
+    let locationLabel: UILabel = {
+        let label = UILabel(frame: .layoutRect(width: 180, height: 40, rectCenter: .centerX, padding: Padding(anchor: .top, padding: .makeHeight(85)), keepAspect: true))
+        label.adjustsFontSizeToFitWidth = true
+        label.font = .poppinsMedium(size: .makeWidth(21))
+        label.textColor = .white
+        label.adjustsFontSizeToFitWidth = true
+        label.textAlignment = .center
+        label.minimumScaleFactor = 0.6
+        return label
     }()
     
     let viewModel = MapViewModel()
@@ -74,6 +84,8 @@ class MapViewController: UIViewController{
         view.addSubview(zoomButton)
         zoomButton.addTarget(self, action: #selector(zoomPressed), for: .touchUpInside)
         
+        view.addSubview(locationLabel)
+        
         
         if let panGeture = mapView.gestureRecognizers?.first(where: {$0 is UIPanGestureRecognizer}) as? UIPanGestureRecognizer{
             panGeture.addTarget(self, action: #selector(didScrollInMap))
@@ -113,13 +125,9 @@ class MapViewController: UIViewController{
             return MapEventAnnotation(event: event)
         }
     }
-    var count: Int = 0
-}
-
-extension MapViewController: MGLMapViewDelegate{
     
-    func mapView(_ mapView: MGLMapView, regionDidChangeAnimated animated: Bool) {
-        
+    ///Func runs via delegate, determines if zoom to location button is visble and animates
+    func determineCenterLocationButton(_ mapView: MGLMapView){
         guard let userLocationCoord = mapView.userLocation?.coordinate else {return}
         let centerCoord = mapView.centerCoordinate
        
@@ -149,6 +157,57 @@ extension MapViewController: MGLMapViewDelegate{
                     self.zoomButton.alpha = 1
                 }
             }
+        }
+    }
+    
+    func determineMapCenterLocationName(_ mapview: MGLMapView) async throws{
+        let centerMapCoords = mapview.centerCoordinate
+        let zoomLevel = mapview.zoomLevel
+        print(zoomLevel)
+        let location: CLLocation = CLLocation(latitude: centerMapCoords.latitude, longitude: centerMapCoords.longitude)
+        let geocoder = CLGeocoder()
+        if let placemark = try await geocoder.reverseGeocodeLocation(location).first {
+                DispatchQueue.main.async {
+                    self.updateLocationLabel(placemark, zoomLevel: zoomLevel)
+                }
+        }
+    }
+    
+    func updateLocationLabel(_ placemark: CLPlacemark, zoomLevel: Double){
+        if zoomLevel <= 4.5 {
+            ///Country < 4.5 zoom level
+            animateLocationLabel(placemark.country)
+        }else if zoomLevel <= 8 {
+            ///State  < 8 zoom level
+            if placemark.country == "United States" {
+                animateLocationLabel(stateDictionary[placemark.administrativeArea ?? ""])
+            }else{
+                animateLocationLabel(placemark.administrativeArea)
+            }
+        }else{
+            ///City > 8 zoom level
+            animateLocationLabel(placemark.locality)
+        }
+    }
+    
+    func animateLocationLabel(_ string: String?){
+        UIView.transition(with: locationLabel,
+                          duration: 0.25,
+                          options: .transitionCrossDissolve,
+                          animations: { [weak self] in
+            self?.locationLabel.text = string
+        }, completion: nil)
+    }
+}
+
+extension MapViewController: MGLMapViewDelegate{
+    
+   
+    
+    func mapView(_ mapView: MGLMapView, regionDidChangeAnimated animated: Bool) {
+        determineCenterLocationButton(mapView)
+        Task{
+            try? await determineMapCenterLocationName(mapView)
         }
     }
     

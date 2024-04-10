@@ -180,6 +180,7 @@
 		A4A996762813C63C009DED0B /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A996752813C63C009DED0B /* Colors.swift */; };
 		A4A996782813C64F009DED0B /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A996772813C64E009DED0B /* Layout.swift */; };
 		A4AA565628C0A65200DE0474 /* MessageCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AA565528C0A65200DE0474 /* MessageCodable.swift */; };
+		A4AD42572BC7173600210B77 /* USStateDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AD42562BC7173600210B77 /* USStateDictionary.swift */; };
 		A4AE75C1294D191F00381A85 /* StoryCamera+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AE75C0294D191F00381A85 /* StoryCamera+Helpers.swift */; };
 		A4AE75C3294D197F00381A85 /* StoryCamera+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AE75C2294D197F00381A85 /* StoryCamera+Actions.swift */; };
 		A4AE75C5294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AE75C4294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift */; };
@@ -417,6 +418,7 @@
 		A4A996752813C63C009DED0B /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Colors.swift; path = "../New Group1/Colors.swift"; sourceTree = "<group>"; };
 		A4A996772813C64E009DED0B /* Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		A4AA565528C0A65200DE0474 /* MessageCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCodable.swift; sourceTree = "<group>"; };
+		A4AD42562BC7173600210B77 /* USStateDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USStateDictionary.swift; sourceTree = "<group>"; };
 		A4AE75C0294D191F00381A85 /* StoryCamera+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoryCamera+Helpers.swift"; sourceTree = "<group>"; };
 		A4AE75C2294D197F00381A85 /* StoryCamera+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoryCamera+Actions.swift"; sourceTree = "<group>"; };
 		A4AE75C4294D1BF100381A85 /* StoryCamera+AccessoryFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoryCamera+AccessoryFeatures.swift"; sourceTree = "<group>"; };
@@ -549,7 +551,7 @@
 				A4E902BB29750967002B0E21 /* Layout */,
 				A4E902BE29750A14002B0E21 /* Loading */,
 				A4E902BF29750A4C002B0E21 /* KVStructs */,
-				A451A9F228DCC26800C0EAA1 /* EmojiArray.swift */,
+				A4AD42552BC716E900210B77 /* UsefulBlobs */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -1050,6 +1052,15 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		A4AD42552BC716E900210B77 /* UsefulBlobs */ = {
+			isa = PBXGroup;
+			children = (
+				A451A9F228DCC26800C0EAA1 /* EmojiArray.swift */,
+				A4AD42562BC7173600210B77 /* USStateDictionary.swift */,
+			);
+			path = UsefulBlobs;
+			sourceTree = "<group>";
+		};
 		A4AEC35029FDF02C008DFA85 /* ChatCameraRollCV */ = {
 			isa = PBXGroup;
 			children = (
@@ -1408,6 +1419,7 @@
 				A42731DE291FC9D200CB6B66 /* SuggestedCollectionView.swift in Sources */,
 				A448ED732951371B009BD7C2 /* StoryVideoRecordingVC.swift in Sources */,
 				A435EFB1296CDCF5007DDB00 /* VideoLoadingDelegate.swift in Sources */,
+				A4AD42572BC7173600210B77 /* USStateDictionary.swift in Sources */,
 				A44E35E729475DD1005DEC4C /* EventOverviewContent.swift in Sources */,
 				A4180BD72AEAEDED00FCC455 /* EventAttendingView.swift in Sources */,
 				A46438E928E58B6F00AAC51E /* CLLocationCoord.swift in Sources */,

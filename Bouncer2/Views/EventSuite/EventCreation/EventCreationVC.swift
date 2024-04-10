@@ -268,7 +268,7 @@ final class EventCreationVC: UIViewController, ObservableObject{
     }
     
     //MARK: - Navigation
-    let overview = EventOverview()
+    let overview = EventSummary()
     let interactor = Interactor()
     
     func listenForOverview(){
